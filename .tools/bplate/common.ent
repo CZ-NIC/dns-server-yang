@@ -1,0 +1,31 @@
+<!ENTITY kw-2119 '
+<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL"
+in this document are to be interpreted as described in <xref
+target="RFC2119"/>.</t>
+'>
+<!ENTITY ed-hint-fill-in '
+<t>RFC Editor: In this section, replace all occurrences of &apos;XXXX&apos;
+with the actual RFC number and all occurrences of the revision date
+below with the date of RFC publication (and remove this note).</t>
+'>
+<!ENTITY ed-hint-remove-sec '
+<t>RFC Editor: Remove this section upon publication as an RFC.</t>
+'>
+<!ENTITY treesym '
+<t>The meaning of the symbols in these diagrams is as follows:
+<list style="symbols">
+  <t>Brackets "[" and "]" enclose list keys.</t>
+  <t>Curly braces "{" and "}" contain names of optional features that
+  make the corresponding node conditional.</t>
+  <t>Abbreviations before data node names: "rw" means configuration
+  (read-write), "ro" state data (read-only), "-x" RPC operations, and
+  "-n" notifications.</t>
+  <t>Symbols after data node names: "?" means an optional node, "!" a
+  container with presence, and "*" denotes a "list" or "leaf-list".</t>
+  <t>Parentheses enclose choice and case nodes, and case nodes are
+  also marked with a colon (":").</t>
+  <t>Ellipsis ("...")  stands for contents of subtrees that are not
+  shown.</t>
+</list></t>
+'>

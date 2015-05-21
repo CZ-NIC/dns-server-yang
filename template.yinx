@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module name="%%MODNAME%%"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+        xmlns:md="urn:ietf:params:xml:ns:yang:%%MODNAME%%"
+        xmlns:h="http://www.w3.org/1999/xhtml"
+        xmlns:xi="http://www.w3.org/2001/XInclude">
+  <namespace uri="urn:ietf:params:xml:ns:yang:%%MODNAME%%"/>
+  <prefix value="%%PRF%%"/>
+  <organization>
+    <text>IETF NETMOD (NETCONF Data Modeling Language) Working Group</text>
+  </organization>
+  <contact>
+    <text>
+      <xi:include href=".tools/bplate/netmod-module.yinx"
+                  xpointer="xpointer(id('contact')/*)"/>
+      <h:p>
+        Editor:   %%EDITOR%%<h:br/>
+                  &lt;mailto:%%EDITOR_ADDRESS%%&gt;
+      </h:p>
+    </text>
+  </contact>
+  <description>
+    <text>
+      <h:p>%%SHORT_MODULE_DESCRIPTION%%</h:p>
+      <xi:include href=".tools/bplate/netmod-module.yinx"
+                  xpointer="xpointer(id('desc')/*)"/>
+    </text>
+  </description>
+  <revision date="2015-04-16">
+    <description>
+      <text>Initial revision.</text>
+    </description>
+    <reference>
+      <text>
+	RFC XXXX: Defining and Using Metadata with YANG
+      </text>
+    </reference>
+  </revision>
+</module>

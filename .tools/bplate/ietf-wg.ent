@@ -1,0 +1,8 @@
+<!ENTITY dhc-wg '
+<area>Internet</area>
+<workgroup>DHC Working Group</workgroup>
+'>
+<!ENTITY netmod-wg '
+<area>Operations and Management</area>
+<workgroup>NETMOD Working Group</workgroup>
+'>

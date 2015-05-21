@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This dummy module contains pieces of boilerplate text that can
+be included in other YANG modules via XInclude.
+-->
+
+<module name="netmod-module"
+	xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+	xmlns:h="http://www.w3.org/1999/xhtml">
+  <namespace uri="urn:ietf:params:xml:ns:yang:netmod-module"/>
+  <prefix value="nmm"/>
+  <organization xml:id="org">
+    <text>IETF NETMOD (NETCONF Data Modeling Language) Working Group</text>
+  </organization>
+  <contact>
+    <text xml:id="contact">
+      <h:p>
+	WG Web:   &lt;http://tools.ietf.org/wg/netmod/&gt;<h:br/>
+	WG List:  &lt;mailto:netmod@ietf.org&gt;
+      </h:p>
+      <h:p>
+	WG Chair: Thomas Nadeau<h:br/>
+	          &lt;mailto:tnadeau@lucidvision.com&gt;
+      </h:p>
+      <h:p>
+	WG Chair: Juergen Schoenwaelder<h:br/>
+	          &lt;mailto:j.schoenwaelder@jacobs-university.de&gt;
+      </h:p>
+    </text>
+  </contact>
+  <description>
+    <text xml:id="desc">
+      <h:p>
+	Copyright (c) 2014 IETF Trust and the persons identified as
+	authors of the code.  All rights reserved.
+      </h:p>
+      <h:p>
+	Redistribution and use in source and binary forms, with or
+	without modification, is permitted pursuant to, and subject to
+	the license terms contained in, the Simplified BSD License set
+	forth in Section 4.c of the IETF Trust's Legal Provisions
+	Relating to IETF Documents
+	(http://trustee.ietf.org/license-info).
+      </h:p>
+      <h:p>
+	The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL
+	NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'MAY', and
+	'OPTIONAL' in the module text are to be interpreted as
+	described in RFC 2119 (http://tools.ietf.org/html/rfc2119).
+      </h:p>
+      <h:p>
+	This version of this YANG module is part of RFC XXXX
+	(http://tools.ietf.org/html/rfcXXXX); see the RFC itself for
+	full legal notices.
+      </h:p>
+    </text>
+  </description>
+</module>
