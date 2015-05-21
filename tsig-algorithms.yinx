@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module name="tsig-algorithms"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+        xmlns:md="urn:ietf:params:xml:ns:yang:tsig-algorithms"
+        xmlns:h="http://www.w3.org/1999/xhtml"
+        xmlns:xi="http://www.w3.org/2001/XInclude">
+  <namespace uri="http://www.nic.cz/ns/tsig-algorithms"/>
+  <prefix value="tsig"/>
+  <organization>
+    <text>CZ.NIC, z. s. p. o.</text>
+  </organization>
+  <contact>
+    <text>
+      <h:p>
+        Editor:   Ladislav Lhotka<h:br/>
+                  &lt;mailto:lhotka@nic.cz&gt;
+      </h:p>
+    </text>
+  </contact>
+  <description>
+    <text>
+      <h:p>This module translates IANA registry for TSIG Algorithm
+      names to YANG identities.</h:p>
+      <h:p>TSIG Algorithm names are text strings encoded using the
+      syntax of a domain name. There is no structure required other
+      than names for different algorithms must be unique when compared
+      as DNS names, i.e., comparison is case insensitive.  New
+      algorithms are assigned using the IETF Consensus policy defined
+      in RFC 2434.</h:p>
+    </text>
+  </description>
+  <reference>
+    <text>
+      <h:p>IANA: Secret Key Transaction Authentication for DNS (TSIG)
+      Algorithm Names.<h:br/>
+      http://www.iana.org/assignments/tsig-algorithm-names/tsig-algorithm-names.xhtml
+      </h:p>
+    </text>
+  </reference>
+  <revision date="2015-05-21">
+    <description>
+      <text>Initial revision.</text>
+    </description>
+  </revision>
+  <identity name="tsig-algorithm">
+    <description>
+      <text>
+	Base identity from which specific TSIG Algorithms are derived.
+      </text>
+    </description>
+  </identity>
+  <identity name="gss-tsig">
+    <base name="tsig-algorithm"/>
+    <description>
+      <text>GSS-TSIG algorithm. Optional to implement.</text>
+    </description>
+    <reference>
+      <text>RFC 3645: Generic Security Service Algorithm for Secret
+      Key Transaction Authentication for DNS (GSS-TSIG).</text>
+    </reference>
+  </identity>
+  <identity name="HMAC-MD5.SIG-ALG.REG.INT">
+    <base name="tsig-algorithm"/>
+    <description>
+      <text>Initial TSIG algorithm. Mandatory to implement.</text>
+    </description>
+    <reference>
+      <text>RFC 2845: Secret Key Transaction Authentication for DNS
+      (TSIG).</text>
+    </reference>
+  </identity>
+  <identity name="hmac-sha1">
+    <base name="tsig-algorithm"/>
+    <description>
+      <text>hmac-sha1 algorithm. Mandatory to implement.</text>
+    </description>
+    <reference>
+      <text>RFC 4635: HMAC SHA TSIG Algorithm Identifiers.</text>
+    </reference>
+  </identity>
+  <identity name="hmac-sha224">
+    <base name="tsig-algorithm"/>
+    <description>
+      <text>hmac-sha224 algorithm. Optional to implement.</text>
+    </description>
+    <reference>
+      <text>RFC 4635: HMAC SHA TSIG Algorithm Identifiers.</text>
+    </reference>
+  </identity>
+  <identity name="hmac-sha256">
+    <base name="tsig-algorithm"/>
+    <description>
+      <text>hmac-sha256 algorithm. Mandatory to implement.</text>
+    </description>
+    <reference>
+      <text>RFC 4635: HMAC SHA TSIG Algorithm Identifiers.</text>
+    </reference>
+  </identity>
+  <identity name="hmac-sha384">
+    <base name="tsig-algorithm"/>
+    <description>
+      <text>hmac-sha384 algorithm. Optional to implement.</text>
+    </description>
+    <reference>
+      <text>RFC 4635: HMAC SHA TSIG Algorithm Identifiers.</text>
+    </reference>
+  </identity>
+  <identity name="hmac-sha512">
+    <base name="tsig-algorithm"/>
+    <description>
+      <text>hmac-sha512 algorithm. Optional to implement.</text>
+    </description>
+    <reference>
+      <text>RFC 4635: HMAC SHA TSIG Algorithm Identifiers.</text>
+    </reference>
+  </identity>
+</module>
