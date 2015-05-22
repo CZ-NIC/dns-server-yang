@@ -1,9 +1,7 @@
-draft-*-[0-9][0-9].*
-figures.ent
 yang.ent
-*.aw
 hello.xml
-model.tree
+model.*
+*.json
 *.rn[gc]
 *.sch
 *.dsrl

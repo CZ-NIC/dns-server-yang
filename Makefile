@@ -15,6 +15,8 @@ y2dopts = -t $(EXAMPLE_TYPE) -b $(EXAMPLE_BASE)
 
 all: $(yams)
 
+json: $(baty).json
+
 hello.xml: $(yams) hello-external.ent
 	@echo '<hello xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">' > $@
 	@echo '<capabilities>' >> $@
@@ -43,6 +45,12 @@ rnc: $(baty).rnc
 
 validate: $(EXAMPLE_INST) $(schemas)
 	@yang2dsdl -j -s $(y2dopts) -v $<
+
+$(baty).json: model.xsl $(EXAMPLE_INST)
+	@xsltproc --output $@ $^
+
+model.xsl: hello.xml
+	@pyang -o $@ -f jsonxsl -L $<
 
 model.tree: hello.xml
 	pyang $(PYANG_OPTS) -f tree -o $@ -L $<
