@@ -1,4 +1,4 @@
-MODULES =
+MODULES = dns-server tsig-algorithms
 EXAMPLE_BASE = example
 EXAMPLE_TYPE = get-reply
 baty = $(EXAMPLE_BASE)-$(EXAMPLE_TYPE)
@@ -13,9 +13,7 @@ y2dopts = -t $(EXAMPLE_TYPE) -b $(EXAMPLE_BASE)
 
 .PHONY: all clean rnc validate yang
 
-all: $(schemas) model.tree
-
-yang: $(yams)
+all: $(yams)
 
 hello.xml: $(yams) hello-external.ent
 	@echo '<hello xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">' > $@
