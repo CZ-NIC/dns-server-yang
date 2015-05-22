@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module name="dns-server"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+        xmlns:srr="http://www.nic.cz/ns/dns-server"
+	xmlns:h="http://www.w3.org/1999/xhtml">
+  <namespace uri="http://www.nic.cz/ns/dns-server"/>
+  <prefix value="dnss"/>
+  <import module="ietf-inet-types">
+    <prefix value="inet"/>
+  </import>
+  <import module="tsig-algorithms">
+    <prefix value="tsig"/>
+  </import>
+  <organization>
+    <text>CZ.NIC, z. s. p. o.</text>
+  </organization>
+  <contact>
+    <text>
+      <h:p>
+        Editor:   Ladislav Lhotka<h:br/>
+                  &lt;mailto:lhotka@nic.cz&gt;
+      </h:p>
+    </text>
+  </contact>
+  <description>
+    <text>
+      This YANG module defines the data model for a DNS server
+      gateway.
+    </text>
+  </description>
+
+  <revision date="2015-05-22">
+    <description>
+      <text>Initial revision.</text>
+    </description>
+  </revision>
+
+  <!-- Features -->
+
+  <feature name="acl-entry-port">
+    <description>
+      <text>
+	This feature indicates support for specifying a port number in
+	access control entries.
+      </text>
+    </description>
+  </feature>
+  
+  <feature name="acl-entry-key">
+    <description>
+      <text>
+	This feature indicates support for specifying a TSIG key in
+	access control entries.
+      </text>
+    </description>
+  </feature>
+
+  <!-- Typedefs -->
+  
+  <typedef name="acl-ref">
+    <description>
+      <text>
+	This type is used for referring to a configured access control
+	list.
+      </text>
+    </description>
+    <type name="leafref">
+      <path value="/dns-server/access-control-list/name"/>
+    </type>
+  </typedef>
+
+  <typedef name="key-ref">
+    <description>
+      <text>
+	This type is used for referring to a configured TSIG key.
+      </text>
+    </description>
+    <type name="leafref">
+      <path value="/dns-server/key/name"/>
+    </type>
+  </typedef>
+
+  <!-- Groupings -->
+
+  <grouping name="entry-name">
+    <description>
+      <text>
+	This grouping defines a leaf that is intended for use as a
+	list key.
+      </text>
+    </description>
+    <leaf name="name">
+      <description>
+	<text>
+	  The name of the list entry.
+	</text>
+      </description>
+      <type name="string"/>
+    </leaf>
+  </grouping>
+  
+  <!-- Configuration data -->
+  
+  <container name="dns-server">
+    <list name="access-control-list">
+      <description>
+	<text>Access control lists.</text>
+      </description>
+      <key value="name"/>
+      <uses name="entry-name"/>
+      <list name="access-list-entry">
+	<key value="name"/>
+	<unique tag="prefix port"/>
+	<uses name="entry-name"/>
+	<leaf name="prefix">
+	  <mandatory value="true"/>
+	  <type name="inet:ip-prefix"/>
+	  <description>
+	    <text>
+	      IPv4 or IPv6 prefix in the usual ADDRESS/LENGTH notation.
+	    </text>
+	  </description>
+	</leaf>
+	<leaf name="port">
+	  <if-feature name="acl-entry-port"/>
+	  <type name="inet:port-number"/>
+	  <description>
+	    <text>
+	      Port associated with the access control entry.
+	    </text>
+	  </description>
+	</leaf>
+	<leaf name="key">
+	  <if-feature name="acl-entry-key"/>
+	  <type name="key-ref"/>
+	  <description>
+	    <text>
+	      TSIG key associated with the access control entry.
+	    </text>
+	  </description>
+	</leaf>
+      </list>
+    </list>
+    <list name="key">
+      <description>
+	<text>Definitions of TSIG keys.</text>
+      </description>
+      <key value="name"/>
+      <uses name="entry-name"/>
+      <leaf name="algorithm">
+	<type name="identityref">
+	  <base name="tsig:tsig-algorithm"/>
+	</type>
+	<description>
+	  <text>
+	    Authentication algorithm for this key.
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="secret">
+	<type name="binary"/>
+	<description>
+	  <text>The shared secret.</text>
+	</description>
+      </leaf>
+    </list>
+  </container>
+</module>
