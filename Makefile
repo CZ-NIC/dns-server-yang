@@ -1,6 +1,6 @@
 MODULES = dns-server tsig-algorithms
 EXAMPLE_BASE = example
-EXAMPLE_TYPE = get-reply
+EXAMPLE_TYPE = data
 baty = $(EXAMPLE_BASE)-$(EXAMPLE_TYPE)
 EXAMPLE_INST = $(baty).xml
 PYANG_OPTS =
