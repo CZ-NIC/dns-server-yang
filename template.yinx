@@ -7,33 +7,24 @@
   <namespace uri="urn:ietf:params:xml:ns:yang:%%MODNAME%%"/>
   <prefix value="%%PRF%%"/>
   <organization>
-    <text>IETF NETMOD (NETCONF Data Modeling Language) Working Group</text>
+    <text>CZ.NIC, z. s. p. o.</text>
   </organization>
   <contact>
     <text>
-      <xi:include href=".tools/bplate/netmod-module.yinx"
-                  xpointer="xpointer(id('contact')/*)"/>
       <h:p>
-        Editor:   %%EDITOR%%<h:br/>
-                  &lt;mailto:%%EDITOR_ADDRESS%%&gt;
+        Editor:   Ladislav Lhotka<h:br/>
+                  &lt;mailto:lhotka@nic.cz&gt;
       </h:p>
     </text>
   </contact>
   <description>
     <text>
       <h:p>%%SHORT_MODULE_DESCRIPTION%%</h:p>
-      <xi:include href=".tools/bplate/netmod-module.yinx"
-                  xpointer="xpointer(id('desc')/*)"/>
     </text>
   </description>
   <revision date="2015-04-16">
     <description>
       <text>Initial revision.</text>
     </description>
-    <reference>
-      <text>
-	RFC XXXX: Defining and Using Metadata with YANG
-      </text>
-    </reference>
   </revision>
 </module>
