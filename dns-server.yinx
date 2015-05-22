@@ -113,7 +113,6 @@
 	<unique tag="prefix port"/>
 	<uses name="entry-name"/>
 	<leaf name="prefix">
-	  <mandatory value="true"/>
 	  <type name="inet:ip-prefix"/>
 	  <description>
 	    <text>
@@ -151,6 +150,7 @@
 	<type name="identityref">
 	  <base name="tsig:tsig-algorithm"/>
 	</type>
+	<default value="tsig:hmac-sha256"/>
 	<description>
 	  <text>
 	    Authentication algorithm for this key.
