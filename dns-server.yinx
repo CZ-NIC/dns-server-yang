@@ -98,10 +98,187 @@
       <type name="string"/>
     </leaf>
   </grouping>
+
+  <grouping name="description">
+    <description>
+      <text>This grouping defines 'description' leaf taht can be added
+      to various objects.</text>
+    </description>
+    <leaf name="description">
+      <description>
+	<text>Textual description of an object.</text>
+      </description>
+      <type name="string"/>
+    </leaf>
+  </grouping>
   
   <!-- Configuration data -->
   
   <container name="dns-server">
+    <description>
+      <text>
+	Configuration of a DNS server.
+      </text>
+    </description>
+    <uses name="description"/>
+    <container name="server-options">
+      <description>
+	<text>
+	  Configuration of global server options.
+	</text>
+      </description>
+      <container name="chaos-identity">
+	<presence value="report server identity to CHAOS queries"/>
+	<description>
+	  <text>
+	    Presence of this container enables reporting server
+	    identity string in response to queries for ID.SERVER or
+	    BIND.HOSTNAME resource in the CHAOS class.
+	  </text>
+	</description>
+	<leaf name="id-server">
+	  <type name="string"/>
+	  <description>
+	    <text>
+	      <h:p>Server identitity string.</h:p>
+	      <h:p>Default: hostname.</h:p>
+	    </text>
+	  </description>
+	  <reference>
+	    <text>
+	      RFC 4892: Requirements for a Mechanism Identifying a
+	      Name Server Instance.
+	    </text>
+	  </reference>
+	</leaf>
+      </container>
+      <container name="nsid-identity">
+	<presence value="report server identity to NSID query"/>
+	<description>
+	  <text>
+	    Presence of this container enables reporting server
+	    identity string in response to EDNS NSID query.
+	  </text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 5001: DNS Name Server Identifier (NSID) Option.
+	  </text>
+	</reference>
+	<leaf name="nsid">
+	  <type name="string"/>
+	  <description>
+	    <text>
+	      <h:p>Server identitity string.</h:p>
+	      <h:p>Default: FQDN of the server.</h:p>
+	    </text>
+	  </description>
+	</leaf>
+      </container>
+      <container name="version">
+	<presence value="report server version"/>
+	<description>
+	  <text>
+	    <h:p>Presence of this container enables reporting server
+	    software version in response to queries for VERSION.SERVER
+	    or VERSION.BIND resource in the CHAOS class.</h:p>
+	    <h:p>Default: implementation-specific string.</h:p>
+	    <h:ul>
+	      <h:li>NSD: hide-version (boolean);</h:li>
+	      <h:li>Knot DNS: version (empty string disables);</h:li>
+	      <h:li>BIND 9: version (string or 'none').</h:li>
+	      <h:li>PowerDNS: version-string (string or
+	      'anonymous'/'powerdns'/'full').</h:li>
+	    </h:ul>
+	  </text>
+	</description>
+      </container>
+      <list name="listen-socket">
+	<description>
+	  <text>
+	    <h:p>List of IP addresses and optional ports on which the
+	    server listens.</h:p>
+	    <h:p>If the 'ip-address' value is '0.0.0.0' (for IPv4)
+	    and/or '::', the server listens on all configured
+	    IPv4/IPv6 addresses that are not explicitly configured in
+	    this list.</h:p>
+	    <h:ul>
+	      <h:li>NSD: ip-address;</h:li>
+	      <h:li>Knot DNS: listen;</h:li>
+	      <h:li>BIND 9: listen-on, listen-on-v6, also supports DSCP;</h:li>
+	      <h:li>PowerDNS: local-address, local-ipv6, local port
+	      (allows only one port).</h:li>
+	    </h:ul>
+	  </text>
+	</description>
+	<key value="name"/>
+	<unique tag="ip-address port"/>
+	<uses name="entry-name"/>
+	<leaf name="ip-address">
+	  <type name="inet:ip-address"/>
+	  <description>
+	    <text>IPv4 or IPv6 address.</text>
+	  </description>
+	</leaf>
+	<leaf name="port">
+	  <type name="inet:port-number"/>
+	  <default value="53"/>
+	  <description>
+	    <text>Port number.</text>
+	  </description>
+	</leaf>
+      </list>
+      <container name="file-paths">
+	<description>
+	  <text>
+	    Configuration of file paths.
+	  </text>
+	</description>
+	<leaf name="run-time-dir">
+	  <type name="string"/>
+	  <description>
+	    <text>
+	      <h:p>Default location of various run-time files such as
+	      PID file.</h:p>
+	      <h:p>Default: implementation specific.</h:p>
+	    </text>
+	  </description>
+	</leaf>
+	<leaf name="pid-file">
+	  <type name="string"/>
+	  <description>
+	    <text>
+	      <h:p>Path of the PID file.</h:p>
+	      <h:p>If the path is relative, the value of
+	      'run-time-dir' is prepended to it.</h:p>
+	      <h:p>Default: implementation specific.</h:p>
+	    </text>
+	  </description>
+	</leaf>
+      </container>
+      <container name="privileges">
+	<description>
+	  <text>
+	    Parameters in this container can be used to run the server
+	    with less privileges. The server MUST switch to the
+	    corresponding UID/GID immediately after binding to
+	    privileged ports.
+	  </text>
+	</description>
+	<leaf name="user">
+	  <type name="string"/>
+	  <description>
+	    <text>User name.</text>
+	  </description>
+	</leaf>
+	<leaf name="group">
+	  <type name="string"/>
+	  <description>
+	    <text>Group name.</text>
+	  </description>
+	</leaf>
+      </container>
+    </container>
     <list name="access-control-list">
       <description>
 	<text>Access control lists.</text>
@@ -146,6 +323,7 @@
       </description>
       <key value="name"/>
       <uses name="entry-name"/>
+      <uses name="description"/>
       <leaf name="algorithm">
 	<type name="identityref">
 	  <base name="tsig:tsig-algorithm"/>

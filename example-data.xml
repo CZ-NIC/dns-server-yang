@@ -3,6 +3,21 @@
   <dns-server
       xmlns="http://www.nic.cz/ns/dns-server"
       xmlns:tsig="http://www.nic.cz/ns/tsig-algorithms">
+    <description>Example DNS server configuration.</description>
+    <server-options>
+      <chaos-identity/>
+      <nsid-identity/>
+      <version/>
+      <listen-socket>
+	<name>01</name>
+	<ip-address>192.0.0.1</ip-address>
+	<port>6378</port>
+      </listen-socket>
+      <listen-socket>
+	<name>02</name>
+	<ip-address>::</ip-address>
+      </listen-socket>
+    </server-options>
     <access-control-list>
       <name>simple</name>
       <access-list-entry>
