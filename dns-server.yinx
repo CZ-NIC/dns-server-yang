@@ -45,12 +45,21 @@
       </text>
     </description>
   </feature>
-  
-  <feature name="acl-entry-key">
+
+  <feature name="any-to-tcp">
     <description>
       <text>
-	This feature indicates support for specifying a TSIG key in
-	access control entries.
+	This feature indicates support for answering ANY queries over UDP with
+	an empty response and TC bit set.
+      </text>
+    </description>
+  </feature>
+
+  <feature name="notify-parameters">
+    <description>
+      <text>
+	This feature indicates support for the configuration of
+	parameters for retransmission of NOTIFY messages over UDP.
       </text>
     </description>
   </feature>
@@ -80,6 +89,30 @@
     </type>
   </typedef>
 
+  <typedef name="remote-ref">
+    <description>
+      <text>
+	This type is used for referring to a configured remote server.
+      </text>
+    </description>
+    <type name="leafref">
+      <path value="/dns-server/remote-server/name"/>
+    </type>
+  </typedef>
+
+  <typedef name="dns-operations">
+    <description>
+      <text>
+	DNS protocol operations.
+      </text>
+    </description>
+    <type name="enumeration">
+      <enum name="transfer"/>
+      <enum name="notify"/>
+      <enum name="update"/>
+    </type>
+  </typedef>
+
   <!-- Groupings -->
 
   <grouping name="entry-name">
@@ -101,7 +134,7 @@
 
   <grouping name="description">
     <description>
-      <text>This grouping defines 'description' leaf taht can be added
+      <text>This grouping defines 'description' leaf that can be added
       to various objects.</text>
     </description>
     <leaf name="description">
@@ -183,13 +216,6 @@
 	    software version in response to queries for VERSION.SERVER
 	    or VERSION.BIND resource in the CHAOS class.</h:p>
 	    <h:p>Default: implementation-specific string.</h:p>
-	    <h:ul>
-	      <h:li>NSD: hide-version (boolean);</h:li>
-	      <h:li>Knot DNS: version (empty string disables);</h:li>
-	      <h:li>BIND 9: version (string or 'none').</h:li>
-	      <h:li>PowerDNS: version-string (string or
-	      'anonymous'/'powerdns'/'full').</h:li>
-	    </h:ul>
 	  </text>
 	</description>
       </container>
@@ -202,13 +228,6 @@
 	    and/or '::', the server listens on all configured
 	    IPv4/IPv6 addresses that are not explicitly configured in
 	    this list.</h:p>
-	    <h:ul>
-	      <h:li>NSD: ip-address;</h:li>
-	      <h:li>Knot DNS: listen;</h:li>
-	      <h:li>BIND 9: listen-on, listen-on-v6, also supports DSCP;</h:li>
-	      <h:li>PowerDNS: local-address, local-ipv6, local port
-	      (allows only one port).</h:li>
-	    </h:ul>
 	  </text>
 	</description>
 	<key value="name"/>
@@ -228,10 +247,10 @@
 	  </description>
 	</leaf>
       </list>
-      <container name="file-paths">
+      <container name="filesystem-paths">
 	<description>
 	  <text>
-	    Configuration of file paths.
+	    Configuration of directories and file paths.
 	  </text>
 	</description>
 	<leaf name="run-time-dir">
@@ -306,16 +325,95 @@
 	    </text>
 	  </description>
 	</leaf>
-	<leaf name="key">
-	  <if-feature name="acl-entry-key"/>
+	<leaf-list name="key">
 	  <type name="key-ref"/>
 	  <description>
 	    <text>
-	      TSIG key associated with the access control entry.
+	      List of TSIG keys associated with the access control
+	      entry.
+	    </text>
+	  </description>
+	</leaf-list>
+      </list>
+      <leaf-list name="operations">
+	<type name="dns-operations"/>
+	<description>
+	  <text>
+	    Operations to which the ACL is applied.
+	  </text>
+	</description>
+      </leaf-list>
+      <leaf name="action">
+	<type name="enumeration">
+	  <enum name="allow"/>
+	  <enum name="deny"/>
+	</type>
+	<default value="allow"/>
+	<description>
+	  <text>ACL action.</text>
+	</description>
+      </leaf>
+    </list>
+    <list name="remote-server">
+      <description>
+	<text>Definitions of remote servers.</text>
+      </description>
+      <key value="name"/>
+      <uses name="entry-name"/>
+      <container name="remote">
+	<description>
+	  <text>
+	    Parameters of the remote server.
+	  </text>
+	</description>
+	<leaf name="ip-address">
+	  <type name="inet:ip-address"/>
+	  <mandatory value="true"/>
+	  <description>
+	    <text>IP address of the remote server.</text>
+	  </description>
+	</leaf>
+	<leaf name="port">
+	  <type name="inet:port-number"/>
+	  <default value="53"/>
+	  <description>
+	    <text>Remote server port.</text>
+	  </description>
+	</leaf>
+      </container>
+      <container name="local">
+	<description>
+	  <text>
+	    <h:p>Parameters of the local server.</h:p>
+	    <h:p>If not configured, the normal operating system's
+	    source address and port selection is applied.</h:p>
+	  </text>
+	</description>
+	<leaf name="ip-address">
+	  <type name="inet:ip-address"/>
+	  <description>
+	    <text>
+	      Source IP address of the local server.
 	    </text>
 	  </description>
 	</leaf>
-      </list>
+	<leaf name="port">
+	  <type name="inet:port-number"/>
+	  <description>
+	    <text>
+	      Source port on the local server.
+	    </text>
+	  </description>
+	</leaf>
+      </container>
+      <leaf name="key">
+	<type name="key-ref"/>
+	<description>
+	  <text>
+	    TSIG key associated with the remote server.
+	  </text>
+	</description>
+      </leaf>
     </list>
     <list name="key">
       <description>
@@ -342,5 +440,247 @@
 	</description>
       </leaf>
     </list>
+    <container name="zones">
+      <description>
+	<text>Configuration of zones.</text>
+      </description>
+      <must condition="count(template[default='true']) &lt;= 1">
+	<description>
+	  <text>
+	    No more than one template may be designated as default.
+	  </text>
+	</description>
+	<error-message>
+	  <value>Multiple default zone templates.</value>
+	</error-message>
+      </must>
+      <grouping name="zone-options">
+	<description>
+	  <text>
+	    This grouping defines zone options that are used both in
+	    the configuration of zones and templates.
+	  </text>
+	</description>
+	<uses name="description"/>
+	<leaf name="zones-dir">
+	  <type name="string"/>
+	  <description>
+	    <text>
+	      <h:p>Filesystem directory where zone files are
+	      stored.</h:p>
+	      <h:p>Default: implementation specific.</h:p>
+	    </text>
+	  </description>
+	</leaf>
+	<leaf-list name="master">
+	  <type name="remote-ref"/>
+	  <description>
+	    <text>
+	      List of references to master servers for the zone.
+	    </text>
+	  </description>
+	</leaf-list>
+	<container name="notify">
+	  <description>
+	    <text>Configuration of NOTIFY messages.</text>
+	  </description>
+	  <reference>
+	    <text>
+	      RFC 1996: A Mechanism for Prompt Notification of Zone
+	      Changes (DNS NOTIFY).
+	    </text>
+	  </reference>
+	  <leaf-list name="recipients">
+	    <type name="remote-ref"/>
+	    <description>
+	      <text>
+		List of references to NOTIFY recipients.
+	      </text>
+	    </description>
+	  </leaf-list>
+	  <leaf name="notify-interval">
+	    <type name="uint16">
+	      <range value="1..max"/>
+	    </type>
+	    <units name="seconds"/>
+	    <default value="60"/>
+	    <description>
+	      <text>
+		Time interval between retransmissions of NOTIFY
+		messages.
+	      </text>
+	    </description>
+	  </leaf>
+	  <leaf name="retransmissions">
+	    <type name="uint8">
+	      <range value="1..max"/>
+	    </type>
+	    <default value="5"/>
+	    <description>
+	      <text>
+		Maximum number of retransmissions of a NOTIFY message.
+	      </text>
+	    </description>
+	  </leaf>
+	</container>
+	<leaf-list name="access-control-list">
+	  <type name="acl-ref"/>
+	  <description>
+	    <text>
+	      List of references to access control lists that will be
+	      applied for the zone.
+	    </text>
+	  </description>
+	</leaf-list>
+	<leaf name="serial-update-method">
+	  <type name="enumeration">
+	    <enum name="increment">
+	      <description>
+		<text>Increment the zone number by one.</text>
+	      </description>
+	    </enum>
+	    <enum name="unix-time">
+	      <description>
+		<text>
+		  <h:p>Set the serial number to the number of
+		  seconds since Unix epoch.</h:p>
+		  <h:p>If the serial number is already greater than
+		  this value, fall back to the 'increment'
+		  method.</h:p>
+		</text>
+	      </description>
+	    </enum>
+	  </type>
+	  <default value="increment"/>
+	  <description>
+	    <text>
+	      Specify the method for updating the zone serial method
+	      after a dynamic update or automatic zone signing.
+	    </text>
+	  </description>
+	</leaf>
+	<leaf name="any-to-tcp">
+	  <if-feature name="any-to-tcp"/>
+	  <type name="boolean"/>
+	  <default value="false"/>
+	  <description>
+	    <text>
+	      If this flag is on, ANY queries to this zone sent over
+	      UDP are served with an empty reply that has the TC bit
+	      on.
+	    </text>
+	  </description>
+	</leaf>
+	<container name="dnssec">
+	  <description>
+	    <text>DNSSEC configuration.</text>
+	  </description>
+	  <presence value="Activate DNSSEC."/>
+	  <leaf name="enabled">
+	    <type name="boolean"/>
+	    <default value="true"/>
+	    <description>
+	      <text>
+		This flag allows to disable DNSSEC while keeping its
+		configuration in place.
+	      </text>
+	    </description>
+	  </leaf>
+	  <leaf name="signature-lifetime">
+	    <type name="uint32">
+	      <range value="10801..max"/>
+	    </type>
+	    <units name="seconds"/>
+	    <default value="2592000"/>
+	    <description>
+	      <text>
+		Validity interval of automatically generated DNSSEC
+		signatures.
+	      </text>
+	    </description>
+	  </leaf>
+	</container>
+	<container name="journal">
+	  <description>
+	    <text>Zone journal parameters.</text>
+	  </description>
+	  <leaf name="maximum-journal-size">
+	    <type name="uint64"/>
+	    <units name="bytes"/>
+	    <description>
+	      <text>
+		<h:p>Maximum size of the zone journal file.</h:p>
+		<h:p>Default: no limit, i.e., maximum size supported
+		by an implementation.</h:p>
+	      </text>
+	    </description>
+	  </leaf>
+	  <leaf name="zone-file-sync-delay">
+	    <type name="uint32"/>
+	    <units name="seconds"/>
+	    <default value="0"/>
+	    <description>
+	      <text>
+		<h:p>Delay between first zone change via IXFR, DDNS or
+		automatic DNSSEC signing, and recording the changes to
+		the zone file.</h:p>
+		<h:p>The value of 0 means no delay, i.e., changes are
+		recorded immediately.</h:p>
+	      </text>
+	    </description>
+	  </leaf>
+	</container>
+      </grouping>
+      <list name="template">
+	<description>
+	  <text>
+	    List of zone configuration templates.
+	  </text>
+	</description>
+	<key value="name"/>
+	<uses name="entry-name"/>
+	<leaf name="default">
+	  <type name="boolean"/>
+	  <default value="false"/>
+	  <description>
+	    <text>
+	      This flag indicates the default template.
+	    </text>
+	  </description>
+	</leaf>
+	<uses name="zone-options"/>
+      </list>
+      <list name="zone">
+	<description>
+	  <text>List of zones.</text>
+	</description>
+	<key value="domain"/>
+	<leaf name="domain">
+	  <type name="inet:domain-name"/>
+	  <description>
+	    <text>Zone name.</text>
+	  </description>
+	</leaf>
+	<leaf name="file">
+	  <type name="string"/>
+	  <description>
+	    <text>
+	      <h:p>Path to zone file.</h:p>
+	      <h:p>The value of 'zones-dir' is prepended to a relative
+	      path.</h:p>
+	      <h:p>Default: implementation specific.</h:p>
+	    </text>
+	  </description>
+	</leaf>
+	<leaf name="template">
+	  <type name="leafref">
+	    <path value="/dns-server/zones/template/name"/>
+	  </type>
+	  <description>
+	    <text>Reference to a configured zone template.</text>
+	  </description>
+	</leaf>
+      </list>
+    </container>
   </container>
 </module>
