@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <module name="tsig-algorithms"
         xmlns="urn:ietf:params:xml:ns:yang:yin:1"
-        xmlns:tsig="http://www.nic.cz/ns/tsig-algorithms"
+        xmlns:tsig="http://www.nic.cz/ns/yang/tsig-algorithms"
         xmlns:h="http://www.w3.org/1999/xhtml"
         xmlns:xi="http://www.w3.org/2001/XInclude">
-  <namespace uri="http://www.nic.cz/ns/tsig-algorithms"/>
+  <namespace uri="http://www.nic.cz/ns/yang/tsig-algorithms"/>
   <prefix value="tsig"/>
   <organization>
     <text>CZ.NIC, z. s. p. o.</text>

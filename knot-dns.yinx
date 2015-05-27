@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module name="knot-dns"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+        xmlns:knot="http://www.nic.cz/ns/yang/knot-dns"
+	xmlns:h="http://www.w3.org/1999/xhtml">
+  <namespace uri="http://www.nic.cz/ns/yang/knot-dns"/>
+  <prefix value="knot"/>
+  <import module="dns-server">
+    <prefix value="dnss"/>
+  </import>
+  <organization>
+    <text>CZ.NIC, z. s. p. o.</text>
+  </organization>
+  <contact>
+    <text>
+      <h:p>
+        Editor:   Ladislav Lhotka<h:br/>
+                  &lt;mailto:lhotka@nic.cz&gt;
+      </h:p>
+    </text>
+  </contact>
+  <description>
+    <text>
+      This YANG module augments the 'dns-server' module with
+      parameters specific for the Knot-DNS server.
+    </text>
+  </description>
+  <reference>
+    <text>https://www.knot-dns.cz/docs/2.0/html/</text>
+  </reference>
+
+  <revision date="2015-05-27">
+    <description>
+      <text>Initial revision.</text>
+    </description>
+  </revision>
+
+  <!-- Groupings -->
+
+  <grouping name="zone-options">
+    <description>
+      <text>Knot-specific zone options that are added to generic zone
+      options.</text>
+    </description>
+    <leaf name="semantic-checks">
+      <type name="boolean"/>
+      <description>
+	<text>
+	  <h:p>Enable additional checks of zone data semantics
+	  (failures are logged):</h:p>
+	  <h:ul>
+	    <h:li>missing NS record at the zone apex,</h:li>
+	    <h:li>missing glue A or AAAA records,</h:li>
+	    <h:li>broken or non-cyclic NSEC(3) chain,</h:li>
+	    <h:li>wrong NSEC(3) type bitmap,</h:li>
+	    <h:li>multiple NSEC records at the same node,</h:li>
+	    <h:li>missing NSEC records at authoritative nodes,</h:li>
+	    <h:li>extra record types under the same name as NSEC3
+	    record (this is valid but Knot will not serve such a zone
+	    correctly),</h:li>
+	    <h:li>NSEC3-unsecured delegation that is not part of
+	    Opt-out span,</h:li>
+	    <h:li>wrong original TTL value in NSEC3 records,</h:li>
+	    <h:li>wrong RDATA TTL value in RRSIG record.</h:li>
+	    <h:li>signer name in RRSIG RR not the same as in
+	    DNSKEY,</h:li>
+	    <h:li>signed RRSIG,</h:li>
+	    <h:li>not all RRs in node are signed,</h:li>
+	    <h:li>wrong key flags or wrong key in RRSIG record (not
+	    the same as ZSK).</h:li>
+	  </h:ul>
+	</text>
+      </description>
+    </leaf>
+    <leaf name="kasp-db">
+      <type name="string"/>
+      <description>
+	<text>
+	  <h:p>Path to Key and Signing Policy (KASP) database
+	  directory.</h:p>
+	  <h:p>Default: 'keys' subdirectory of the directory specified
+	  in 'zones-dir'.</h:p>
+	</text>
+      </description>
+    </leaf>
+  </grouping>
+  
+  <!-- Configuration data -->
+
+  <augment target-node="/dnss:dns-server/dnss:server-options">
+    <container name="threads">
+      <leaf name="workers">
+	<type name="uint8">
+	  <range value="1..max"/>
+	</type>
+	<description>
+	  <text>
+	    <h:p>Number of query-handling workers (threads).</h:p>
+	    <h:p>Default: auto-selected value based on the number of
+	    available CPU cores.</h:p>
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="background-workers">
+	<type name="uint8">
+	  <range value="1..max"/>
+	</type>
+	<description>
+	  <text>
+	    <h:p>Number of workers (threads) performing background
+	    operations (zone loading, zone updates etc.).</h:p>
+	    <h:p>Default: auto-selected value based on the number of
+	    available CPU cores.</h:p>
+	  </text>
+	</description>
+      </leaf>
+    </container>
+    <leaf name="asynchronous-start">
+      <type name="boolean"/>
+      <default value="false"/>
+      <description>
+	<text>
+	  Instructs the server to start asynchronously. Until zones
+	  are loaded, queries are responded with SERVFAIL.
+	</text>
+      </description>
+    </leaf>
+  </augment>
+
+  <augment target-node="/dnss:dns-server">
+    <container name="control-socket">
+      <description>
+	<text>Address of the Knot DNS control socket.</text>
+      </description>
+      <choice name="socket-type">
+	<description>
+	  <text>The control socket can be either Unix domain socket
+	  (default) or TCP/IP endpoint.</text>
+	</description>
+	<default value="unix"/>
+	<leaf name="unix">
+	  <type name="dnss:fs-path"/>
+	  <default value="knot.sock"/>
+	  <description>
+	    <text>
+	      <h:p>Filename of the Unix domain socket.</h:p>
+	      <h:p>A relative name is prepended with the directory
+	      specified in 'dnss:run-time-dir'.</h:p>
+	    </text>
+	  </description>
+	</leaf>
+	<case name="network">
+	  <description>
+	    <text>Address of the network socket.</text>
+	  </description>
+	  <uses name="dnss:endpoint-address">
+	    <refine target-node="port">
+	      <default value="5533"/>
+	    </refine>
+	  </uses>
+	</case>
+      </choice>
+    </container>
+  </augment>
+  
+  <augment target-node="/dnss:dns-server/dnss:zones/dnss:template">
+    <uses name="knot:zone-options"/>
+  </augment>
+  
+  <augment target-node="/dnss:dns-server/dnss:zones/dnss:zone">
+    <uses name="knot:zone-options"/>
+  </augment>
+  
+</module>

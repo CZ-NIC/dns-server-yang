@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
   <dns-server
-      xmlns="http://www.nic.cz/ns/dns-server"
-      xmlns:tsig="http://www.nic.cz/ns/tsig-algorithms">
+      xmlns="http://www.nic.cz/ns/yang/dns-server"
+      xmlns:tsig="http://www.nic.cz/ns/yang/tsig-algorithms"
+      xmlns:knot="http://www.nic.cz/ns/yang/knot-dns">
     <description>Example DNS server configuration.</description>
     <server-options>
       <chaos-identity/>
       <nsid-identity/>
       <version/>
-      <listen-socket>
+      <listen-endpoint>
 	<name>01</name>
 	<ip-address>192.0.0.1</ip-address>
 	<port>6378</port>
-      </listen-socket>
-      <listen-socket>
+      </listen-endpoint>
+      <listen-endpoint>
 	<name>02</name>
 	<ip-address>::</ip-address>
-      </listen-socket>
+      </listen-endpoint>
     </server-options>
     <access-control-list>
       <name>simple</name>
