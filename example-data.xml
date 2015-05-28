@@ -6,48 +6,156 @@
       xmlns:knot="http://www.nic.cz/ns/yang/knot-dns">
     <description>Example DNS server configuration.</description>
     <server-options>
-      <chaos-identity/>
-      <nsid-identity/>
-      <version/>
+      <chaos-identity>
+	<id-server>I have no mouth and must scream.</id-server>
+	<version>2.0</version>
+      </chaos-identity>
+      <nsid-identity>
+	<nsid>myserver0.example.net</nsid>
+      </nsid-identity>
       <listen-endpoint>
 	<name>01</name>
-	<ip-address>192.0.0.1</ip-address>
-	<port>6378</port>
+	<ip-address>127.0.0.1</ip-address>
+	<port>53531</port>
       </listen-endpoint>
       <listen-endpoint>
 	<name>02</name>
-	<ip-address>::</ip-address>
+	<ip-address>::1</ip-address>
       </listen-endpoint>
+      <filesystem-paths>
+	<run-time-dir>/tmp/knot</run-time-dir>
+	<pid-file>knot.pid</pid-file>
+      </filesystem-paths>
+      <privileges>
+	<user>knot</user>
+	<group>wheel</group>
+      </privileges>
+      <knot:threads>
+	<knot:workers>3</knot:workers>
+      </knot:threads>
     </server-options>
     <access-control-list>
-      <name>simple</name>
+      <name>acl-xfr-update</name>
       <access-list-entry>
         <name>01</name>
-        <prefix>192.168.2.100/32</prefix>
+        <ip-prefix>127.0.0.1/32</ip-prefix>
+	<key>key0.server0</key>
       </access-list-entry>
+      <operation>transfer</operation>
+      <operation>update</operation>
     </access-control-list>
     <access-control-list>
-      <name>mixed</name>
+      <name>acl-notify</name>
       <access-list-entry>
         <name>01</name>
-        <prefix>192.168.2.0/32</prefix>
+        <ip-prefix>::1/128</ip-prefix>
       </access-list-entry>
       <access-list-entry>
         <name>02</name>
-        <prefix>2001:db8::1/128</prefix>
+        <ip-prefix>2001:db8::/64</ip-prefix>
       </access-list-entry>
-    </access-control-list>
-    <access-control-list>
-      <name>key</name>
-      <access-list-entry>
-        <name>01</name>
-	<key>key1</key>
-      </access-list-entry>
+      <operation>notify</operation>
     </access-control-list>
     <key>
-      <name>key1</name>
-      <algorithm>tsig:hmac-sha512</algorithm>
+      <name>key0.server0</name>
+      <algorithm>tsig:hmac-sha256</algorithm>
       <secret>Wg==</secret>
     </key>
+    <key>
+      <name>key0.example.com</name>
+      <secret>Wg==</secret>
+    </key>
+    <remote-server>
+      <name>server0</name>
+      <remote>
+	<ip-address>127.0.0.1</ip-address>
+	<port>53531</port>
+      </remote>
+      <key>key0.server0</key>
+      <local>
+	<ip-address>127.0.0.1</ip-address>
+	<port>53531</port>
+      </local>
+    </remote-server>
+    <remote-server>
+      <name>server1</name>
+      <remote>
+	<ip-address>2001:db8:0:1::1</ip-address>
+      </remote>
+      <key>key0.example.com</key>
+    </remote-server>
+    <knot:control-socket>
+      <knot:ip-address>127.0.0.1</knot:ip-address>
+    </knot:control-socket>
+    <zones>
+      <template>
+	<name>default</name>
+	<description>Shared options for all zones.</description>
+	<default>true</default>
+	<zones-dir>/tmp/zones</zones-dir>
+	<knot:semantic-checks>true</knot:semantic-checks>
+	<any-to-tcp>true</any-to-tcp>
+	<notify>
+	  <retrans-interval>60</retrans-interval>
+	  <max-retrans>5</max-retrans>
+	</notify>
+	<journal>
+	  <from-differences>false</from-differences>
+	  <zone-file-sync-delay>3600</zone-file-sync-delay>
+	  <maximum-journal-size>1125899906842624</maximum-journal-size>
+	</journal>
+	<query-module>
+	  <name>capture_all</name>
+	  <type>knot:dnstap</type>
+	  <knot:dnstap>
+	    <knot:file>/tmp/capture.tap</knot:file>
+	  </knot:dnstap>
+	</query-module>
+	<query-module>
+	  <name>default</name>
+	  <type>knot:dnsproxy</type>
+	  <knot:dnsproxy>
+	    <knot:remote-server>
+	      <knot:ip-address>10.0.1.1</knot:ip-address>
+	    </knot:remote-server>
+	  </knot:dnsproxy>
+	</query-module>
+	<query-module>
+	  <name>default</name>
+	  <type>knot:rosedb</type>
+	  <knot:rosedb>
+	    <knot:db-dir>/tmp/static_rrdb</knot:db-dir>
+	  </knot:rosedb>
+	</query-module>
+      </template>
+      <zone>
+	<domain>example.com</domain>
+	<file>samples/example.com.zone</file>
+	<any-to-tcp>false</any-to-tcp>
+	<access-control-list>acl-xfr-update</access-control-list>
+	<access-control-list>acl-notify</access-control-list>
+	<query-module>
+	  <name>test1</name>
+	  <type>knot:synth-record</type>
+	  <knot:synth-record>
+	    <knot:record-type>forward</knot:record-type>
+	    <knot:prefix>dynamic-</knot:prefix>
+	    <knot:ttl>400</knot:ttl>
+	    <knot:network>2620:0:b61::/52</knot:network>
+	  </knot:synth-record>
+	</query-module>
+	<query-module>
+	  <name>test2</name>
+	  <type>knot:synth-record</type>
+	  <knot:synth-record>
+	    <knot:record-type>reverse</knot:record-type>
+	    <knot:prefix>dynamic-</knot:prefix>
+	    <knot:origin>example</knot:origin>
+	    <knot:ttl>400</knot:ttl>
+	    <knot:network>2620:0:b61::/52</knot:network>
+	  </knot:synth-record>
+	</query-module>
+      </zone>
+    </zones>
   </dns-server>
 </data>

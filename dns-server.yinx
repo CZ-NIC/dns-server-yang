@@ -64,6 +64,23 @@
     </description>
   </feature>
 
+  <feature name="journal-from-differences">
+    <description>
+      <text>This feature indicates support for generating a set of
+      differences from two versions of full zone file.</text>
+    </description>
+  </feature>
+  
+  <!-- Identities -->
+
+  <identity name="query-module-type">
+    <description>
+      <text>
+	Base identity from which query module types are derived.
+      </text>
+    </description>
+  </identity>
+
   <!-- Typedefs -->
 
   <typedef name="fs-path">
@@ -134,6 +151,7 @@
   </description>
   <leaf name="ip-address">
     <type name="inet:ip-address"/>
+    <mandatory value="true"/>
     <description>
       <text>IPv4/IPv6 address.</text>
     </description>
@@ -196,24 +214,36 @@
 	<description>
 	  <text>
 	    Presence of this container enables reporting server
-	    identity string in response to queries for ID.SERVER or
-	    BIND.HOSTNAME resource in the CHAOS class.
+	    identity in response to queries in the CHAOS class.
 	  </text>
 	</description>
+	<reference>
+	  <text>
+	    RFC 4892: Requirements for a Mechanism Identifying a Name
+	    Server Instance.
+	  </text>
+	</reference>
 	<leaf name="id-server">
 	  <type name="string"/>
 	  <description>
 	    <text>
-	      <h:p>Server identitity string.</h:p>
+	      <h:p>Server identitity string sent in response to
+	      queries for ID.SERVER or BIND.HOSTNAME resource in the
+	      CHAOS class.</h:p>
 	      <h:p>Default: hostname.</h:p>
 	    </text>
 	  </description>
-	  <reference>
+	</leaf>
+	<leaf name="version">
+	  <type name="string"/>
+	  <description>
 	    <text>
-	      RFC 4892: Requirements for a Mechanism Identifying a
-	      Name Server Instance.
+	      <h:p>Server software version sent in response to queries
+	      for VERSION.SERVER or VERSION.BIND resource in the CHAOS
+	      class.</h:p>
+	      <h:p>Default: implementation-specific string.</h:p>
 	    </text>
-	  </reference>
+	  </description>
 	</leaf>
       </container>
       <container name="nsid-identity">
@@ -238,17 +268,6 @@
 	    </text>
 	  </description>
 	</leaf>
-      </container>
-      <container name="version">
-	<presence value="report server version"/>
-	<description>
-	  <text>
-	    <h:p>Presence of this container enables reporting server
-	    software version in response to queries for VERSION.SERVER
-	    or VERSION.BIND resource in the CHAOS class.</h:p>
-	    <h:p>Default: implementation-specific string.</h:p>
-	  </text>
-	</description>
       </container>
       <list name="listen-endpoint">
 	<description>
@@ -330,9 +349,9 @@
       <uses name="description"/>
       <list name="access-list-entry">
 	<key value="name"/>
-	<unique tag="prefix port"/>
+	<unique tag="ip-prefix port"/>
 	<uses name="entry-name"/>
-	<leaf name="prefix">
+	<leaf name="ip-prefix">
 	  <type name="inet:ip-prefix"/>
 	  <description>
 	    <text>
@@ -359,8 +378,9 @@
 	  </description>
 	</leaf-list>
       </list>
-      <leaf-list name="operations">
+      <leaf-list name="operation">
 	<type name="dns-operations"/>
+	<min-elements value="1"/>
 	<description>
 	  <text>
 	    Operations to which the ACL is applied.
@@ -405,6 +425,7 @@
 	    source address and port selection is applied.</h:p>
 	  </text>
 	</description>
+	<presence value="local endpoint address"/>
 	<uses name="endpoint-address"/>
       </container>
       <leaf name="key">
@@ -427,7 +448,7 @@
 	<type name="identityref">
 	  <base name="tsig:tsig-algorithm"/>
 	</type>
-	<default value="tsig:hmac-sha256"/>
+	<default value="tsig:HMAC-MD5.SIG-ALG.REG.INT"/>
 	<description>
 	  <text>
 	    Authentication algorithm for this key.
@@ -436,6 +457,7 @@
       </leaf>
       <leaf name="secret">
 	<type name="binary"/>
+	<mandatory value="true"/>
 	<description>
 	  <text>The shared secret.</text>
 	</description>
@@ -491,7 +513,7 @@
 	      Changes (DNS NOTIFY).
 	    </text>
 	  </reference>
-	  <leaf-list name="recipients">
+	  <leaf-list name="recipient">
 	    <type name="remote-ref"/>
 	    <description>
 	      <text>
@@ -499,7 +521,7 @@
 	      </text>
 	    </description>
 	  </leaf-list>
-	  <leaf name="notify-interval">
+	  <leaf name="retrans-interval">
 	    <type name="uint16">
 	      <range value="1..max"/>
 	    </type>
@@ -512,7 +534,7 @@
 	      </text>
 	    </description>
 	  </leaf>
-	  <leaf name="retransmissions">
+	  <leaf name="max-retrans">
 	    <type name="uint8">
 	      <range value="1..max"/>
 	    </type>
@@ -630,7 +652,46 @@
 	      </text>
 	    </description>
 	  </leaf>
+	  <leaf name="from-differences">
+	    <if-feature name="journal-from-differences"/>
+	    <type name="boolean"/>
+	    <default value="false"/>
+	    <description>
+	      <text>
+		<h:p>When 'true' and either a new version of a master
+		zone is reloaded from the zone file, or a new version
+		of a slave zone is received via zone transfer, the
+		server will calculate the differences and record them
+		in the journal.</h:p>
+	      </text>
+	    </description>
+	  </leaf>
 	</container>
+	<list name="query-module">
+	  <key value="name type"/>
+	  <description>
+	    <text>
+	      <h:p>Configuration of a query module.</h:p>
+	      <h:p>Query modules implement special server behavior in
+	      response to certain queries.</h:p>
+	      <h:p>Configuration parameters for a particular module are
+	      expected to be added via augmentation, and inside a
+	      container with presence.</h:p>
+	    </text>
+	  </description>
+	  <uses name="entry-name"/>
+	  <uses name="description"/>
+	  <leaf name="type">
+	    <type name="identityref">
+	      <base name="dnss:query-module-type"/>
+	    </type>
+	    <description>
+	      <text>
+		Query module type.
+	      </text>
+	    </description>
+	  </leaf>
+	</list>
       </grouping>
       <list name="template">
 	<description>
