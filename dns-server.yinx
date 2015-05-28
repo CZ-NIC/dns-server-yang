@@ -596,16 +596,16 @@
 	</leaf>
 	<container name="dnssec">
 	  <description>
-	    <text>DNSSEC configuration.</text>
+	    <text>Configuration of automatic DNSSEC signing.</text>
 	  </description>
-	  <presence value="Activate DNSSEC."/>
+	  <presence value="automatic DNSSEC signing"/>
 	  <leaf name="enabled">
 	    <type name="boolean"/>
 	    <default value="true"/>
 	    <description>
 	      <text>
-		This flag allows to disable DNSSEC while keeping its
-		configuration in place.
+		This flag allows to disable automatic DNSSEC signing
+		while keeping its configuration in place.
 	      </text>
 	    </description>
 	  </leaf>

@@ -116,6 +116,12 @@
 	</text>
       </description>
     </leaf>
+  </grouping>
+
+  <grouping name="auto-dnssec-options">
+    <description>
+      <text>Knot-specific options for automatic DNSSEC signing.</text>
+    </description>
     <leaf name="kasp-db">
       <type name="string"/>
       <description>
@@ -128,7 +134,7 @@
       </description>
     </leaf>
   </grouping>
-
+  
   <grouping name="dnstap-config">
     <description>
       <text>
@@ -355,6 +361,10 @@
     <uses name="knot:zone-options"/>
   </augment>
   
+  <augment target-node="/dnss:dns-server/dnss:zones/dnss:template/dnss:dnssec">
+    <uses name="auto-dnssec-options"/>
+  </augment>
+  
   <augment
       target-node="/dnss:dns-server/dnss:zones/dnss:template/dnss:query-module">
     <when condition="dnss:type = 'knot:dnstap'"/>
@@ -383,6 +393,10 @@
     <uses name="knot:zone-options"/>
   </augment>
 
+  <augment target-node="/dnss:dns-server/dnss:zones/dnss:zone/dnss:dnssec">
+    <uses name="auto-dnssec-options"/>
+  </augment>
+  
   <augment
       target-node="/dnss:dns-server/dnss:zones/dnss:zone/dnss:query-module">
     <when condition="dnss:type = 'knot:dnstap'"/>

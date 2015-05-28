@@ -11,7 +11,7 @@
 	<version>2.0</version>
       </chaos-identity>
       <nsid-identity>
-	<nsid>myserver0.example.net</nsid>
+	<nsid>myserver0.example.com</nsid>
       </nsid-identity>
       <listen-endpoint>
 	<name>01</name>
@@ -95,6 +95,7 @@
 	<zones-dir>/tmp/zones</zones-dir>
 	<knot:semantic-checks>true</knot:semantic-checks>
 	<any-to-tcp>true</any-to-tcp>
+	<serial-update-method>unix-time</serial-update-method>
 	<notify>
 	  <retrans-interval>60</retrans-interval>
 	  <max-retrans>5</max-retrans>
@@ -104,6 +105,10 @@
 	  <zone-file-sync-delay>3600</zone-file-sync-delay>
 	  <maximum-journal-size>1125899906842624</maximum-journal-size>
 	</journal>
+	<dnssec>
+	  <signature-lifetime>1728000</signature-lifetime>
+	  <knot:kasp-db>/var/lib/knot/kasp</knot:kasp-db>
+	</dnssec>
 	<query-module>
 	  <name>capture_all</name>
 	  <type>knot:dnstap</type>
