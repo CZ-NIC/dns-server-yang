@@ -24,8 +24,7 @@
   </contact>
   <description>
     <text>
-      This YANG module defines the data model for a DNS server
-      gateway.
+      This YANG module defines the data model for an authoritative DNS server.
     </text>
   </description>
 
@@ -145,23 +144,23 @@
   <!-- Groupings -->
 
   <grouping name="endpoint-address">
-  <description>
-    <text>This grouping defines a TCP/IP endpoint address, i.e., the
-    combination of an IP address and port number.</text>
-  </description>
-  <leaf name="ip-address">
-    <type name="inet:ip-address"/>
-    <mandatory value="true"/>
     <description>
-      <text>IPv4/IPv6 address.</text>
+      <text>This grouping defines a TCP/IP endpoint address, i.e., the
+      combination of an IP address and port number.</text>
     </description>
-  </leaf>
-  <leaf name="port">
-    <type name="inet:port-number"/>
-    <description>
-      <text>Port number.</text>
-    </description>
-  </leaf>
+    <leaf name="ip-address">
+      <type name="inet:ip-address"/>
+      <mandatory value="true"/>
+      <description>
+	<text>IPv4/IPv6 address.</text>
+      </description>
+    </leaf>
+    <leaf name="port">
+      <type name="inet:port-number"/>
+      <description>
+	<text>Port number.</text>
+      </description>
+    </leaf>
   </grouping>
   
   <grouping name="entry-name">
@@ -289,6 +288,31 @@
 	  </refine>
 	</uses>
       </list>
+      <container name="resources">
+	<description>
+	  <text>
+	    Configuration of server resources.
+	  </text>
+	</description>
+	<leaf name="max-tcp-clients">
+	  <type name="uint16"/>
+	  <default value="100"/>
+	  <description>
+	    <text>
+	      Maximum number of simultaneous TCP client connections.
+	    </text>
+	  </description>
+	</leaf>
+	<leaf name="max-udp-size">
+	  <type name="uint16"/>
+	  <default value="4096"/>
+	  <description>
+	    <text>
+	      Maximum size of a UDP datagram with EDNS0 extensions.
+	    </text>
+	  </description>
+	</leaf>
+      </container>
       <container name="filesystem-paths">
 	<description>
 	  <text>
@@ -336,6 +360,50 @@
 	  <type name="string"/>
 	  <description>
 	    <text>Group name.</text>
+	  </description>
+	</leaf>
+      </container>
+      <container name="response-rate-limiting">
+	<leaf name="responses-per-second">
+	  <type name="uint16"/>
+	  <default value="5"/>
+	  <description>
+	    <text>
+	      <h:p>Maximum number of times that the a set of related
+	      requestors is sent the same answer within a one-second
+	      interval.</h:p>
+	      <h:p>The sets of related requestors are determined based
+	      on an implementation-specific classification scheme,
+	      which typically involves several query parameters such
+	      as source address prefix, query type, domain name or
+	      rcode.</h:p>
+	      <h:p>Queries that exceed the limit are either discarded
+	      or replied with a SLIP response that has the TC bit set
+	      and thus instructs the requestor to switch to TCP.</h:p>
+	      <h:p>The value of zero means no rate limit.</h:p>
+	    </text>
+	  </description>
+	</leaf>
+	<leaf name="slip">
+	  <type name="uint8"/>
+	  <default value="1"/>
+	  <description>
+	    <text>
+	      <h:p>If this parameter is set to N, then every Nth
+	      response that doesn't pass the rate limit check is sent
+	      as the SLIP message instead of being discarded.</h:p>
+	      <h:p>The value of zero turns the SLIP feature off.</h:p>
+	    </text>
+	  </description>
+	</leaf>
+	<leaf name="table-size">
+	  <type name="uint32"/>
+	  <description>
+	    <text>
+	      <h:p>The size of the (hash) table, i.e., the number of
+	      classification buckets that the server keeps in
+	      memory.</h:p>
+	    </text>
 	  </description>
 	</leaf>
       </container>
@@ -499,7 +567,8 @@
 	  <type name="remote-ref"/>
 	  <description>
 	    <text>
-	      List of references to master servers for the zone.
+	      List of references to master servers for the zone from
+	      which the local server receives zone data via AXFR/IXFR.
 	    </text>
 	  </description>
 	</leaf-list>

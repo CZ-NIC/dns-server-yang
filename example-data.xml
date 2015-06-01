@@ -30,10 +30,17 @@
 	<user>knot</user>
 	<group>wheel</group>
       </privileges>
-      <knot:threads>
+      <resources>
 	<knot:workers>3</knot:workers>
-      </knot:threads>
+      </resources>
     </server-options>
+    <knot:logging>
+      <knot:log>
+	<knot:name>01</knot:name>
+	<knot:syslog/>
+	<knot:any>info</knot:any>
+      </knot:log>
+    </knot:logging>
     <access-control-list>
       <name>acl-xfr-update</name>
       <access-list-entry>
