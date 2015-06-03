@@ -208,6 +208,7 @@
 	  Configuration of global server options.
 	</text>
       </description>
+      <uses name="description"/>
       <container name="chaos-identity">
 	<presence value="report server identity to CHAOS queries"/>
 	<description>
@@ -229,7 +230,7 @@
 	      <h:p>Server identitity string sent in response to
 	      queries for ID.SERVER or BIND.HOSTNAME resource in the
 	      CHAOS class.</h:p>
-	      <h:p>Default: hostname.</h:p>
+	      <h:p>Default: FQDN of the server.</h:p>
 	    </text>
 	  </description>
 	</leaf>
@@ -364,6 +365,18 @@
 	</leaf>
       </container>
       <container name="response-rate-limiting">
+	<presence value="enable RRL"/>
+	<description>
+	  <text>
+	    Configuration of Response Rate Limiting that is used to
+	    prevent/mitigate DNS reflection and amplification attacks.
+	  </text>
+	</description>
+	<reference>
+	  <text>
+	    http://ss.vix.su/~vixie/isc-tn-2012-1.txt
+	  </text>
+	</reference>
 	<leaf name="responses-per-second">
 	  <type name="uint16"/>
 	  <default value="5"/>
