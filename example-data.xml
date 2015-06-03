@@ -6,6 +6,8 @@
       xmlns:knot="http://www.nic.cz/ns/yang/knot-dns">
     <description>Example DNS server configuration.</description>
     <server-options>
+      <description>Server options.</description>
+      <knot:asynchronous-start>true</knot:asynchronous-start>
       <chaos-identity>
 	<id-server>I have no mouth and must scream.</id-server>
 	<version>2.0</version>
@@ -33,6 +35,9 @@
       <resources>
 	<knot:workers>3</knot:workers>
       </resources>
+      <response-rate-limiting>
+	<table-size>1000000</table-size>
+      </response-rate-limiting>
     </server-options>
     <knot:logging>
       <knot:log>
