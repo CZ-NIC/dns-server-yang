@@ -1,5 +1,6 @@
 yang.ent
 hello.xml
+knot.conf
 model.*
 *.json
 *.rn[gc]

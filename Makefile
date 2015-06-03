@@ -17,6 +17,8 @@ all: $(yams)
 
 json: $(baty).json
 
+knot: knot.conf
+
 hello.xml: $(yams) hello-external.ent
 	@echo '<hello xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">' > $@
 	@echo '<capabilities>' >> $@
@@ -49,6 +51,9 @@ validate: $(EXAMPLE_INST) $(schemas)
 $(baty).json: model.xsl $(EXAMPLE_INST)
 	@xsltproc --output $@ $^
 
+knot.conf: xslt/knot.xsl $(EXAMPLE_INST)
+	@xsltproc --output $@ xslt/knot.xsl $^
+
 model.xsl: hello.xml
 	@pyang -o $@ -f jsonxsl -L $<
 
@@ -56,4 +61,5 @@ model.tree: hello.xml
 	pyang $(PYANG_OPTS) -f tree -o $@ -L $<
 
 clean:
-	@rm -rf *.rng *.rnc *.sch *.dsrl hello.xml model.tree $(yams)
+	@rm -rf *.rng *.rnc *.sch *.dsrl hello.xml model.tree \
+	  knot.conf $(yams)
