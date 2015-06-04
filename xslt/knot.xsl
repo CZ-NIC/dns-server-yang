@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <variable name="dnss-root" select="//nc:*/dnss:dns-server"/>
 
   <!-- Named templates -->
-  
+
   <template name="on-off">
     <param name="bool" select="."/>
     <choose>
@@ -70,7 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </call-template>
     </if>
   </template>
-  
+
   <template name="parameter">
     <param name="name" select="local-name()"/>
     <param name="value" select="."/>
@@ -84,11 +84,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <text>&#xA;</text>
     </if>
   </template>
-  
+
   <template name="list-key">
     <param name="name" select="local-name()"/>
     <param name="value" select="."/>
     <value-of select="concat('  - ', $name, ': ', $value, '&#xA;')"/>
+  </template>
+
+  <template name="yaml-list">
+    <param name="name"/>
+    <param name="nodeset"/>
+    <if test="count($nodeset) &gt; 0">
+      <call-template name="parameter">
+	<with-param name="name" select="$name"/>
+	<with-param name="value">
+	  <if test="count($nodeset) &gt; 1">[</if>
+	  <for-each select="$nodeset">
+	    <apply-templates select="." mode="value"/>
+	    <if test="position() != last()">, </if>
+	  </for-each>
+	  <if test="count($nodeset) &gt; 1">]</if>
+	</with-param>
+      </call-template>
+    </if>
   </template>
 
   <template name="comment">
@@ -117,7 +135,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <template match="/">
     <apply-templates select="//nc:*/dnss:dns-server"/>
   </template>
-  
+
   <template match="dnss:dns-server">
     <call-template name="comment">
       <with-param name="text">
@@ -141,7 +159,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <with-param name="text" select="."/>
     </call-template>
   </template>
-  
+
   <template match="dnss:description|knot:description">
     <call-template name="parameter">
       <with-param name="name">comment</with-param>
@@ -155,9 +173,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <with-param name="name">id</with-param>
     </call-template>
   </template>
-  
+
   <!-- server -->
-  
+
   <template match="dnss:server-options">
     <call-template name="section">
       <with-param name="name">server</with-param>
@@ -165,7 +183,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <apply-templates select="dnss:description"/>
     <apply-templates select="dnss:chaos-identity"/>
     <apply-templates select="dnss:nsid-identity"/>
-    <apply-templates select="dnss:listen-endpoint"/>
+    <call-template name="yaml-list">
+      <with-param name="name">listen</with-param>
+      <with-param name="nodeset" select="dnss:listen-endpoint"/>
+    </call-template>
     <apply-templates select="dnss:resources"/>
     <apply-templates select="dnss:filesystem-paths"/>
     <apply-templates select="dnss:privileges"/>
@@ -190,7 +211,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <with-param name="quoted" select="1"/>
     </call-template>
   </template>
-  
+
   <template match="dnss:nsid-identity">
     <apply-templates select="dnss:nsid"/>
   </template>
@@ -201,17 +222,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </call-template>
   </template>
 
-  <template match="dnss:listen-endpoint">
-    <call-template name="parameter">
-      <with-param name="name">listen</with-param>
-      <with-param name="value">
-	<value-of select="dnss:ip-address"/>
-	<if test="dnss:port">
-	  <text>@</text>
-	  <value-of select="dnss:port"/>
-	</if>
-      </with-param>
-    </call-template>
+  <template match="dnss:listen-endpoint" mode="value">
+    <value-of select="dnss:ip-address"/>
+    <if test="dnss:port">
+      <text>@</text>
+      <value-of select="dnss:port"/>
+    </if>
   </template>
 
   <template match="dnss:resources">
@@ -280,7 +296,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <with-param name="dflt">root</with-param>
     </call-template>
   </template>
-  
+
   <template match="dnss:response-rate-limiting">
     <call-template name="parameter">
       <with-param name="name">rate-limit</with-param>
@@ -346,11 +362,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </call-template>
     <apply-templates select="dnss:name"/>
     <apply-templates select="dnss:description"/>
-    <if test="dnss:access-list-entry"/>
+    <call-template name="yaml-list">
+      <with-param name="name">address</with-param>
+      <with-param name="nodeset" select="dnss:network"/>
+    </call-template>
+    <call-template name="yaml-list">
+      <with-param name="name">key</with-param>
+      <with-param name="nodeset" select="dnss:key"/>
+    </call-template>
+    <call-template name="yaml-list">
+      <with-param name="name">action</with-param>
+      <with-param name="nodeset" select="dnss:operation"/>
+    </call-template>
+    <apply-templates select="dnss:action"/>
+  </template>
+
+  <template match="dnss:access-control-list/dnss:network" mode="value">
+    <value-of select="dnss:ip-prefix"/>
+  </template>
+
+  <template match="dnss:action">
+    <call-template name="parameter">
+      <with-param name="name">deny</with-param>
+      <with-param name="value">
+	<choose>
+	  <when test=". = 'allow'">off</when>
+	  <otherwise>on</otherwise>
+	</choose>
+      </with-param>
+      <with-param name="dflt">off</with-param>
+    </call-template>
   </template>
 
   <!-- Directly translated parameters -->
-  
+
   <template match="dnss:secret
 		   |knot:tcp-workers
 		   |knot:udp-workers
@@ -366,7 +411,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </with-param>
     </call-template>
   </template>
-  
+
   <!-- Without a specific template, issue a warning. -->
   <template match="*">
     <message terminate="no">
