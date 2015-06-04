@@ -58,8 +58,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </template>
 
   <template name="section">
-    <param name="sname" select="local-name()"/>
-    <value-of select="concat($sname, ':&#xA;')"/>
+    <param name="name" select="local-name()"/>
+    <value-of select="concat($name, ':&#xA;')"/>
   </template>
   
   <template name="parameter">
@@ -77,9 +77,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </template>
   
   <template name="list-key">
-    <param name="kname" select="local-name()"/>
-    <param name="kvalue" select="."/>
-    <value-of select="concat('  - ', $kname, ': ', $kvalue, '&#xA;')"/>
+    <param name="name" select="local-name()"/>
+    <param name="value" select="."/>
+    <value-of select="concat('  - ', $name, ': ', $value, '&#xA;')"/>
   </template>
 
   <template name="comment">
@@ -89,6 +89,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <value-of select="concat(' ', normalize-space($text))"/>
     </if>
     <text>&#xA;</text>
+  </template>
+
+  <template name="strip-prefix">
+    <param name="qn" select="."/>
+    <choose>
+      <when test="contains($qn, ':')">
+	<value-of select="substring-after($qn, ':')"/>
+      </when>
+      <otherwise>
+	<value-of select="$qn"/>
+      </otherwise>
+    </choose>
   </template>
 
   <!-- Root element -->
@@ -111,6 +123,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <call-template name="comment"/>
     <apply-templates select="dnss:description"/>
     <apply-templates select="dnss:server-options"/>
+    <apply-templates select="dnss:key"/>
   </template>
 
   <template match="dnss:dns-server/dnss:description">
@@ -126,10 +139,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <with-param name="quoted" select="1"/>
     </call-template>
   </template>
+
+  <template match="dnss:name|knot:name">
+    <call-template name="list-key">
+      <with-param name="name">id</with-param>
+    </call-template>
+  </template>
+  
+  <!-- server -->
   
   <template match="dnss:server-options">
     <call-template name="section">
-      <with-param name="sname">server</with-param>
+      <with-param name="name">server</with-param>
     </call-template>
     <apply-templates select="dnss:description"/>
     <apply-templates select="dnss:chaos-identity"/>
@@ -284,9 +305,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </call-template>
   </template>
 
+  <!-- key -->
+
+  <template match="dnss:key">
+    <if test="position() = 1">
+      <call-template name="section">
+	<with-param name="name">key</with-param>
+      </call-template>
+    </if>
+    <apply-templates select="dnss:name"/>
+    <apply-templates select="dnss:description"/>
+    <call-template name="parameter">
+      <with-param name="name">algorithm</with-param>
+      <with-param name="value">
+	<call-template name="value-or-default">
+	  <with-param name="nodeset" select="dnss:algorithm"/>
+	  <with-param name="dflt">hmac-md5</with-param>
+	</call-template>
+      </with-param>
+    </call-template>
+    <apply-templates select="dnss:secret"/>
+  </template>
+
+  <template match="dnss:algorithm" mode="value">
+    <variable name="alg">
+      <call-template name="strip-prefix"/>
+    </variable>
+    <choose>
+      <when test="$alg = 'HMAC-MD5.SIG-ALG.REG.INT'">hmac-md5</when>
+      <otherwise>
+	<value-of select="$alg"/>
+      </otherwise>
+    </choose>
+  </template>
+  
   <!-- Directly translated parameters -->
   
-  <template match="knot:workers
+  <template match="dnss:secret
+		   |knot:workers
 		   |knot:background-workers
 		   |knot:asynchronous-start">
     <call-template name="parameter"/>
