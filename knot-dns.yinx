@@ -313,6 +313,7 @@
 	<uses name="dnss:entry-name"/>
 	<uses name="dnss:description"/>
 	<choice name="target">
+	  <mandatory value="true"/>
 	  <leaf name="stdout">
 	    <type name="empty"/>
 	    <description>
@@ -372,13 +373,25 @@
 	Configuration of Knot-specific server resources. 
       </text>
     </description>
-    <leaf name="workers">
+    <leaf name="tcp-workers">
       <type name="uint8">
 	<range value="1..max"/>
       </type>
       <description>
 	<text>
-	  <h:p>Number of query-handling workers (threads).</h:p>
+	  <h:p>Number of workers (threads) handling TCP queries.</h:p>
+	  <h:p>Default: auto-selected value based on the number of
+	  available CPU cores.</h:p>
+	</text>
+      </description>
+    </leaf>
+    <leaf name="udp-workers">
+      <type name="uint8">
+	<range value="1..max"/>
+      </type>
+      <description>
+	<text>
+	  <h:p>Number of workers (threads) handling UDP queries.</h:p>
 	  <h:p>Default: auto-selected value based on the number of
 	  available CPU cores.</h:p>
 	</text>
@@ -397,17 +410,7 @@
 	</text>
       </description>
     </leaf>
-    <leaf name="max-transfers">
-      <type name="uint32"/>
-      <default value="10"/>
-      <description>
-	<text>
-	  Maximum number of simultaneous AXFR/IXFR transfers,
-	  including pending SOA queries.
-	</text>
-      </description>
-    </leaf>
-    <leaf name="max-conn-idle">
+    <leaf name="tcp-idle-timeout">
       <type name="uint32"/>
       <units name="seconds"/>
       <default value="20"/>
@@ -417,7 +420,7 @@
 	</text>
       </description>
     </leaf>
-    <leaf name="max-conn-handshake">
+    <leaf name="tcp-handshake-timeout">
       <type name="uint32"/>
       <units name="seconds"/>
       <default value="5"/>
@@ -428,7 +431,7 @@
 	</text>
       </description>
     </leaf>
-    <leaf name="max-conn-reply">
+    <leaf name="tcp-reply-timeout">
       <type name="uint32"/>
       <units name="seconds"/>
       <default value="10"/>
@@ -441,7 +444,7 @@
   </augment>
   
   <augment target-node="/dnss:dns-server/dnss:server-options">  
-    <leaf name="asynchronous-start">
+    <leaf name="async-start">
       <type name="boolean"/>
       <default value="false"/>
       <description>

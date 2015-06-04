@@ -428,7 +428,7 @@
       <key value="name"/>
       <uses name="entry-name"/>
       <uses name="description"/>
-      <list name="access-list-entry">
+      <list name="network">
 	<key value="name"/>
 	<unique tag="ip-prefix port"/>
 	<uses name="entry-name"/>
@@ -442,6 +442,14 @@
 	</leaf>
 	<leaf name="port">
 	  <if-feature name="acl-entry-port"/>
+	  <when condition="../ip-prefix">
+	    <description>
+	      <text>
+		Port is valid only if the ACL entry specifies an IP
+		prefix.
+	      </text>
+	    </description>
+	  </when>
 	  <type name="inet:port-number"/>
 	  <description>
 	    <text>
@@ -449,16 +457,16 @@
 	    </text>
 	  </description>
 	</leaf>
-	<leaf-list name="key">
-	  <type name="key-ref"/>
-	  <description>
-	    <text>
-	      List of TSIG keys associated with the access control
-	      entry.
-	    </text>
-	  </description>
-	</leaf-list>
       </list>
+      <leaf-list name="key">
+	<type name="key-ref"/>
+	<description>
+	  <text>
+	    List of TSIG keys associated with the access control
+	    entry.
+	  </text>
+	</description>
+      </leaf-list>
       <leaf-list name="operation">
 	<type name="dns-operations"/>
 	<min-elements value="1"/>

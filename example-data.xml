@@ -7,7 +7,7 @@
     <description>Example DNS server configuration.</description>
     <server-options>
       <description>Server options.</description>
-      <knot:asynchronous-start>true</knot:asynchronous-start>
+      <knot:async-start>true</knot:async-start>
       <chaos-identity>
 	<id-server>I have no mouth and must scream.</id-server>
 	<version>2.0</version>
@@ -33,7 +33,8 @@
 	<group>wheel</group>
       </privileges>
       <resources>
-	<knot:workers>3</knot:workers>
+	<knot:tcp-workers>3</knot:tcp-workers>
+	<knot:udp-workers>42</knot:udp-workers>
       </resources>
       <response-rate-limiting>
 	<table-size>1000000</table-size>
@@ -48,24 +49,24 @@
     </knot:logging>
     <access-control-list>
       <name>acl-xfr-update</name>
-      <access-list-entry>
+      <network>
         <name>01</name>
         <ip-prefix>127.0.0.1/32</ip-prefix>
-	<key>key0.server0</key>
-      </access-list-entry>
+      </network>
+      <key>key0.server0</key>
       <operation>transfer</operation>
       <operation>update</operation>
     </access-control-list>
     <access-control-list>
       <name>acl-notify</name>
-      <access-list-entry>
+      <network>
         <name>01</name>
         <ip-prefix>::1/128</ip-prefix>
-      </access-list-entry>
-      <access-list-entry>
+      </network>
+      <network>
         <name>02</name>
         <ip-prefix>2001:db8::/64</ip-prefix>
-      </access-list-entry>
+      </network>
       <operation>notify</operation>
     </access-control-list>
     <key>
@@ -75,6 +76,7 @@
     </key>
     <key>
       <name>key0.example.com</name>
+      <description>slave key</description>
       <secret>Wg==</secret>
     </key>
     <remote-server>

@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <!-- Named templates -->
   
   <template name="on-off">
-    <param name="bool"/>
+    <param name="bool" select="."/>
     <choose>
       <when test="$bool = 'true'">on</when>
       <otherwise>off</otherwise>
@@ -60,6 +60,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <template name="section">
     <param name="name" select="local-name()"/>
     <value-of select="concat($name, ':&#xA;')"/>
+  </template>
+
+  <template name="section-first">
+    <param name="name" select="local-name()"/>
+    <if test="position() = 1">
+      <call-template name="section">
+	<with-param name="name" select="$name"/>
+      </call-template>
+    </if>
   </template>
   
   <template name="parameter">
@@ -124,6 +133,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <apply-templates select="dnss:description"/>
     <apply-templates select="dnss:server-options"/>
     <apply-templates select="dnss:key"/>
+    <apply-templates select="dnss:access-control-list"/>
   </template>
 
   <template match="dnss:dns-server/dnss:description">
@@ -160,7 +170,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <apply-templates select="dnss:filesystem-paths"/>
     <apply-templates select="dnss:privileges"/>
     <apply-templates select="dnss:response-rate-limiting"/>
-    <apply-templates select="knot:asynchronous-start"/>
+    <apply-templates select="knot:async-start"/>
   </template>
 
   <template match="dnss:chaos-identity">
@@ -223,26 +233,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </call-template>
   </template>
 
-  <template match="knot:max-transfers">
-    <call-template name="parameter">
-      <with-param name="name">transfers</with-param>
-      <with-param name="dflt">10</with-param>
-    </call-template>
-  </template>
-
-  <template match="knot:max-conn-idle">
+  <template match="knot:tcp-idle-timeout">
     <call-template name="parameter">
       <with-param name="dflt" select="20"/>
     </call-template>
   </template>
 
-  <template match="knot:max-conn-handshake">
+  <template match="knot:tcp-handshake-timeout">
     <call-template name="parameter">
       <with-param name="dflt" select="5"/>
     </call-template>
   </template>
 
-  <template match="knot:max-conn-reply">
+  <template match="knot:tcp-reply-timeout">
     <call-template name="parameter">
       <with-param name="dflt" select="10"/>
     </call-template>
@@ -300,7 +303,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template match="dnss:table-size">
     <call-template name="parameter">
-      <with-param name="name">rate-limit-size</with-param>
+      <with-param name="name">rate-limit-table-size</with-param>
       <with-param name="dflt" select="393241"/>
     </call-template>
   </template>
@@ -308,11 +311,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <!-- key -->
 
   <template match="dnss:key">
-    <if test="position() = 1">
-      <call-template name="section">
-	<with-param name="name">key</with-param>
-      </call-template>
-    </if>
+    <call-template name="section-first"/>
     <apply-templates select="dnss:name"/>
     <apply-templates select="dnss:description"/>
     <call-template name="parameter">
@@ -338,14 +337,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </otherwise>
     </choose>
   </template>
-  
+
+  <!-- acl -->
+
+  <template match="dnss:access-control-list">
+    <call-template name="section-first">
+      <with-param name="name">acl</with-param>
+    </call-template>
+    <apply-templates select="dnss:name"/>
+    <apply-templates select="dnss:description"/>
+    <if test="dnss:access-list-entry"/>
+  </template>
+
   <!-- Directly translated parameters -->
   
   <template match="dnss:secret
-		   |knot:workers
+		   |knot:tcp-workers
+		   |knot:udp-workers
 		   |knot:background-workers
-		   |knot:asynchronous-start">
+		   |knot:async-start">
     <call-template name="parameter"/>
+  </template>
+
+  <template match="knot:async-start">
+    <call-template name="parameter">
+      <with-param name="value">
+	<call-template name="on-off"/>
+      </with-param>
+    </call-template>
   </template>
   
   <!-- Without a specific template, issue a warning. -->
