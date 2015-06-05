@@ -115,12 +115,57 @@
       <knot:port>55553</knot:port>
       <knot:access-control-list>socket</knot:access-control-list>
     </knot:control-socket>
+    <query-module>
+      <type>knot:dnstap</type>
+      <name>capture_all</name>
+      <knot:dnstap>
+	<knot:file>/tmp/capture.tap</knot:file>
+      </knot:dnstap>
+    </query-module>
+    <query-module>
+      <type>knot:dnsproxy</type>
+      <name>default</name>
+      <knot:dnsproxy>
+	<knot:remote-server>
+	  <knot:ip-address>10.0.1.1</knot:ip-address>
+	</knot:remote-server>
+      </knot:dnsproxy>
+    </query-module>
+    <query-module>
+      <type>knot:rosedb</type>
+      <name>default</name>
+      <knot:rosedb>
+	<knot:db-dir>/tmp/static_rrdb</knot:db-dir>
+      </knot:rosedb>
+    </query-module>
+    <query-module>
+      <type>knot:synth-record</type>
+      <name>test1</name>
+      <knot:synth-record>
+	<knot:record-type>forward</knot:record-type>
+	<knot:prefix>dynamic-</knot:prefix>
+	<knot:ttl>400</knot:ttl>
+	<knot:network>2620:0:b61::/52</knot:network>
+      </knot:synth-record>
+    </query-module>
+    <query-module>
+      <type>knot:synth-record</type>
+      <name>test2</name>
+      <knot:synth-record>
+	<knot:record-type>reverse</knot:record-type>
+	<knot:prefix>dynamic-</knot:prefix>
+	<knot:origin>example</knot:origin>
+	<knot:ttl>400</knot:ttl>
+	<knot:network>2620:0:b61::/52</knot:network>
+      </knot:synth-record>
+    </query-module>
     <zones>
       <template>
 	<name>default</name>
 	<description>Shared options for all zones.</description>
 	<default>true</default>
 	<zones-dir>/tmp/zones</zones-dir>
+	<file>samples/%s.zone</file>
 	<knot:semantic-checks>true</knot:semantic-checks>
 	<any-to-tcp>true</any-to-tcp>
 	<serial-update-method>unix-time</serial-update-method>
@@ -133,60 +178,35 @@
 	  <zone-file-sync-delay>3600</zone-file-sync-delay>
 	  <maximum-journal-size>1125899906842624</maximum-journal-size>
 	</journal>
-	<dnssec>
-	  <signature-lifetime>1728000</signature-lifetime>
+	<dnssec-signing>
 	  <knot:kasp-db>/var/lib/knot/kasp</knot:kasp-db>
-	</dnssec>
+	</dnssec-signing>
 	<query-module>
-	  <name>capture_all</name>
 	  <type>knot:dnstap</type>
-	  <knot:dnstap>
-	    <knot:file>/tmp/capture.tap</knot:file>
-	  </knot:dnstap>
+	  <name>capture_all</name>
 	</query-module>
 	<query-module>
-	  <name>default</name>
 	  <type>knot:dnsproxy</type>
-	  <knot:dnsproxy>
-	    <knot:remote-server>
-	      <knot:ip-address>10.0.1.1</knot:ip-address>
-	    </knot:remote-server>
-	  </knot:dnsproxy>
+	  <name>default</name>
 	</query-module>
 	<query-module>
-	  <name>default</name>
 	  <type>knot:rosedb</type>
-	  <knot:rosedb>
-	    <knot:db-dir>/tmp/static_rrdb</knot:db-dir>
-	  </knot:rosedb>
+	  <name>default</name>
 	</query-module>
       </template>
       <zone>
 	<domain>example.com</domain>
-	<file>samples/example.com.zone</file>
+	<template>default</template>
 	<any-to-tcp>false</any-to-tcp>
 	<access-control-list>acl-xfr-update</access-control-list>
 	<access-control-list>acl-notify</access-control-list>
 	<query-module>
-	  <name>test1</name>
 	  <type>knot:synth-record</type>
-	  <knot:synth-record>
-	    <knot:record-type>forward</knot:record-type>
-	    <knot:prefix>dynamic-</knot:prefix>
-	    <knot:ttl>400</knot:ttl>
-	    <knot:network>2620:0:b61::/52</knot:network>
-	  </knot:synth-record>
+	  <name>test1</name>
 	</query-module>
 	<query-module>
-	  <name>test2</name>
 	  <type>knot:synth-record</type>
-	  <knot:synth-record>
-	    <knot:record-type>reverse</knot:record-type>
-	    <knot:prefix>dynamic-</knot:prefix>
-	    <knot:origin>example</knot:origin>
-	    <knot:ttl>400</knot:ttl>
-	    <knot:network>2620:0:b61::/52</knot:network>
-	  </knot:synth-record>
+	  <name>test2</name>
 	</query-module>
       </zone>
     </zones>

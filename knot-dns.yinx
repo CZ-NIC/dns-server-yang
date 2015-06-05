@@ -118,7 +118,7 @@
     </leaf>
   </grouping>
 
-  <grouping name="auto-dnssec-options">
+  <grouping name="dnssec-sign-options">
     <description>
       <text>Knot-specific options for automatic DNSSEC signing.</text>
     </description>
@@ -133,150 +133,6 @@
 	</text>
       </description>
     </leaf>
-  </grouping>
-  
-  <grouping name="dnstap-config">
-    <description>
-      <text>
-	<h:p>Configuration data for the 'dnstap' query module.</h:p>
-	<h:p>This module performs query and response logging via the
-	dnstap library.</h:p>
-      </text>
-    </description>
-    <reference>
-      <text>http://dnstap.info</text>
-    </reference>
-    <container name="dnstap">
-      <presence value="dnstap query module"/>
-      <choice name="sink">
-	<description>
-	  <text>
-	    Destination for query/response logs, can be a file or Unix
-	    domain socket.
-	  </text>
-	</description>
-	<leaf name="file">
-	  <type name="dnss:fs-path"/>
-	  <description>
-	    <text>File path.</text>
-	  </description>
-	</leaf>
-	<leaf name="unix-socket">
-	  <type name="dnss:fs-path"/>
-	  <description>
-	    <text>
-	      Unix domain socket path.
-	    </text>
-	  </description>
-	</leaf>
-      </choice>
-    </container>
-  </grouping>
-
-  <grouping name="synth-record-config">
-    <description>
-      <text>
-	<h:p>Configuration data for the 'synth-record' query module.</h:p>
-	<h:p>This module allows for synthesizing forward or reverse
-	records for a given prefix and subnet.</h:p>
-      </text>
-    </description>
-    <container name="synth-record">
-      <presence value="synth-record query module"/>
-      <leaf name="record-type">
-	<type name="enumeration">
-	  <enum name="forward">
-	    <description>
-	      <text>Forward records.</text>
-	    </description>
-	  </enum>
-	  <enum name="reverse">
-	    <description>
-	      <text>Reverse records.</text>
-	    </description>
-	  </enum>
-	</type>
-	<mandatory value="true"/>
-	<description>
-	  <text>Type of the synthesized records.</text>
-	</description>
-      </leaf>
-      <leaf name="prefix">
-	<type name="string"/>
-	<mandatory value="true"/>
-	<description>
-	  <text>
-	    <h:p>A prefix of the record owner.</h:p>
-	    <h:p>Dots are not allowed, parts of a synthetic name must be
-	    dash-separated.</h:p>
-	    <h:p>TODO: regex pattern?</h:p>
-	  </text>
-	</description>
-      </leaf>
-      <leaf name="origin">
-	<type name="inet:domain-name"/>
-	<must condition="../record-type = 'reverse'">
-	  <description>
-	    <text>This parameter is only valid for reverse records.</text>
-	  </description>
-	  <error-message>
-	    <value>origin is only valid for reverse records</value>
-	  </error-message>
-	</must>
-	<description>
-	  <text>Zone origin.</text>
-	</description>
-      </leaf>
-      <leaf name="ttl">
-	<type name="uint16"/>
-	<units name="seconds"/>
-	<default value="3600"/>
-	<description>
-	  <text>Time-to-live value of the generated records.</text>
-	</description>
-      </leaf>
-      <leaf name="network">
-	<type name="inet:ip-prefix"/>
-	<description>
-	  <text>Network subnet.</text>
-	</description>
-      </leaf>
-    </container>
-  </grouping>
-  
-  <grouping name="dnsproxy-config">
-    <description>
-      <text>
-	<h:p>Configuration data for the 'dnsproxy' query module.</h:p>
-	<h:p>This module catches all unsatisfied queries and forwards
-	them to another server.</h:p>
-      </text>
-    </description>
-    <container name="dnsproxy">
-      <presence value="dnsproxy query module"/>
-      <container name="remote-server">
-	<uses name="dnss:endpoint-address"/>
-      </container>
-    </container>
-  </grouping>
-
-  <grouping name="rosedb-config">
-    <description>
-      <text>
-	<h:p>Configuration data for the 'rosedb' query module.</h:p>
-	<h:p>This module allows for answering certain queries from a
-	database.</h:p>
-      </text>
-    </description>
-    <container name="rosedb">
-      <presence value="rosedb query module"/>
-      <leaf name="db-dir">
-	<type name="dnss:fs-path"/>
-	<description>
-	  <text>Path to the database directory.</text>
-	</description>
-      </leaf>
-    </container>
   </grouping>
   
   <!-- Configuration data -->
@@ -498,64 +354,170 @@
     <uses name="knot:zone-options"/>
   </augment>
   
-  <augment target-node="/dnss:dns-server/dnss:zones/dnss:template/dnss:dnssec">
-    <uses name="auto-dnssec-options"/>
+  <augment target-node="/dnss:dns-server/dnss:zones/dnss:template/dnss:dnssec-signing">
+    <uses name="dnssec-sign-options"/>
   </augment>
   
   <augment
-      target-node="/dnss:dns-server/dnss:zones/dnss:template/dnss:query-module">
+      target-node="/dnss:dns-server/dnss:query-module">
     <when condition="dnss:type = 'knot:dnstap'"/>
-    <uses name="dnstap-config"/>
+    <container name="dnstap">
+      <presence value="dnstap query module"/>
+      <description>
+	<text>
+	  <h:p>Configuration data for the 'dnstap' query module.</h:p>
+	  <h:p>This module performs query and response logging via the
+	  dnstap library.</h:p>
+	</text>
+      </description>
+      <reference>
+	<text>http://dnstap.info</text>
+      </reference>
+      <choice name="sink">
+	<mandatory value="true"/>
+	<description>
+	  <text>
+	    Destination for query/response logs, can be a file or Unix
+	    domain socket.
+	  </text>
+	</description>
+	<leaf name="file">
+	  <type name="dnss:fs-path"/>
+	  <description>
+	    <text>File path.</text>
+	  </description>
+	</leaf>
+	<leaf name="unix-socket">
+	  <type name="dnss:fs-path"/>
+	  <description>
+	    <text>
+	      Unix domain socket path.
+	    </text>
+	  </description>
+	</leaf>
+      </choice>
+    </container>
   </augment>
   
   <augment
-      target-node="/dnss:dns-server/dnss:zones/dnss:template/dnss:query-module">
+      target-node="/dnss:dns-server/dnss:query-module">
     <when condition="dnss:type = 'knot:synth-record'"/>
-    <uses name="synth-record-config"/>
+    <container name="synth-record">
+      <description>
+	<text>
+	  <h:p>Configuration data for the 'synth-record' query module.</h:p>
+	  <h:p>This module allows for synthesizing forward or reverse
+	  records for a given prefix and subnet.</h:p>
+	</text>
+      </description>
+      <presence value="synth-record query module"/>
+      <leaf name="record-type">
+	<type name="enumeration">
+	  <enum name="forward">
+	    <description>
+	      <text>Forward records.</text>
+	    </description>
+	  </enum>
+	  <enum name="reverse">
+	    <description>
+	      <text>Reverse records.</text>
+	    </description>
+	  </enum>
+	</type>
+	<mandatory value="true"/>
+	<description>
+	  <text>Type of the synthesized records.</text>
+	</description>
+      </leaf>
+      <leaf name="prefix">
+	<type name="string"/>
+	<mandatory value="true"/>
+	<description>
+	  <text>
+	    <h:p>A prefix of the record owner.</h:p>
+	    <h:p>Dots are not allowed, parts of a synthetic name must be
+	    dash-separated.</h:p>
+	    <h:p>TODO: regex pattern?</h:p>
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="origin">
+	<type name="inet:domain-name"/>
+	<must condition="../record-type = 'reverse'">
+	  <description>
+	    <text>This parameter is only valid for reverse records.</text>
+	  </description>
+	  <error-message>
+	    <value>origin is only valid for reverse records</value>
+	  </error-message>
+	</must>
+	<description>
+	  <text>Zone origin.</text>
+	</description>
+      </leaf>
+      <leaf name="ttl">
+	<type name="uint16"/>
+	<units name="seconds"/>
+	<default value="3600"/>
+	<description>
+	  <text>Time-to-live value of the generated records.</text>
+	</description>
+      </leaf>
+      <leaf name="network">
+	<type name="inet:ip-prefix"/>
+	<description>
+	  <text>Network subnet.</text>
+	</description>
+      </leaf>
+    </container>
   </augment>
   
   <augment
-      target-node="/dnss:dns-server/dnss:zones/dnss:template/dnss:query-module">
+      target-node="/dnss:dns-server/dnss:query-module">
     <when condition="dnss:type = 'knot:dnsproxy'"/>
-    <uses name="dnsproxy-config"/>
+    <container name="dnsproxy">
+      <description>
+	<text>
+	  <h:p>Configuration data for the 'dnsproxy' query
+	  module.</h:p>
+	  <h:p>This module catches all unsatisfied queries and
+	  forwards them to another server.</h:p>
+	</text>
+      </description>
+      <presence value="dnsproxy query module"/>
+      <container name="remote-server">
+	<uses name="dnss:endpoint-address"/>
+      </container>
+    </container>
   </augment>
   
   <augment
-      target-node="/dnss:dns-server/dnss:zones/dnss:template/dnss:query-module">
+      target-node="/dnss:dns-server/dnss:query-module">
     <when condition="dnss:type = 'knot:rosedb'"/>
-    <uses name="rosedb-config"/>
+    <container name="rosedb">
+      <presence value="rosedb query module"/>
+      <description>
+	<text>
+	  <h:p>Configuration data for the 'rosedb' query module.</h:p>
+	  <h:p>This module allows for answering certain queries from a
+	  database.</h:p>
+	</text>
+      </description>
+      <leaf name="db-dir">
+	<type name="dnss:fs-path"/>
+	<description>
+	  <text>Path to the database directory.</text>
+	</description>
+      </leaf>
+    </container>
   </augment>
   
   <augment target-node="/dnss:dns-server/dnss:zones/dnss:zone">
     <uses name="knot:zone-options"/>
   </augment>
 
-  <augment target-node="/dnss:dns-server/dnss:zones/dnss:zone/dnss:dnssec">
-    <uses name="auto-dnssec-options"/>
-  </augment>
-  
-  <augment
-      target-node="/dnss:dns-server/dnss:zones/dnss:zone/dnss:query-module">
-    <when condition="dnss:type = 'knot:dnstap'"/>
-    <uses name="dnstap-config"/>
-  </augment>
-  
-  <augment
-      target-node="/dnss:dns-server/dnss:zones/dnss:zone/dnss:query-module">
-    <when condition="dnss:type = 'knot:synth-record'"/>
-    <uses name="synth-record-config"/>
-  </augment>
-  
-  <augment
-      target-node="/dnss:dns-server/dnss:zones/dnss:zone/dnss:query-module">
-    <when condition="dnss:type = 'knot:dnsproxy'"/>
-    <uses name="dnsproxy-config"/>
-  </augment>
-  
-  <augment
-      target-node="/dnss:dns-server/dnss:zones/dnss:zone/dnss:query-module">
-    <when condition="dnss:type = 'knot:rosedb'"/>
-    <uses name="rosedb-config"/>
+  <augment target-node="/dnss:dns-server/dnss:zones/dnss:zone/dnss:dnssec-signing">
+    <uses name="dnssec-sign-options"/>
   </augment>
   
 </module>

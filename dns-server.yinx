@@ -558,6 +558,32 @@
 	</description>
       </leaf>
     </list>
+    <list name="query-module">
+      <key value="type name"/>
+      <description>
+	<text>
+	  <h:p>Configurations of query modules that implement
+	  special server behavior in response to certain
+	  queries.</h:p>
+	  <h:p>Configuration parameters for a particular module are
+	  expected to be added via augmentation, and inside a
+	  container with presence.</h:p>
+	</text>
+      </description>
+      <ordered-by value="user"/>
+      <leaf name="type">
+	<type name="identityref">
+	  <base name="dnss:query-module-type"/>
+	</type>
+	<description>
+	  <text>
+	    Query module type.
+	  </text>
+	</description>
+      </leaf>
+      <uses name="entry-name"/>
+      <uses name="description"/>
+    </list>
     <container name="zones">
       <description>
 	<text>Configuration of zones.</text>
@@ -587,6 +613,22 @@
 	      <h:p>Filesystem directory where zone files are
 	      stored.</h:p>
 	      <h:p>Default: implementation specific.</h:p>
+	    </text>
+	  </description>
+	</leaf>
+	<leaf name="file">
+	  <type name="fs-path"/>
+	  <description>
+	    <text>
+	      <h:p>Path to zone file.</h:p>
+	      <h:p>If the path is relative, the value of 'zones-dir'
+	      is prepended to it.</h:p>
+	      <h:p>Default: implementation specific.</h:p>
+	      <h:p>The following substitutions are supported:</h:p>
+	      <h:ul>
+		<h:li>'%s' is replaced with the current zone name.</h:li>
+		<h:li>'%%' is replaced with a single percent sign.</h:li>
+	      </h:ul>
 	    </text>
 	  </description>
 	</leaf>
@@ -688,7 +730,7 @@
 	    </text>
 	  </description>
 	</leaf>
-	<container name="dnssec">
+	<container name="dnssec-signing">
 	  <description>
 	    <text>Configuration of automatic DNSSEC signing.</text>
 	  </description>
@@ -700,19 +742,6 @@
 	      <text>
 		This flag allows to disable automatic DNSSEC signing
 		while keeping its configuration in place.
-	      </text>
-	    </description>
-	  </leaf>
-	  <leaf name="signature-lifetime">
-	    <type name="uint32">
-	      <range value="10801..max"/>
-	    </type>
-	    <units name="seconds"/>
-	    <default value="2592000"/>
-	    <description>
-	      <text>
-		Validity interval of automatically generated DNSSEC
-		signatures.
 	      </text>
 	    </description>
 	  </leaf>
@@ -762,27 +791,31 @@
 	  </leaf>
 	</container>
 	<list name="query-module">
-	  <key value="name type"/>
+	  <key value="type name"/>
+	  <ordered-by value="user"/>
 	  <description>
 	    <text>
-	      <h:p>Configuration of a query module.</h:p>
-	      <h:p>Query modules implement special server behavior in
-	      response to certain queries.</h:p>
-	      <h:p>Configuration parameters for a particular module are
-	      expected to be added via augmentation, and inside a
-	      container with presence.</h:p>
+	      <h:p>A user-ordered list of references to configured
+	      query modules.</h:p>
+	      <h:p>The modules shall be applied to queries for the
+	      current zone in the specified order.</h:p>
 	    </text>
 	  </description>
-	  <uses name="entry-name"/>
-	  <uses name="description"/>
 	  <leaf name="type">
-	    <type name="identityref">
-	      <base name="dnss:query-module-type"/>
+	    <type name="leafref">
+	      <path value="/dns-server/query-module/type"/>
 	    </type>
 	    <description>
-	      <text>
-		Query module type.
-	      </text>
+	      <text>Type of the query module</text>
+	    </description>
+	  </leaf>
+	  <leaf name="name">
+	    <type name="leafref">
+	      <path
+		  value="/dns-server/query-module[type=current()/../type]/name"/>
+	    </type>
+	    <description>
+	      <text>Name of the query module.</text>
 	    </description>
 	  </leaf>
 	</list>
@@ -815,17 +848,6 @@
 	  <type name="inet:domain-name"/>
 	  <description>
 	    <text>Zone name.</text>
-	  </description>
-	</leaf>
-	<leaf name="file">
-	  <type name="fs-path"/>
-	  <description>
-	    <text>
-	      <h:p>Path to zone file.</h:p>
-	      <h:p>The value of 'zones-dir' is prepended to a relative
-	      path.</h:p>
-	      <h:p>Default: implementation specific.</h:p>
-	    </text>
 	  </description>
 	</leaf>
 	<leaf name="template">
