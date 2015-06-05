@@ -88,7 +88,7 @@
       <key>key0.server0</key>
       <local>
 	<ip-address>127.0.0.1</ip-address>
-	<port>53531</port>
+	<port>6378</port>
       </local>
     </remote-server>
     <remote-server>
