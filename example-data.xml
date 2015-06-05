@@ -40,13 +40,17 @@
 	<table-size>1000000</table-size>
       </response-rate-limiting>
     </server-options>
-    <knot:logging>
-      <knot:log>
-	<knot:name>01</knot:name>
-	<knot:syslog/>
-	<knot:any>info</knot:any>
-      </knot:log>
-    </knot:logging>
+    <knot:log>
+      <knot:name>01</knot:name>
+      <knot:syslog/>
+      <knot:any>warning</knot:any>
+    </knot:log>
+    <knot:log>
+      <knot:name>02</knot:name>
+      <knot:file>/tmp/knot.log</knot:file>
+      <knot:server>info</knot:server>
+      <knot:zone>info</knot:zone>
+    </knot:log>
     <access-control-list>
       <name>acl-xfr-update</name>
       <network>

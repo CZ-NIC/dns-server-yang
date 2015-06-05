@@ -282,9 +282,15 @@
   <!-- Configuration data -->
 
   <augment target-node="/dnss:dns-server">
-    <container name="logging">
+    <list name="log">
+      <key value="name"/>
       <description>
-	<text>Logging options.</text>
+	<text>
+	  <h:p>List of log options.</h:p>
+	  <h:p>If no entry is present, messages with severity
+	  'warning' or higher are logged to syslog and standard
+	  error.</h:p>
+	</text>
       </description>
       <typedef name="severity">
 	<description>
@@ -300,73 +306,62 @@
 	</type>
 	<default value="warning"/>
       </typedef>
-      <list name="log">
-	<key value="name"/>
+      <uses name="dnss:entry-name"/>
+      <uses name="dnss:description"/>
+      <choice name="target">
+	<mandatory value="true"/>
+	<leaf name="stdout">
+	  <type name="empty"/>
+	  <description>
+	    <text>Standard output.</text>
+	  </description>
+	</leaf>
+	<leaf name="stderr">
+	  <type name="empty"/>
+	  <description>
+	    <text>Standard error.</text>
+	  </description>
+	</leaf>
+	<leaf name="syslog">
+	  <type name="empty"/>
+	  <description>
+	    <text>Syslog service.</text>
+	  </description>
+	</leaf>
+	<leaf name="file">
+	  <type name="dnss:fs-path"/>
+	  <description>
+	    <text>File name.</text>
+	  </description>
+	</leaf>
+      </choice>
+      <leaf name="server">
+	<type name="severity"/>
 	<description>
 	  <text>
-	    <h:p>List of log options.</h:p>
-	    <h:p>If no entry is present, messages with severity
-	    'warning' or higher are logged to syslog and standard
-	    error.</h:p>
+	    Severity threshold for server-related messages.
 	  </text>
 	</description>
-	<uses name="dnss:entry-name"/>
-	<uses name="dnss:description"/>
-	<choice name="target">
-	  <mandatory value="true"/>
-	  <leaf name="stdout">
-	    <type name="empty"/>
-	    <description>
-	      <text>Standard output.</text>
-	    </description>
-	  </leaf>
-	  <leaf name="stderr">
-	    <type name="empty"/>
-	    <description>
-	      <text>Standard error.</text>
-	    </description>
-	  </leaf>
-	  <leaf name="syslog">
-	    <type name="empty"/>
-	    <description>
-	      <text>Syslog service.</text>
-	    </description>
-	  </leaf>
-	  <leaf name="file">
-	    <type name="dnss:fs-path"/>
-	    <description>
-	      <text>File name.</text>
-	    </description>
-	  </leaf>
-	</choice>
-	<leaf name="server">
-	  <type name="severity"/>
-	  <description>
-	    <text>
-	      Severity threshold for server-related messages. 
-	    </text>
-	  </description>
-	</leaf>
-	<leaf name="zone">
-	  <type name="severity"/>
-	  <description>
-	    <text>
-	      Severity threshold for zone-related messages. 
-	    </text>
-	  </description>
-	</leaf>
-	<leaf name="any">
-	  <type name="severity"/>
-	  <description>
-	    <text>
-	      Severity threshold for all messages.
-	    </text>
-	  </description>
-	</leaf>
-      </list>
-    </container>
+      </leaf>
+      <leaf name="zone">
+	<type name="severity"/>
+	<description>
+	  <text>
+	    Severity threshold for zone-related messages.
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="any">
+	<type name="severity"/>
+	<description>
+	  <text>
+	    Severity threshold for all messages.
+	  </text>
+	</description>
+      </leaf>
+    </list>
   </augment>
-  
+
   <augment target-node="/dnss:dns-server/dnss:server-options/dnss:resources">
     <description>
       <text>
