@@ -143,6 +143,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </if>
   </template>
 
+  <template name="zone-options">
+    <apply-templates select="dnss:description"/>
+    <apply-templates select="dnss:file"/>
+    <apply-templates select="dnss:zones-dir"/>
+    <call-template name="yaml-list">
+      <with-param name="name">master</with-param>
+      <with-param name="nodeset" select="dnss:master"/>
+    </call-template>
+    <apply-templates select="dnss:notify"/>
+    <call-template name="yaml-list">
+      <with-param name="name">acl</with-param>
+      <with-param name="nodeset" select="dnss:access-control-list"/>
+    </call-template>
+    <apply-templates select="knot:semantic-checks"/>
+    <apply-templates select="dnss:any-to-tcp"/>
+    <apply-templates select="dnss:dnssec-signing"/>
+    <apply-templates select="dnss:journal"/>
+    <call-template name="yaml-list">
+      <with-param name="name">module</with-param>
+      <with-param name="nodeset" select="dnss:query-module"/>
+    </call-template>
+  </template>
+
   <!-- Root element -->
 
   <template match="/">
@@ -168,6 +191,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <apply-templates select="dnss:remote-server"/>
     <apply-templates select="knot:log"/>
     <apply-templates select="knot:control-socket"/>
+    <apply-templates select="dnss:query-module"/>
+    <apply-templates select="dnss:zones"/>
   </template>
 
   <template match="dnss:dns-server/dnss:description">
@@ -482,26 +507,220 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </call-template>
   </template>
 
+  <!-- query modules -->
+
+  <template match="dnss:query-module">
+    <variable name="typ">
+      <call-template name="strip-prefix">
+	<with-param name="qn" select="dnss:type"/>
+      </call-template>
+    </variable>
+    <call-template name="section">
+      <with-param name="name" select="concat('mod-', $typ)"/>
+    </call-template>
+    <apply-templates select="dnss:name"/>
+    <apply-templates select="." mode="content"/>
+  </template>
+
+  <template match="dnss:query-module[dnss:type='knot:dnstap']"
+	    mode="content">
+    <apply-templates select="knot:dnstap"/>
+  </template>
+  
+  <template match="knot:dnstap">
+    <call-template name="parameter">
+      <with-param name="name">sink</with-param>
+      <with-param name="value">
+	<apply-templates select="knot:file|knot:unix-socket"
+			 mode="value"/>
+      </with-param>
+    </call-template>
+  </template>
+
+  <template match="dnss:query-module/knot:unix-socket"
+	    mode="value">
+    <value-of select="concat('&quot;unix:', ., '&quot;')"/>
+  </template>
+  
+  <template match="dnss:query-module[dnss:type='knot:synth-record']"
+	    mode="content">
+    <apply-templates select="knot:synth-record"/>
+  </template>
+  
+  <template match="knot:synth-record">
+    <apply-templates select="knot:record-type"/>
+    <apply-templates select="knot:prefix"/>
+    <apply-templates select="knot:origin"/>
+    <apply-templates select="knot:ttl"/>
+    <apply-templates select="knot:network"/>
+  </template>
+
+  <template match="knot:record-type">
+    <call-template name="parameter">
+      <with-param name="name">type</with-param>
+    </call-template>
+  </template>
+  
+  <template match="dnss:query-module[dnss:type='knot:dnsproxy']"
+	    mode="content">
+    <apply-templates select="knot:dnsproxy"/>
+  </template>
+
+  <template match="knot:dnsproxy">
+    <apply-templates select="knot:remote-server"/>
+  </template>
+
+  <template match="knot:remote-server">
+    <call-template name="parameter">
+      <with-param name="name">remote</with-param>
+      <with-param name="value">
+	<call-template name="address-port"/>
+      </with-param>
+    </call-template>
+  </template>
+  
+  <template match="dnss:query-module[dnss:type='knot:rosedb']"
+	    mode="content">
+    <apply-templates select="knot:rosedb"/>
+  </template>
+  
+  <template match="knot:rosedb">
+    <apply-templates select="knot:db-dir"/>
+  </template>
+  
+  <template match="knot:db-dir">
+    <call-template name="parameter">
+      <with-param name="name">dbdir</with-param>
+      <with-param name="quoted" select="1"/>
+    </call-template>
+  </template>
+  
+  <!-- template & zone -->
+
+  <template match="dnss:zones">
+    <apply-templates select="dnss:template"/>
+    <apply-templates select="dnss:zone"/>
+  </template>
+
+  <template match="dnss:zones/dnss:template">
+    <call-template name="section-first"/>
+    <apply-templates select="dnss:name"/>
+    <call-template name="zone-options"/>
+  </template>
+
+  <template match="dnss:zone">
+    <call-template name="section-first"/>
+    <apply-templates select="dnss:domain"/>
+    <apply-templates select="dnss:template"/>
+    <call-template name="zone-options"/>
+  </template>
+
+  <template match="dnss:zone/dnss:domain">
+    <call-template name="list-key"/>
+  </template>
+
+  <template match="dnss:zones-dir">
+    <call-template name="parameter">
+      <with-param name="name">storage</with-param>
+    </call-template>
+  </template>
+
+  <template match="dnss:notify">
+    <call-template name="yaml-list">
+      <with-param name="name">notify</with-param>
+      <with-param name="nodeset" select="dnss:recipient"/>
+    </call-template>
+  </template>
+
+  <template match="dnss:any-to-tcp">
+    <call-template name="parameter">
+      <with-param name="name">disable-any</with-param>
+      <with-param name="value">
+	<call-template name="on-off"/>
+      </with-param>
+    </call-template> 
+  </template>
+
+  <template match="dnss:dnssec-signing">
+    <call-template name="parameter">
+      <with-param name="name">dnssec-signing</with-param>
+      <with-param name="value">
+	<call-template name="value-or-default">
+	  <with-param name="nodeset" select="dnss:enabled"/>
+	  <with-param name="dflt">on</with-param>
+	</call-template>
+      </with-param>
+      <with-param name="dflt">off</with-param>
+    </call-template>
+    <apply-templates select="knot:kasp-db"/>
+  </template>
+  
+  <template match="dnss:journal">
+    <apply-templates select="dnss:zone-file-sync-delay"/>
+    <apply-templates select="dnss:from-differences"/>
+    <apply-templates select="maximum-journal-size"/>
+  </template>
+
+  <template match="dnss:zone-file-sync-delay">
+    <call-template name="parameter">
+      <with-param name="name">zonefile-sync</with-param>
+      <with-param name="dflt" select="0"/>
+    </call-template>
+  </template>
+  
+  <template match="dnss:from-differences">
+    <call-template name="parameter">
+      <with-param name="name">ixfr-from-differences</with-param>
+      <with-param name="value">
+	<call-template name="on-off"/>
+      </with-param>
+      <with-param name="dflt">off</with-param>
+    </call-template>
+  </template>
+  
+  <template match="dnss:maximum-journal-size">
+    <call-template name="parameter">
+      <with-param name="name">max-journal-size</with-param>
+    </call-template>
+  </template>
+
+  <template match="dnss:query-module" mode="value">
+    <variable name="typ">
+      <call-template name="strip-prefix">
+	<with-param name="qn" select="dnss:type"/>
+      </call-template>
+    </variable>
+    <value-of select="concat('&quot;', $typ, '/', dnss:name, '&quot;')"/>
+  </template>
+
   <!-- Directly translated parameters -->
 
   <template match="dnss:secret
 		   |knot:any
 		   |knot:async-start
 		   |knot:background-workers
+		   |knot:network
+		   |knot:origin
+		   |knot:prefix
 		   |knot:server
 		   |knot:tcp-workers
+		   |knot:ttl
 		   |knot:udp-workers
 		   |knot:zone">
     <call-template name="parameter"/>
   </template>
 
-  <template match="dnss:key">
+  <template match="dnss:key
+		   |dnss:file
+		   |knot:kasp-db 
+		   |dnss:template">
     <call-template name="parameter">
       <with-param name="quoted" select="1"/>
     </call-template>
   </template>
 
-  <template match="knot:async-start">
+  <template match="knot:async-start
+		   |knot:semantic-checks">
     <call-template name="parameter">
       <with-param name="value">
 	<call-template name="on-off"/>
@@ -509,10 +728,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </call-template>
   </template>
 
-  <template match="knot:file" mode="value">
+  <template match="dnss:access-control-list
+		   |dnss:master
+		   |dnss:recipient
+		   |knot:access-control-list
+		   |knot:file
+		   " mode="value">
     <value-of select="concat('&quot;', ., '&quot;')"/>
   </template>
 
+  <template match="dnss:enabled" mode="value">
+    <call-template name="on-off"/>
+  </template>
+  
   <template match="knot:stdout
 		   |knot:stderr
 		   |knot:syslog" mode="value">
