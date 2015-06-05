@@ -88,7 +88,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <template name="list-key">
     <param name="name" select="local-name()"/>
     <param name="value" select="."/>
-    <value-of select="concat('  - ', $name, ': ', $value, '&#xA;')"/>
+    <param name="quoted" select="0"/>
+    <value-of select="concat('  - ', $name, ': ')"/>
+    <if test="$quoted">"</if>
+    <value-of select="$value"/>
+    <if test="$quoted">"</if>
+    <text>&#xA;</text>
   </template>
 
   <template name="yaml-list">
@@ -130,6 +135,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </choose>
   </template>
 
+  <template name="address-port">
+    <value-of select="dnss:ip-address"/>
+    <if test="dnss:port">
+      <text>@</text>
+      <value-of select="dnss:port"/>
+    </if>
+  </template>
+
   <!-- Root element -->
 
   <template match="/">
@@ -152,6 +165,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <apply-templates select="dnss:server-options"/>
     <apply-templates select="dnss:key"/>
     <apply-templates select="dnss:access-control-list"/>
+    <apply-templates select="dnss:remote-server"/>
   </template>
 
   <template match="dnss:dns-server/dnss:description">
@@ -171,6 +185,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <template match="dnss:name|knot:name">
     <call-template name="list-key">
       <with-param name="name">id</with-param>
+      <with-param name="quoted" select="1"/>
     </call-template>
   </template>
 
@@ -223,11 +238,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </template>
 
   <template match="dnss:listen-endpoint" mode="value">
-    <value-of select="dnss:ip-address"/>
-    <if test="dnss:port">
-      <text>@</text>
-      <value-of select="dnss:port"/>
-    </if>
+    <call-template name="address-port"/>
   </template>
 
   <template match="dnss:resources">
@@ -394,6 +405,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </call-template>
   </template>
 
+  <!-- remote -->
+
+  <template match="dnss:remote-server">
+    <call-template name="section-first">
+      <with-param name="name">remote</with-param>
+    </call-template>
+    <apply-templates select="dnss:name"/>
+    <apply-templates select="dnss:description"/>
+    <apply-templates select="dnss:remote"/>
+    <apply-templates select="dnss:local"/>
+    <apply-templates select="dnss:key"/>
+  </template>
+
+  <template match="dnss:remote">
+    <call-template name="parameter">
+      <with-param name="name">address</with-param>
+      <with-param name="value">
+	<call-template name="address-port"/>
+      </with-param>
+    </call-template>
+  </template>
+
+  <template match="dnss:local">
+    <call-template name="parameter">
+      <with-param name="name">via</with-param>
+      <with-param name="value">
+	<call-template name="address-port"/>
+      </with-param>
+    </call-template>
+  </template>
+
   <!-- Directly translated parameters -->
 
   <template match="dnss:secret
@@ -402,6 +444,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		   |knot:background-workers
 		   |knot:async-start">
     <call-template name="parameter"/>
+  </template>
+
+  <template match="dnss:key">
+    <call-template name="parameter">
+      <with-param name="quoted" select="1"/>
+    </call-template>
   </template>
 
   <template match="knot:async-start">
