@@ -136,10 +136,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </template>
 
   <template name="address-port">
-    <value-of select="dnss:ip-address"/>
+    <value-of select="dnss:ip-address|knot:ip-address"/>
     <if test="dnss:port">
       <text>@</text>
-      <value-of select="dnss:port"/>
+      <value-of select="dnss:port|knot:port"/>
     </if>
   </template>
 
@@ -167,6 +167,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <apply-templates select="dnss:access-control-list"/>
     <apply-templates select="dnss:remote-server"/>
     <apply-templates select="knot:log"/>
+    <apply-templates select="knot:control-socket"/>
   </template>
 
   <template match="dnss:dns-server/dnss:description">
@@ -452,6 +453,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <apply-templates select="knot:server"/>
     <apply-templates select="knot:zone"/>
     <apply-templates select="knot:any"/>
+  </template>
+
+  <!-- control -->
+
+  <template match="knot:control-socket">
+    <call-template name="section">
+      <with-param name="name">control</with-param>
+    </call-template>
+    <call-template name="parameter">
+      <with-param name="name">listen</with-param>
+      <with-param name="value">
+	<choose>
+	  <when test="knot:unix">
+	    <value-of select="knot:unix"/>
+	  </when>
+	  <when test="knot:ip-address">
+	    <call-template name="address-port"/>
+	  </when>
+	  <otherwise>knot.sock</otherwise>
+	</choose>
+      </with-param>
+      <with-param name="dflt">knot.sock</with-param>
+    </call-template>
+    <call-template name="yaml-list">
+      <with-param name="name">acl</with-param>
+      <with-param name="nodeset" select="knot:access-control-list"/>
+    </call-template>
   </template>
 
   <!-- Directly translated parameters -->
