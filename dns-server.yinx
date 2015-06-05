@@ -128,19 +128,6 @@
     </type>
   </typedef>
 
-  <typedef name="dns-operations">
-    <description>
-      <text>
-	DNS protocol operations.
-      </text>
-    </description>
-    <type name="enumeration">
-      <enum name="transfer"/>
-      <enum name="notify"/>
-      <enum name="update"/>
-    </type>
-  </typedef>
-
   <!-- Groupings -->
 
   <grouping name="endpoint-address">
@@ -178,6 +165,20 @@
       </description>
       <type name="string"/>
     </leaf>
+  </grouping>
+
+  <grouping name="acls">
+    <description>
+      <text>This grouping defines a list of ACL references.</text>
+    </description>
+    <leaf-list name="access-control-list">
+      <type name="acl-ref"/>
+      <description>
+	<text>
+	  List of references to access control lists.
+	</text>
+      </description>
+    </leaf-list>
   </grouping>
 
   <grouping name="description">
@@ -468,7 +469,12 @@
 	</description>
       </leaf-list>
       <leaf-list name="operation">
-	<type name="dns-operations"/>
+	<type name="enumeration">
+	  <enum name="transfer"/>
+	  <enum name="notify"/>
+	  <enum name="update"/>
+	  <enum name="control"/>
+	</type>
 	<min-elements value="1"/>
 	<description>
 	  <text>
@@ -636,15 +642,13 @@
 	    </description>
 	  </leaf>
 	</container>
-	<leaf-list name="access-control-list">
-	  <type name="acl-ref"/>
+	<uses name="acls">
 	  <description>
 	    <text>
-	      List of references to access control lists that will be
-	      applied for the zone.
+	      Access control lists applied for the zone.
 	    </text>
 	  </description>
-	</leaf-list>
+	</uses>
 	<leaf name="serial-update-method">
 	  <type name="enumeration">
 	    <enum name="increment">

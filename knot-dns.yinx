@@ -454,7 +454,7 @@
   <augment target-node="/dnss:dns-server">
     <container name="control-socket">
       <description>
-	<text>Address of the Knot DNS control socket.</text>
+	<text>Configuration of Knot DNS control socket.</text>
       </description>
       <choice name="socket-type">
 	<description>
@@ -484,6 +484,13 @@
 	  </uses>
 	</case>
       </choice>
+      <uses name="dnss:acls">
+	<description>
+	  <text>
+	    ACLs for the control socket.
+	  </text>
+	</description>
+      </uses>
     </container>
   </augment>
   

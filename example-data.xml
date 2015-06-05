@@ -73,6 +73,14 @@
       </network>
       <operation>notify</operation>
     </access-control-list>
+    <access-control-list>
+      <name>socket</name>
+      <network>
+	<name>01</name>
+	<ip-prefix>192.0.2.0/28</ip-prefix>
+      </network>
+      <operation>control</operation>
+    </access-control-list>
     <key>
       <name>key0.server0</name>
       <algorithm>tsig:hmac-sha256</algorithm>
@@ -104,6 +112,8 @@
     </remote-server>
     <knot:control-socket>
       <knot:ip-address>127.0.0.1</knot:ip-address>
+      <knot:port>55553</knot:port>
+      <knot:access-control-list>socket</knot:access-control-list>
     </knot:control-socket>
     <zones>
       <template>
