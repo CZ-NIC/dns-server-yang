@@ -166,6 +166,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <apply-templates select="dnss:key"/>
     <apply-templates select="dnss:access-control-list"/>
     <apply-templates select="dnss:remote-server"/>
+    <apply-templates select="knot:log"/>
   </template>
 
   <template match="dnss:dns-server/dnss:description">
@@ -436,13 +437,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </call-template>
   </template>
 
+  <!-- log -->
+
+  <template match="knot:log">
+    <call-template name="section-first"/>
+    <apply-templates select="knot:description"/>
+    <call-template name="list-key">
+      <with-param name="name">target</with-param>
+      <with-param name="value">
+	<apply-templates select="knot:stdout|knot:stderr
+				 |knot:syslog|knot:file" mode="value"/>
+      </with-param>
+    </call-template>
+    <apply-templates select="knot:server"/>
+    <apply-templates select="knot:zone"/>
+    <apply-templates select="knot:any"/>
+  </template>
+
   <!-- Directly translated parameters -->
 
   <template match="dnss:secret
+		   |knot:any
+		   |knot:async-start
+		   |knot:background-workers
+		   |knot:server
 		   |knot:tcp-workers
 		   |knot:udp-workers
-		   |knot:background-workers
-		   |knot:async-start">
+		   |knot:zone">
     <call-template name="parameter"/>
   </template>
 
@@ -458,6 +479,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<call-template name="on-off"/>
       </with-param>
     </call-template>
+  </template>
+
+  <template match="knot:file" mode="value">
+    <value-of select="concat('&quot;', ., '&quot;')"/>
+  </template>
+
+  <template match="knot:stdout
+		   |knot:stderr
+		   |knot:syslog" mode="value">
+    <value-of select="local-name()"/>
   </template>
 
   <!-- Without a specific template, issue a warning. -->
