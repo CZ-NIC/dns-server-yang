@@ -23,9 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <stylesheet
     xmlns="http://www.w3.org/1999/XSL/Transform"
-    xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0"
     xmlns:dnss="http://www.nic.cz/ns/yang/dns-server"
-    xmlns:tsig="http://www.nic.cz/ns/yang/tsig-algorithms"
     xmlns:knot="http://www.nic.cz/ns/yang/knot-dns"
     version="1.0">
   <output method="text"/>
@@ -57,7 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <param name="nodeset"/>
     <if test="count($nodeset) &gt; 0">
       <call-template name="key-value">
-	<with-param name="name" select="$name"/>
+	<with-param name="key" select="$name"/>
 	<with-param name="value">
 	  <if test="count($nodeset) &gt; 1">[</if>
 	  <for-each select="$nodeset">
@@ -101,11 +99,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </call-template>
   </template>
 
-  <!-- Root element -->
-
-  <template match="/">
-    <apply-templates select="//nc:*/dnss:dns-server"/>
-  </template>
+  <!-- Matching templates -->
 
   <template match="dnss:dns-server">
     <call-template name="hash-comment">
@@ -138,7 +132,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template match="dnss:description|knot:description">
     <call-template name="key-value">
-      <with-param name="name">comment</with-param>
+      <with-param name="key">comment</with-param>
       <with-param name="value" select="normalize-space(.)"/>
       <with-param name="quote">"</with-param>
     </call-template>
@@ -178,7 +172,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template match="dnss:id-server">
     <call-template name="key-value">
-      <with-param name="name">identity</with-param>
+      <with-param name="key">identity</with-param>
       <with-param name="quote">"</with-param>
     </call-template>
   </template>
@@ -217,7 +211,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template match="dnss:max-udp-size">
     <call-template name="key-value">
-      <with-param name="name">max-udp-payload</with-param>
+      <with-param name="key">max-udp-payload</with-param>
       <with-param name="dflt">100</with-param>
     </call-template>
   </template>
@@ -246,19 +240,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template match="dnss:run-time-dir">
     <call-template name="key-value">
-      <with-param name="name">rundir</with-param>
+      <with-param name="key">rundir</with-param>
     </call-template>
   </template>
 
   <template match="dnss:pid-file">
     <call-template name="key-value">
-      <with-param name="name">pidfile</with-param>
+      <with-param name="key">pidfile</with-param>
     </call-template>
   </template>
 
   <template match="dnss:privileges">
     <call-template name="key-value">
-      <with-param name="name">user</with-param>
+      <with-param name="key">user</with-param>
       <with-param name="value">
 	<value-of select="dnss:user"/>
 	<if test="dnss:group and dnss:group != 'root'">
@@ -272,7 +266,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template match="dnss:response-rate-limiting">
     <call-template name="key-value">
-      <with-param name="name">rate-limit</with-param>
+      <with-param name="key">rate-limit</with-param>
       <with-param name="value">
 	<call-template name="value-or-default">
 	  <with-param name="nodeset"
@@ -286,13 +280,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template match="dnss:slip">
     <call-template name="key-value">
-      <with-param name="name">rate-limit-slip</with-param>
+      <with-param name="key">rate-limit-slip</with-param>
     </call-template>
   </template>
 
   <template match="dnss:table-size">
     <call-template name="key-value">
-      <with-param name="name">rate-limit-table-size</with-param>
+      <with-param name="key">rate-limit-table-size</with-param>
       <with-param name="dflt" select="393241"/>
     </call-template>
   </template>
@@ -304,7 +298,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <apply-templates select="dnss:name"/>
     <apply-templates select="dnss:description"/>
     <call-template name="key-value">
-      <with-param name="name">algorithm</with-param>
+      <with-param name="key">algorithm</with-param>
       <with-param name="value">
 	<call-template name="value-or-default">
 	  <with-param name="nodeset" select="dnss:algorithm"/>
@@ -356,7 +350,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template match="dnss:action">
     <call-template name="key-value">
-      <with-param name="name">deny</with-param>
+      <with-param name="key">deny</with-param>
       <with-param name="value">
 	<choose>
 	  <when test=". = 'allow'">off</when>
@@ -382,7 +376,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template match="dnss:remote">
     <call-template name="key-value">
-      <with-param name="name">address</with-param>
+      <with-param name="key">address</with-param>
       <with-param name="value">
 	<call-template name="address-port"/>
       </with-param>
@@ -391,7 +385,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template match="dnss:local">
     <call-template name="key-value">
-      <with-param name="name">via</with-param>
+      <with-param name="key">via</with-param>
       <with-param name="value">
 	<call-template name="address-port"/>
       </with-param>
@@ -422,7 +416,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <with-param name="name">control</with-param>
     </call-template>
     <call-template name="key-value">
-      <with-param name="name">listen</with-param>
+      <with-param name="key">listen</with-param>
       <with-param name="value">
 	<choose>
 	  <when test="knot:unix">
@@ -464,7 +458,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
   <template match="knot:dnstap">
     <call-template name="key-value">
-      <with-param name="name">sink</with-param>
+      <with-param name="key">sink</with-param>
       <with-param name="value">
 	<apply-templates select="knot:file|knot:unix-socket"
 			 mode="value"/>
@@ -492,7 +486,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template match="knot:record-type">
     <call-template name="key-value">
-      <with-param name="name">type</with-param>
+      <with-param name="key">type</with-param>
     </call-template>
   </template>
   
@@ -507,7 +501,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template match="knot:remote-server">
     <call-template name="key-value">
-      <with-param name="name">remote</with-param>
+      <with-param name="key">remote</with-param>
       <with-param name="value">
 	<call-template name="address-port"/>
       </with-param>
@@ -525,7 +519,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
   <template match="knot:db-dir">
     <call-template name="key-value">
-      <with-param name="name">dbdir</with-param>
+      <with-param name="key">dbdir</with-param>
       <with-param name="quote">"</with-param>
     </call-template>
   </template>
@@ -556,7 +550,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template match="dnss:zones-dir">
     <call-template name="key-value">
-      <with-param name="name">storage</with-param>
+      <with-param name="key">storage</with-param>
     </call-template>
   </template>
 
@@ -569,7 +563,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template match="dnss:any-to-tcp">
     <call-template name="key-value">
-      <with-param name="name">disable-any</with-param>
+      <with-param name="key">disable-any</with-param>
       <with-param name="value">
 	<call-template name="on-off"/>
       </with-param>
@@ -578,7 +572,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template match="dnss:dnssec-signing">
     <call-template name="key-value">
-      <with-param name="name">dnssec-signing</with-param>
+      <with-param name="key">dnssec-signing</with-param>
       <with-param name="value">
 	<call-template name="value-or-default">
 	  <with-param name="nodeset" select="dnss:enabled"/>
@@ -598,14 +592,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template match="dnss:zone-file-sync-delay">
     <call-template name="key-value">
-      <with-param name="name">zonefile-sync</with-param>
+      <with-param name="key">zonefile-sync</with-param>
       <with-param name="dflt" select="0"/>
     </call-template>
   </template>
   
   <template match="dnss:from-differences">
     <call-template name="key-value">
-      <with-param name="name">ixfr-from-differences</with-param>
+      <with-param name="key">ixfr-from-differences</with-param>
       <with-param name="value">
 	<call-template name="on-off"/>
       </with-param>
@@ -615,7 +609,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
   <template match="dnss:maximum-journal-size">
     <call-template name="key-value">
-      <with-param name="name">max-journal-size</with-param>
+      <with-param name="key">max-journal-size</with-param>
     </call-template>
   </template>
 

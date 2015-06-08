@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <stylesheet
     xmlns="http://www.w3.org/1999/XSL/Transform"
+    xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0"
+    xmlns:dnss="http://www.nic.cz/ns/yang/dns-server"
     version="1.0">
   <output method="text"/>
   <strip-space elements="*"/>
@@ -90,7 +92,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <!-- Insert key-value pair -->
   <template name="key-value">
     <param name="level" select="1"/> <!-- level of indentation -->
-    <param name="name" select="local-name()"/> <!-- key -->
+    <param name="key" select="local-name()"/> <!-- key -->
     <param name="sep">: </param>	       <!-- separator -->
     <param name="quote"/>	               <!-- quote char -->
     <param name="value" select="."/>	       <!-- value -->
@@ -100,7 +102,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <call-template name="indent">
 	<with-param name="level" select="$level"/>
       </call-template>
-      <value-of select="concat($name, $sep, $quote, $value, $quote, $term)"/>
+      <value-of select="concat($key, $sep, $quote, $value, $quote, $term)"/>
     </if>
   </template>
 
@@ -127,8 +129,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </choose>
   </template>
 
-  <!-- Without a specific template, issue a warning. -->
+  <!-- Matching templates -->
   
+  <!-- Root template -->
+  <template match="/">
+    <apply-templates select="//nc:*/dnss:dns-server"/>
+  </template>
+
+  <!-- Without a specific template, issue a warning. -->
   <template match="*">
     <message terminate="no">
       <value-of select="concat('Element ', name(), ' not handled.')"/>
