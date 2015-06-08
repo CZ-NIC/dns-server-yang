@@ -109,6 +109,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <!-- Insert hash-style comment line -->
   <template name="hash-comment">
     <param name="text"/>
+    <param name="level" select="0"/>
+    <call-template name="indent">
+      <with-param name="level" select="$level"/>
+    </call-template>
     <text>#</text>
     <if test="string-length($text) &gt; 0">
       <value-of select="concat(' ', normalize-space($text))"/>
