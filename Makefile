@@ -11,13 +11,15 @@ xslpars =
 schemas = $(baty).rng $(baty).sch $(baty).dsrl
 y2dopts = -t $(EXAMPLE_TYPE) -b $(EXAMPLE_BASE)
 
-.PHONY: all clean rnc validate yang
+.PHONY: all clean json knot nsd rnc validate yang
 
 all: $(yams)
 
 json: $(baty).json
 
 knot: knot.conf
+
+nsd: nsd.conf
 
 hello.xml: $(yams) hello-external.ent
 	@echo '<hello xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">' > $@
@@ -52,7 +54,10 @@ $(baty).json: model.xsl $(EXAMPLE_INST)
 	@xsltproc --output $@ $^
 
 knot.conf: xslt/knot.xsl $(EXAMPLE_INST)
-	@xsltproc --output $@ xslt/knot.xsl $^
+	@xsltproc --output $@ $^
+
+nsd.conf: xslt/nsd.xsl $(EXAMPLE_INST)
+	@xsltproc --output $@ $^
 
 model.xsl: hello.xml
 	@pyang -o $@ -f jsonxsl -L $<

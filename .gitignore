@@ -1,6 +1,7 @@
 yang.ent
 hello.xml
 knot.conf
+nsd.conf
 model.*
 *.json
 *.rn[gc]
