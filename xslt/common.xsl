@@ -79,16 +79,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <value-of select="concat('&#xA;', $name, ':&#xA;')"/>
   </template>
 
-  <!-- Insert section before the first list entry -->
-  <template name="section-first">
-    <param name="name" select="local-name()"/>
-    <if test="position() = 1">
-      <call-template name="section">
-	<with-param name="name" select="$name"/>
-      </call-template>
-    </if>
-  </template>
-
   <!-- Insert key-value pair -->
   <template name="key-value">
     <param name="level" select="1"/> <!-- level of indentation -->

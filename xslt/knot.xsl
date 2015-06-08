@@ -41,6 +41,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </call-template>
   </template>
 
+  <!-- Insert section before first list entry -->
+  <template name="section-first">
+    <param name="name" select="local-name()"/>
+    <if test="position() = 1">
+      <call-template name="section">
+	<with-param name="name" select="$name"/>
+      </call-template>
+    </if>
+  </template>
+
   <template name="list-key">
     <param name="name" select="local-name()"/>
     <param name="value" select="."/>
@@ -235,7 +245,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </template>
 
   <template match="dnss:filesystem-paths">
-    <apply-templates select="dnss:run-time-dir|dnss:pid-file"/>
+    <apply-templates select="dnss:run-time-dir"/>
+    <apply-templates select="dnss:pid-file"/>
   </template>
 
   <template match="dnss:run-time-dir">
