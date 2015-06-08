@@ -45,9 +45,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <param name="name" select="local-name()"/>
     <param name="value" select="."/>
     <param name="quote"/>
-    <value-of select="concat('  - ', $name, ': ')"/>
-    <value-of select="concat($quote, $value, $quote)"/>
-    <text>&#xA;</text>
+    <value-of select="substring($spaces, 1, $indent-step - 2)"/>
+    <value-of select="concat('- ', $name, ': ')"/>
+    <value-of select="concat($quote, $value, $quote, '&#xA;')"/>
   </template>
 
   <template name="yaml-list">
@@ -212,7 +212,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <template match="dnss:max-udp-size">
     <call-template name="key-value">
       <with-param name="key">max-udp-payload</with-param>
-      <with-param name="dflt">100</with-param>
+      <with-param name="dflt" select="4096"/>
     </call-template>
   </template>
 
@@ -251,19 +251,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </template>
 
   <template match="dnss:privileges">
+    <apply-templates select="dnss:user"/>
+  </template>
+
+  <template match="dnss:user">
     <call-template name="key-value">
       <with-param name="key">user</with-param>
       <with-param name="value">
-	<value-of select="dnss:user"/>
-	<if test="dnss:group and dnss:group != 'root'">
+	<value-of select="."/>
+	<if test="../dnss:group and ../dnss:group != 'root'">
 	  <text>:</text>
-	  <value-of select="dnss:group"/>
+	  <value-of select="../dnss:group"/>
 	</if>
       </with-param>
       <with-param name="dflt">root</with-param>
     </call-template>
   </template>
-
+  
   <template match="dnss:response-rate-limiting">
     <call-template name="key-value">
       <with-param name="key">rate-limit</with-param>
@@ -641,8 +645,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template match="dnss:key
 		   |dnss:file
-		   |knot:kasp-db 
-		   |dnss:template">
+		   |dnss:template
+		   |knot:kasp-db"> 
     <call-template name="key-value">
       <with-param name="quote">"</with-param>
     </call-template>
