@@ -30,6 +30,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <strip-space elements="*"/>
   <include href="common.xsl"/>
 
+  <key name="remote" match="/dnss:dns-server/dnss:remote-server"
+       use="dnss:name"/>
+
+  <key name="acl" match="/dnss:dns-server/dnss:access-control-list"
+       use="dnss:name"/>
+
   <!-- Named templates -->
 
   <template name="address-port">
@@ -42,24 +48,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <template name="zone-options">
     <apply-templates select="dnss:description"/>
+    <apply-templates select="dnss:name"/>
     <apply-templates select="dnss:file"/>
-    <apply-templates select="dnss:zones-dir"/>
-    <call-template name="yaml-list">
-      <with-param name="name">master</with-param>
-      <with-param name="nodeset" select="dnss:master"/>
-    </call-template>
+    <apply-templates select="dnss:master"/>
     <apply-templates select="dnss:notify"/>
-    <call-template name="yaml-list">
-      <with-param name="name">acl</with-param>
-      <with-param name="nodeset" select="dnss:access-control-list"/>
-    </call-template>
-    <apply-templates select="dnss:any-to-tcp"/>
-    <apply-templates select="dnss:dnssec-signing"/>
-    <apply-templates select="dnss:journal"/>
-    <call-template name="yaml-list">
-      <with-param name="name">module</with-param>
-      <with-param name="nodeset" select="dnss:query-module"/>
-    </call-template>
+    <apply-templates select="dnss:access-control-list"/>
   </template>
 
   <!-- Matching templates -->
@@ -78,8 +71,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <call-template name="hash-comment"/>
     <apply-templates select="dnss:description"/>
     <apply-templates select="dnss:server-options"/>
-<!--     <apply-templates select="dnss:key"/>
-    <apply-templates select="dnss:access-control-list"/>
+    <apply-templates select="dnss:key"/>
+<!--    <apply-templates select="dnss:access-control-list"/>
     <apply-templates select="dnss:remote-server"/>
     <apply-templates select="dnss:query-module"/>
     <apply-templates select="dnss:zones"/>
@@ -100,9 +93,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </template>
 
   <template match="dnss:name|nsd:name">
-    <call-template name="list-key">
+    <call-template name="key-value">
       <with-param name="name">name</with-param>
-      <with-param name="quote" select="1"/>
+      <with-param name="quote">"</with-param>
     </call-template>
   </template>
 
@@ -192,19 +185,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </template>
 
   <template match="dnss:filesystem-paths">
+    <apply-templates select="dnss:run-time-dir"/>
     <apply-templates select="dnss:pid-file"/>
+  </template>
+
+  <template match="dnss:run-time-dir">
+    <call-template name="key-value">
+      <with-param name="key">zonesdir</with-param>
+    </call-template>
   </template>
 
   <template match="dnss:pid-file">
     <call-template name="key-value">
       <with-param name="key">pidfile</with-param>
-      <with-param name="value">
-	<if test="not(starts-with(., '/'))">
-	  <value-of select="concat(../dnss:run-time-dir, '/')"/>
-	</if>
-	<value-of select="."/>
-      </with-param>
-      <with-param name="quote">"</with-param>
     </call-template>
   </template>
 
@@ -259,10 +252,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <!-- key -->
 
-  <template match="dnss:key">
-    <call-template name="section-first"/>
-    <apply-templates select="dnss:name"/>
+  <template match="dnss:dns-server/dnss:key">
+    <call-template name="section"/>
     <apply-templates select="dnss:description"/>
+    <apply-templates select="dnss:name"/>
     <call-template name="key-value">
       <with-param name="key">algorithm</with-param>
       <with-param name="value">
@@ -287,84 +280,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </choose>
   </template>
 
-  <!-- acl -->
-
-  <template match="dnss:access-control-list">
-    <call-template name="section-first">
-      <with-param name="name">acl</with-param>
-    </call-template>
-    <apply-templates select="dnss:name"/>
-    <apply-templates select="dnss:description"/>
-    <call-template name="yaml-list">
-      <with-param name="name">address</with-param>
-      <with-param name="nodeset" select="dnss:network"/>
-    </call-template>
-    <call-template name="yaml-list">
-      <with-param name="name">key</with-param>
-      <with-param name="nodeset" select="dnss:key"/>
-    </call-template>
-    <call-template name="yaml-list">
-      <with-param name="name">action</with-param>
-      <with-param name="nodeset" select="dnss:operation"/>
-    </call-template>
-    <apply-templates select="dnss:action"/>
-  </template>
-
-  <template match="dnss:access-control-list/dnss:network" mode="value">
-    <value-of select="dnss:ip-prefix"/>
-  </template>
-
-  <template match="dnss:action">
-    <call-template name="key-value">
-      <with-param name="key">deny</with-param>
-      <with-param name="value">
-	<choose>
-	  <when test=". = 'allow'">off</when>
-	  <otherwise>on</otherwise>
-	</choose>
-      </with-param>
-      <with-param name="dflt">off</with-param>
-    </call-template>
-  </template>
-
-  <!-- remote -->
-
-  <template match="dnss:remote-server">
-    <call-template name="section-first">
-      <with-param name="name">remote</with-param>
-    </call-template>
-    <apply-templates select="dnss:name"/>
-    <apply-templates select="dnss:description"/>
-    <apply-templates select="dnss:remote"/>
-    <apply-templates select="dnss:local"/>
-    <apply-templates select="dnss:key"/>
-  </template>
-
-  <template match="dnss:remote">
-    <call-template name="key-value">
-      <with-param name="key">address</with-param>
-      <with-param name="value">
-	<call-template name="address-port"/>
-      </with-param>
-    </call-template>
-  </template>
-
-  <template match="dnss:local">
-    <call-template name="key-value">
-      <with-param name="key">via</with-param>
-      <with-param name="value">
-	<call-template name="address-port"/>
-      </with-param>
-    </call-template>
-  </template>
-
   <!-- log -->
 
   <!-- control -->
 
-  <!-- query modules -->
-
-  <!-- template & zone -->
+  <!-- pattern & zone -->
 
   <template match="dnss:zones">
     <apply-templates select="dnss:template"/>
@@ -372,25 +292,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </template>
 
   <template match="dnss:zones/dnss:template">
-    <call-template name="section-first"/>
-    <apply-templates select="dnss:name"/>
+    <call-template name="section">
+      <with-param name="name">pattern</with-param>
+    </call-template>
     <call-template name="zone-options"/>
   </template>
 
   <template match="dnss:zone">
-    <call-template name="section-first"/>
-    <apply-templates select="dnss:domain"/>
+    <call-template name="section"/>
     <apply-templates select="dnss:template"/>
     <call-template name="zone-options"/>
   </template>
 
-  <template match="dnss:zone/dnss:domain">
-    <call-template name="list-key"/>
+  <template match="dnss:template">
+    <call-template name="key-value">
+      <with-param name="key">include-pattern</with-param>
+    </call-template>
   </template>
 
-  <template match="dnss:zones-dir">
+  <template match="dnss:file">
     <call-template name="key-value">
-      <with-param name="key">storage</with-param>
+      <with-param name="key">zonefile</with-param>
     </call-template>
   </template>
 
@@ -467,15 +389,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <call-template name="key-value"/>
   </template>
 
-  <template match="dnss:key
-		   |dnss:file
+<!--  <template match="dnss:key
 		   |dnss:template">
     <call-template name="key-value">
       <with-param name="quoted" select="1"/>
     </call-template>
   </template>
 
-<!--  <template match="knot:async-start
+  <template match="knot:async-start
 		   |knot:semantic-checks">
     <call-template name="key-value">
       <with-param name="value">
@@ -483,7 +404,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </with-param>
     </call-template>
   </template>
--->
 
   <template match="dnss:access-control-list
 		   |dnss:master
@@ -491,6 +411,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		   " mode="value">
     <value-of select="concat('&quot;', ., '&quot;')"/>
   </template>
+-->
 
   <template match="dnss:enabled" mode="value">
     <call-template name="on-off"/>
