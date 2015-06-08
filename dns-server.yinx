@@ -344,6 +344,7 @@
 	</leaf>
       </container>
       <container name="privileges">
+	<presence value="process owner (and group)"/>
 	<description>
 	  <text>
 	    Parameters in this container can be used to run the server
@@ -354,6 +355,7 @@
 	</description>
 	<leaf name="user">
 	  <type name="string"/>
+	  <mandatory value="true"/>
 	  <description>
 	    <text>User name.</text>
 	  </description>
