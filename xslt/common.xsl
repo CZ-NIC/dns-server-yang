@@ -23,10 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <stylesheet
     xmlns="http://www.w3.org/1999/XSL/Transform"
-    xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0"
-    xmlns:dnss="http://www.nic.cz/ns/yang/dns-server"
-    xmlns:tsig="http://www.nic.cz/ns/yang/tsig-algorithms"
-    xmlns:knot="http://www.nic.cz/ns/yang/knot-dns"
     version="1.0">
   <output method="text"/>
   <strip-space elements="*"/>
