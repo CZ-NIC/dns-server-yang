@@ -31,9 +31,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <output method="text"/>
   <strip-space elements="*"/>
 
-  <!-- Address family of the configuration -->
-  <variable name="dnss-root" select="//nc:*/dnss:dns-server"/>
-
   <!-- Named templates -->
 
   <template name="on-off">
