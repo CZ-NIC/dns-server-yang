@@ -169,10 +169,6 @@
 	<knot:semantic-checks>true</knot:semantic-checks>
 	<any-to-tcp>true</any-to-tcp>
 	<serial-update-method>unix-time</serial-update-method>
-	<notify>
-	  <retrans-interval>60</retrans-interval>
-	  <max-retrans>5</max-retrans>
-	</notify>
 	<journal>
 	  <from-differences>false</from-differences>
 	  <zone-file-sync-delay>3600</zone-file-sync-delay>
@@ -197,6 +193,10 @@
       <zone>
 	<domain>example.com</domain>
 	<template>default</template>
+	<master>server1</master>
+	<notify>
+	  <recipient>server0</recipient>
+	</notify>
 	<any-to-tcp>false</any-to-tcp>
 	<access-control-list>acl-xfr-update</access-control-list>
 	<access-control-list>acl-notify</access-control-list>

@@ -54,15 +54,6 @@
     </description>
   </feature>
 
-  <feature name="notify-parameters">
-    <description>
-      <text>
-	This feature indicates support for the configuration of
-	parameters for retransmission of NOTIFY messages over UDP.
-      </text>
-    </description>
-  </feature>
-
   <feature name="journal-from-differences">
     <description>
       <text>This feature indicates support for generating a set of
@@ -661,30 +652,6 @@
 	      </text>
 	    </description>
 	  </leaf-list>
-	  <leaf name="retrans-interval">
-	    <type name="uint16">
-	      <range value="1..max"/>
-	    </type>
-	    <units name="seconds"/>
-	    <default value="60"/>
-	    <description>
-	      <text>
-		Time interval between retransmissions of NOTIFY
-		messages.
-	      </text>
-	    </description>
-	  </leaf>
-	  <leaf name="max-retrans">
-	    <type name="uint8">
-	      <range value="1..max"/>
-	    </type>
-	    <default value="5"/>
-	    <description>
-	      <text>
-		Maximum number of retransmissions of a NOTIFY message.
-	      </text>
-	    </description>
-	  </leaf>
 	</container>
 	<uses name="acls">
 	  <description>
