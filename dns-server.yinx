@@ -428,6 +428,7 @@
 	<uses name="entry-name"/>
 	<leaf name="ip-prefix">
 	  <type name="inet:ip-prefix"/>
+	  <mandatory value="true"/>
 	  <description>
 	    <text>
 	      IPv4 or IPv6 prefix in the usual ADDRESS/LENGTH notation.
