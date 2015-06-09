@@ -30,10 +30,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <strip-space elements="*"/>
   <include href="common.xsl"/>
 
-  <key name="remote" match="/dnss:dns-server/dnss:remote-server"
+  <key name="remote" match="//dnss:remote-server"
        use="dnss:name"/>
 
-  <key name="acl" match="/dnss:dns-server/dnss:access-control-list"
+  <key name="acl" match="//dnss:access-control-list"
        use="dnss:name"/>
 
   <!-- Named templates -->
@@ -46,9 +46,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </if>
   </template>
 
+  <template name="prefix-port">
+    <value-of select="dnss:ip-prefix"/>
+    <if test="dnss:port">
+      <text>@</text>
+      <value-of select="dnss:port"/>
+    </if>
+  </template>
+
   <template name="zone-options">
     <apply-templates select="dnss:description"/>
-    <apply-templates select="dnss:name"/>
     <apply-templates select="dnss:file"/>
     <apply-templates select="dnss:master"/>
     <apply-templates select="dnss:notify"/>
@@ -72,11 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <apply-templates select="dnss:description"/>
     <apply-templates select="dnss:server-options"/>
     <apply-templates select="dnss:key"/>
-<!--    <apply-templates select="dnss:access-control-list"/>
-    <apply-templates select="dnss:remote-server"/>
-    <apply-templates select="dnss:query-module"/>
     <apply-templates select="dnss:zones"/>
--->
   </template>
 
   <template match="dnss:dns-server/dnss:description">
@@ -295,13 +298,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <call-template name="section">
       <with-param name="name">pattern</with-param>
     </call-template>
+    <apply-templates select="dnss:name"/>
     <call-template name="zone-options"/>
   </template>
 
   <template match="dnss:zone">
     <call-template name="section"/>
+    <apply-templates select="dnss:domain"/>
     <apply-templates select="dnss:template"/>
     <call-template name="zone-options"/>
+  </template>
+
+  <template match="dnss:domain">
+    <call-template name="key-value">
+      <with-param name="key">name</with-param>
+    </call-template>
   </template>
 
   <template match="dnss:template">
@@ -316,71 +327,103 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </call-template>
   </template>
 
+  <template match="dnss:master">
+    <apply-templates select="key('remote', .)">
+      <with-param name="kw">request-xfr</with-param>
+    </apply-templates>
+  </template>
+
   <template match="dnss:notify">
-    <call-template name="yaml-list">
-      <with-param name="name">notify</with-param>
-      <with-param name="nodeset" select="dnss:recipient"/>
-    </call-template>
+    <apply-templates select="key('remote', .)">
+      <with-param name="kw">notify</with-param>
+    </apply-templates>
   </template>
 
-  <template match="dnss:any-to-tcp">
+  <template match="dnss:remote-server">
+    <param name="kw"/>
     <call-template name="key-value">
-      <with-param name="key">disable-any</with-param>
+      <with-param name="key" select="$kw"/>
       <with-param name="value">
-	<call-template name="on-off"/>
-      </with-param>
-    </call-template> 
-  </template>
-
-  <template match="dnss:dnssec-signing">
-    <call-template name="key-value">
-      <with-param name="key">dnssec-signing</with-param>
-      <with-param name="value">
+	<apply-templates select="dnss:remote"/>
+	<text> </text>
 	<call-template name="value-or-default">
-	  <with-param name="nodeset" select="dnss:enabled"/>
-	  <with-param name="dflt">on</with-param>
+	  <with-param name="nodeset" select="dnss:key"/>
+	  <with-param name="dflt">NOKEY</with-param>
 	</call-template>
       </with-param>
-      <with-param name="dflt">off</with-param>
-    </call-template>
-  </template>
-  
-  <template match="dnss:journal">
-    <apply-templates select="dnss:zone-file-sync-delay"/>
-    <apply-templates select="dnss:from-differences"/>
-    <apply-templates select="maximum-journal-size"/>
-  </template>
-
-  <template match="dnss:zone-file-sync-delay">
-    <call-template name="key-value">
-      <with-param name="key">zonefile-sync</with-param>
-      <with-param name="dflt" select="0"/>
-    </call-template>
-  </template>
-  
-  <template match="dnss:from-differences">
-    <call-template name="key-value">
-      <with-param name="key">ixfr-from-differences</with-param>
-      <with-param name="value">
-	<call-template name="on-off"/>
-      </with-param>
-      <with-param name="dflt">off</with-param>
-    </call-template>
-  </template>
-  
-  <template match="dnss:maximum-journal-size">
-    <call-template name="key-value">
-      <with-param name="key">max-journal-size</with-param>
     </call-template>
   </template>
 
-  <template match="dnss:query-module" mode="value">
-    <variable name="typ">
-      <call-template name="strip-prefix">
-	<with-param name="qn" select="dnss:type"/>
+  <template match="dnss:remote">
+    <call-template name="address-port"/>
+  </template>
+
+  <template match="dnss:access-control-list">
+    <apply-templates select="key('acl', .)"/>
+  </template>
+
+  <template match="dnss:dns-server/dnss:access-control-list">
+    <choose>
+      <when test="dnss:network">
+	<for-each select="dnss:network">
+	  <apply-templates select=".." mode="key">
+	    <with-param name="pref">
+	      <call-template name="prefix-port"/>
+	    </with-param>
+	  </apply-templates>
+	</for-each>
+      </when>
+      <otherwise>
+	<apply-templates select="." mode="key"/>
+	<apply-templates select="." mode="key">
+	  <with-param name="pref">::/0</with-param>
+	</apply-templates>
+      </otherwise>
+    </choose>
+  </template>
+
+  <template match="dnss:dns-server/dnss:access-control-list" mode="key">
+    <param name="pref">0.0.0.0/0</param>
+    <choose>
+      <when test="dnss:key">
+	<for-each select="dnss:key">
+	  <apply-templates select=".." mode="operation">
+	    <with-param name="pref" select="$pref"/>
+	    <with-param name="key" select="."/>
+	  </apply-templates>
+	</for-each>
+      </when>
+      <otherwise>
+	<apply-templates select="." mode="operation">
+	  <with-param name="pref" select="$pref"/>
+	</apply-templates>
+      </otherwise>
+    </choose>
+  </template>
+
+  <template match="dnss:dns-server/dnss:access-control-list" mode="operation">
+    <param name="pref"/>
+    <param name="key"/>
+    <for-each select="dnss:operation[. = 'transfer' or . = 'notify']">
+      <call-template name="key-value">
+	<with-param name="key">
+	  <choose>
+	    <when test=". = 'transfer'">provide-xfr</when>
+	    <otherwise>allow-notify</otherwise>
+	  </choose>
+	</with-param>
+	<with-param name="value">
+	  <value-of select="concat($pref, ' ')"/>
+	  <choose>
+	    <when test="../dnss:action = 'deny'">BLOCKED</when>
+	    <when test="$key">
+	      <value-of select="$key"/>
+	    </when>
+	    <otherwise>NOKEY</otherwise>
+	  </choose>
+	</with-param>
       </call-template>
-    </variable>
-    <value-of select="concat('&quot;', $typ, '/', dnss:name, '&quot;')"/>
+    </for-each>
   </template>
 
   <!-- Directly translated parameters -->
