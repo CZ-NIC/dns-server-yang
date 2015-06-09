@@ -72,6 +72,7 @@
         <ip-prefix>2001:db8::/64</ip-prefix>
       </network>
       <operation>notify</operation>
+      <action>deny</action>
     </access-control-list>
     <access-control-list>
       <name>socket</name>
