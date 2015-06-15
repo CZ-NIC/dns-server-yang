@@ -184,6 +184,23 @@
       <type name="string"/>
     </leaf>
   </grouping>
+
+  <grouping name="pid">
+    <description>
+      <text>
+	This grouping defines PID leaf for use in RPC replies. 
+      </text>
+    </description>
+    <leaf name="pid">
+      <type name="uint32"/>
+      <mandatory value="true"/>
+      <description>
+	<text>
+	  Return PID of the DNS server process. 
+	</text>
+      </description>
+    </leaf>
+  </grouping>
   
   <!-- Configuration data -->
   
@@ -832,4 +849,46 @@
       </list>
     </container>
   </container>
+
+  <!-- Operations -->
+
+  <rpc name="start-server">
+    <description>
+      <text>
+	Start the DNS server, or do nothing if it is already running.
+      </text>
+    </description>
+    <output>
+      <uses name="pid"/>
+    </output>
+  </rpc>
+
+  <rpc name="stop-server">
+    <description>
+      <text>
+	Stop the DNS server, or do nothing if it is not running.
+      </text>
+    </description>
+  </rpc>
+
+  <rpc name="restart-server">
+    <description>
+      <text>
+	Restart the DNS server, which is equivalent to executing
+	'stop-server' and 'start-server' in sequence.
+      </text>
+    </description>
+    <output>
+      <uses name="pid"/>
+    </output>
+  </rpc>
+
+  <rpc name="reload-server">
+    <description>
+      <text>
+	Reload zone database from zone files.
+      </text>
+    </description>
+  </rpc>
+
 </module>
