@@ -184,4 +184,13 @@ module: dns-server
          |     +--rw knot:ip-address             inet:ip-address
          |     +--rw knot:port?                  inet:port-number
          +--rw knot:access-control-list*   acl-ref
+rpcs:
+   +---x start-server
+   |  +--ro output
+   |     +--ro pid    uint32
+   +---x stop-server
+   +---x restart-server
+   |  +--ro output
+   |     +--ro pid    uint32
+   +---x reload-server
 ```
