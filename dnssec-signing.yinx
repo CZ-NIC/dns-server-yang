@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module name="dnssec-signing"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+        xmlns:dnss="http://www.nic.cz/ns/yang/dns-server"
+        xmlns:dnssig="http://www.nic.cz/ns/yang/dnssec-signing"
+        xmlns:dsalg="http://www.nic.cz/ns/yang/dnssec-algorithms"
+	xmlns:h="http://www.w3.org/1999/xhtml">
+  <namespace uri="http://www.nic.cz/ns/yang/dnssec-signing"/>
+  <prefix value="dnssig"/>
+  <import module="dns-server">
+    <prefix value="dnss"/>
+  </import>
+  <import module="dnssec-algorithms">
+    <prefix value="dsalg"/>
+  </import>
+  <organization>
+    <text>CZ.NIC, z. s. p. o.</text>
+  </organization>
+  <contact>
+    <text>
+      <h:p>
+        Editor:   Ladislav Lhotka<h:br/>
+                  &lt;mailto:lhotka@nic.cz&gt;
+      </h:p>
+    </text>
+  </contact>
+  <description>
+    <text>
+      This YANG module defines configuration data and RPC operations
+      for automatic DNSSEC signatures.
+    </text>
+  </description>
+
+  <revision date="2015-06-19">
+    <description>
+      <text>Initial revision.</text>
+    </description>
+  </revision>
+
+  <!-- Features -->
+  
+  <!-- Identities -->
+
+  <!-- Typedefs -->
+
+  <typedef name="lifetime">
+    <description>
+      <text>This type is used for the lifetime values of keys and
+      signatures.</text>
+    </description>
+    <type name="uint32"/>
+    <units name="seconds"/>
+  </typedef>
+  
+  <!-- Groupings -->
+
+  <!-- Configuration data -->
+
+  <augment target-node="/dnss:dns-server">
+    <description>
+      <text>
+	Augment DNS server configuration with a list of DNSSEC signing
+	policies.
+      </text>
+    </description>
+    <list name="sign-policy">
+      <key value="name"/>
+      <description>
+	<text>
+	  A named DNSSEC signing policy.
+	</text>
+      </description>
+      <uses name="dnss:entry-name"/>
+      <leaf name="algorithm">
+	<type name="dsalg:dnssec-algorithm"/>
+	<default value="RSASHA256"/>
+	<description>
+	  <text>
+	    Algorithm used for signing keys and issued signatures.
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="ksk-length">
+	<type name="uint16"/>
+	<default value="2048"/>
+	<units name="bits"/>
+	<description>
+	  <text>
+	    Length of generated key-signing keys.
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="zsk-length">
+	<type name="uint16"/>
+	<default value="1024"/>
+	<units name="bits"/>
+	<description>
+	  <text>
+	    Length of generated zone-signing keys.
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="dnskey-ttl">
+	<type name="dnss:rr-ttl"/>
+	<description>
+	  <text>
+	    TTL value for DNSKEY records added to zone apex.
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="zsk-lifetime">
+	<type name="lifetime"/>
+	<default value="2592000"/>
+	<description>
+	  <text>
+	    <h:p>Time interval after which ZSK rollover will be initiated.</h:p>
+	    <h:p>The default value corresponds to 30 days.</h:p>
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="rrsig-lifetime">
+	<type name="lifetime"/>
+	<default value="1209600"/>
+	<description>
+	  <text>
+	    <h:p>Lifetime of newly issued signatures.</h:p>
+	    <h:p>The default value corresponds to two weeks.</h:p>
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="rrsig-refresh">
+	<type name="uint32"/>
+	<units name="seconds"/>
+	<default value="604800"/>
+	<description>
+	  <text>
+	    <h:p>This parameter specifies how long before signature
+	    expiration the signature will be refreshed.</h:p>
+	    <h:p>The default value corresponds to one week.</h:p>
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="nsec3">
+	<type name="boolean"/>
+	<default value="false"/>
+	<description>
+	  <text>
+	    This flag specifies whether NSEC3 will be used instead of
+	    NSEC.
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="soa-min-ttl">
+	<type name="dnss:rr-ttl"/>
+	<description>
+	  <text>
+	    SOA minimum TTL value.
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="zone-max-ttl">
+	<type name="dnss:rr-ttl"/>
+	<description>
+	  <text>
+	    Maximum TTL value present in the zone.
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="propagation-delay">
+	<type name="uint32"/>
+	<units name="seconds"/>
+	<default value="3600"/>
+	<description>
+	  <text>
+	    Extra delay added to every key rollover step.
+	  </text>
+	</description>
+      </leaf>
+    </list>
+  </augment>
+  
+  <!-- RPC operations -->
+  
+</module>

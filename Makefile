@@ -1,4 +1,4 @@
-MODULES = dns-server tsig-algorithms knot-dns
+MODULES = dns-server dnssec-signing tsig-algorithms dnssec-algorithms knot-dns
 EXAMPLE_BASE = example
 EXAMPLE_TYPE = data
 baty = $(EXAMPLE_BASE)-$(EXAMPLE_TYPE)

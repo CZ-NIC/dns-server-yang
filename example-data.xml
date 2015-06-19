@@ -3,6 +3,7 @@
   <dns-server
       xmlns="http://www.nic.cz/ns/yang/dns-server"
       xmlns:tsig="http://www.nic.cz/ns/yang/tsig-algorithms"
+      xmlns:dnssig="http://www.nic.cz/ns/yang/dnssec-signing"
       xmlns:knot="http://www.nic.cz/ns/yang/knot-dns">
     <description>Example DNS server configuration.</description>
     <server-options>
@@ -160,6 +161,12 @@
 	<knot:network>2620:0:b61::/52</knot:network>
       </knot:synth-record>
     </query-module>
+    <dnssig:sign-policy>
+      <dnssig:name>default_rsa</dnssig:name>
+      <dnssig:algorithm>RSASHA256</dnssig:algorithm>
+      <dnssig:zsk-length>1024</dnssig:zsk-length>
+      <dnssig:ksk-length>2048</dnssig:ksk-length>
+    </dnssig:sign-policy>
     <zones>
       <template>
 	<name>default</name>

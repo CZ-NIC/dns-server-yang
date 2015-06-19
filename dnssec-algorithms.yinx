@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module name="dnssec-algorithms"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+        xmlns:dsalg="http://www.nic.cz/ns/yang/dnssec-algorithms"
+        xmlns:h="http://www.w3.org/1999/xhtml">
+  <namespace uri="http://www.nic.cz/ns/yang/dnssec-algorithms"/>
+  <prefix value="dsalg"/>
+  <organization>
+    <text>CZ.NIC, z. s. p. o.</text>
+  </organization>
+  <contact>
+    <text>
+      <h:p>
+        Editor:   Ladislav Lhotka<h:br/>
+                  &lt;mailto:lhotka@nic.cz&gt;
+      </h:p>
+    </text>
+  </contact>
+  <description>
+    <text>
+      <h:p>This module translates IANA registry for DNSSEC algorithm
+      numbers to a YANG enumeration type.</h:p>
+    </text>
+  </description>
+  <reference>
+    <text>
+      <h:p>IANA: Domain Name System Security (DNSSEC) Algorithm Numbers.<h:br/>
+      http://www.iana.org/assignments/dns-sec-alg-numbers/dns-sec-alg-numbers.xhtml
+      </h:p>
+    </text>
+  </reference>
+  <revision date="2015-06-19">
+    <description>
+      <text>Initial revision.</text>
+    </description>
+  </revision>
+
+  <typedef name="dnssec-algorithm">
+    <description>
+      <text>
+	<h:p>This typedef defines an enumeration of algorithms for
+	DNSSEC signing as defined by IANA.</h:p>
+	<h:p>The numbers defined by the 'value' statements are used in
+	KEY, SIG, DNSKEY, RRSIG and CERT resource records for
+	identifying the security algorithm.</h:p>
+	<h:p>Value 0, 4, 9 and 11 are reserved.</h:p>
+      </text>
+    </description>
+    <type name="enumeration">
+      <enum name="RSAMD5">
+	<description>
+	 <text>RSA/MD5</text>
+	</description>
+	<status value="deprecated"/>
+	<value value="1"/>
+      </enum>
+      <enum name="DH">
+	<description>
+	  <text>Diffie-Hellman</text>
+	</description>
+	<value value="2"/>
+      </enum>
+      <enum name="DSA">
+	<description>
+	  <text>DSA/SHA1</text>
+	</description>
+	<value value="3"/>
+      </enum>
+      <enum name="RSASHA1">
+	<description>
+	  <text>RSA/SHA1</text>
+	</description>
+	<value value="5"/>
+      </enum>
+      <enum name="DSA-NSEC3-SHA1">
+	<description>
+	  <text>DSA-NSEC3-SHA1</text>
+	</description>
+	<value value="6"/>
+      </enum>
+      <enum name="RSASHA1-NSEC3-SHA1">
+	<description>
+	  <text>RSASHA1-NSEC3-SHA1</text>
+	</description>
+	<value value="7"/>
+      </enum>
+      <enum name="RSASHA256">
+	<description>
+	  <text>RSA/SHA256</text>
+	</description>
+	<value value="8"/>
+      </enum>
+      <enum name="RSASHA512">
+	<description>
+	  <text>RSA/SHA512</text>
+	</description>
+	<value value="10"/>
+      </enum>
+      <enum name="ECC-GOST">
+	<description>
+	  <text>GOST R 34.10-2001</text>
+	</description>
+	<value value="12"/>
+      </enum>
+      <enum name="ECDSAP256SHA256">
+	<description>
+	  <text>ECDSA Curve P-256 with SHA-256</text>
+	</description>
+	<value value="13"/>
+      </enum>
+      <enum name="ECDSAP384SHA384">
+	<description>
+	  <text>ECDSA Curve P-384 with SHA-384</text>
+	</description>
+	<value value="14"/>
+      </enum>
+    </type>
+  </typedef>
+
+</module>
