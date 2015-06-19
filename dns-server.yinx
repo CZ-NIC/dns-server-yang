@@ -73,6 +73,18 @@
 
   <!-- Typedefs -->
 
+  <typedef name="rr-ttl">
+    <description>
+      <text>
+	This type is used for TTL values of DNS resource records.
+      </text>
+    </description>
+    <type name="int32">
+      <range value="0..max"/>
+    </type>
+    <units name="seconds"/>
+  </typedef>
+
   <typedef name="fs-path">
     <description>
       <text>
