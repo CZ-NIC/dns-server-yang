@@ -2,8 +2,7 @@
 <module name="tsig-algorithms"
         xmlns="urn:ietf:params:xml:ns:yang:yin:1"
         xmlns:tsig="http://www.nic.cz/ns/yang/tsig-algorithms"
-        xmlns:h="http://www.w3.org/1999/xhtml"
-        xmlns:xi="http://www.w3.org/2001/XInclude">
+        xmlns:h="http://www.w3.org/1999/xhtml">
   <namespace uri="http://www.nic.cz/ns/yang/tsig-algorithms"/>
   <prefix value="tsig"/>
   <organization>
