@@ -729,22 +729,6 @@
 	    </text>
 	  </description>
 	</leaf>
-	<container name="dnssec-signing">
-	  <description>
-	    <text>Configuration of automatic DNSSEC signing.</text>
-	  </description>
-	  <presence value="automatic DNSSEC signing"/>
-	  <leaf name="enabled">
-	    <type name="boolean"/>
-	    <default value="true"/>
-	    <description>
-	      <text>
-		This flag allows to disable automatic DNSSEC signing
-		while keeping its configuration in place.
-	      </text>
-	    </description>
-	  </leaf>
-	</container>
 	<container name="journal">
 	  <description>
 	    <text>Zone journal parameters.</text>

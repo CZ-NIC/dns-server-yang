@@ -182,9 +182,10 @@
 	  <zone-file-sync-delay>3600</zone-file-sync-delay>
 	  <maximum-journal-size>1125899906842624</maximum-journal-size>
 	</journal>
-	<dnssec-signing>
+	<dnssig:dnssec-signing>
+	  <dnssig:policy>default_rsa</dnssig:policy>
 	  <knot:kasp-db>/var/lib/knot/kasp</knot:kasp-db>
-	</dnssec-signing>
+	</dnssig:dnssec-signing>
 	<query-module>
 	  <type>knot:dnstap</type>
 	  <name>capture_all</name>

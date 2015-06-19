@@ -54,6 +54,42 @@
   
   <!-- Groupings -->
 
+  <grouping name="zone-options">
+    <description>
+      <text>
+	Zone options that configure DNSSEC signing.
+      </text>
+    </description>
+    <container name="dnssec-signing">
+      <description>
+	<text>Configuration of automatic DNSSEC signing.</text>
+      </description>
+      <presence value="automatic DNSSEC signing"/>
+      <leaf name="enabled">
+	<type name="boolean"/>
+	<default value="true"/>
+	<description>
+	  <text>
+	    This flag allows to disable automatic DNSSEC signing while
+	    keeping its configuration in place.
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="policy">
+	<type name="leafref">
+	  <path value="/dnss:dns-server/dnssig:sign-policy/dnssig:name"/>
+	</type>
+	<description>
+	  <text>
+	    <h:p>Reference to a signing policy.</h:p>
+	    <h:p>If this leaf is present, ZSKs are generated
+	    automatically according to the signing policy.</h:p>
+	  </text>
+	</description>
+      </leaf>
+    </container>
+  </grouping>
+
   <!-- Configuration data -->
 
   <augment target-node="/dnss:dns-server">
@@ -179,6 +215,14 @@
     </list>
   </augment>
   
+  <augment target-node="/dnss:dns-server/dnss:zones/dnss:template">
+    <uses name="dnssig:zone-options"/>
+  </augment>
+
+  <augment target-node="/dnss:dns-server/dnss:zones/dnss:zone">
+    <uses name="dnssig:zone-options"/>
+  </augment>
+
   <!-- RPC operations -->
   
 </module>
