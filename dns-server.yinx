@@ -213,6 +213,38 @@
       </description>
     </leaf>
   </grouping>
+
+  <!-- State data -->
+
+  <container name="dns-server-state">
+    <config value="false"/>
+    <description>
+      <text>
+	Operational state of the name server.
+      </text>
+    </description>
+    <container name="server">
+      <description>
+	<text>
+	  State data of the server process.
+	</text>
+      </description>
+    </container>
+    <list name="zone">
+      <description>
+	<text>
+	  State data of a zone.
+	</text>
+      </description>
+      <key value="domain"/>
+      <leaf name="domain">
+	<type name="inet:domain-name"/>
+	<description>
+	  <text>Zone name.</text>
+	</description>
+      </leaf>
+    </list>
+  </container>
   
   <!-- Configuration data -->
   
