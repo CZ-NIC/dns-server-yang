@@ -34,6 +34,22 @@ Data Tree
 
 ```
 module: dns-server
+   +--ro dns-server-state
+   |  +--ro server
+   |  +--ro zone* [domain]
+   |     +--ro domain                   inet:domain-name
+   |     +--ro dnssig:dnssec-signing
+   |        +--ro dnssig:key* [key-id]
+   |           +--ro dnssig:key-id       key-id
+   |           +--ro dnssig:key-tag      uint16
+   |           +--ro dnssig:algorithm    dsalg:dnssec-algorithm
+   |           +--ro dnssig:length       uint16
+   |           +--ro dnssig:publish?     yang:date-and-time
+   |           +--ro dnssig:activate?    yang:date-and-time
+   |           +--ro dnssig:retire?      yang:date-and-time
+   |           +--ro dnssig:remove?      yang:date-and-time
+   |           +--ro dnssig:created?     yang:date-and-time
+   |           +--ro dnssig:flags?       bits
    +--rw dns-server
       +--rw description?           string
       +--rw server-options
@@ -116,20 +132,17 @@ module: dns-server
       |     +--rw knot:db-dir?   dnss:fs-path
       +--rw zones
       |  +--rw template* [name]
-      |  |  +--rw name                    string
-      |  |  +--rw default?                boolean
-      |  |  +--rw description?            string
-      |  |  +--rw zones-dir?              fs-path
-      |  |  +--rw file?                   fs-path
-      |  |  +--rw master*                 remote-ref
+      |  |  +--rw name                     string
+      |  |  +--rw default?                 boolean
+      |  |  +--rw description?             string
+      |  |  +--rw zones-dir?               fs-path
+      |  |  +--rw file?                    fs-path
+      |  |  +--rw master*                  remote-ref
       |  |  +--rw notify
       |  |  |  +--rw recipient*   remote-ref
-      |  |  +--rw access-control-list*    acl-ref
-      |  |  +--rw serial-update-method?   enumeration
-      |  |  +--rw any-to-tcp?             boolean {any-to-tcp}?
-      |  |  +--rw dnssec-signing!
-      |  |  |  +--rw enabled?        boolean
-      |  |  |  +--rw knot:kasp-db?   string
+      |  |  +--rw access-control-list*     acl-ref
+      |  |  +--rw serial-update-method?    enumeration
+      |  |  +--rw any-to-tcp?              boolean {any-to-tcp}?
       |  |  +--rw journal
       |  |  |  +--rw maximum-journal-size?   uint64
       |  |  |  +--rw zone-file-sync-delay?   uint32
@@ -137,22 +150,23 @@ module: dns-server
       |  |  +--rw query-module* [type name]
       |  |  |  +--rw type    -> /dns-server/query-module/type
       |  |  |  +--rw name    -> /dns-server/query-module[type=current()/../type]/name
-      |  |  +--rw knot:semantic-checks?   boolean
+      |  |  +--rw dnssig:dnssec-signing!
+      |  |  |  +--rw dnssig:enabled?   boolean
+      |  |  |  +--rw dnssig:policy?    -> /dnss:dns-server/dnssig:sign-policy/name
+      |  |  |  +--rw knot:kasp-db?     string
+      |  |  +--rw knot:semantic-checks?    boolean
       |  +--rw zone* [domain]
-      |     +--rw domain                  inet:domain-name
-      |     +--rw template?               -> /dns-server/zones/template/name
-      |     +--rw description?            string
-      |     +--rw zones-dir?              fs-path
-      |     +--rw file?                   fs-path
-      |     +--rw master*                 remote-ref
+      |     +--rw domain                   inet:domain-name
+      |     +--rw template?                -> /dns-server/zones/template/name
+      |     +--rw description?             string
+      |     +--rw zones-dir?               fs-path
+      |     +--rw file?                    fs-path
+      |     +--rw master*                  remote-ref
       |     +--rw notify
       |     |  +--rw recipient*   remote-ref
-      |     +--rw access-control-list*    acl-ref
-      |     +--rw serial-update-method?   enumeration
-      |     +--rw any-to-tcp?             boolean {any-to-tcp}?
-      |     +--rw dnssec-signing!
-      |     |  +--rw enabled?        boolean
-      |     |  +--rw knot:kasp-db?   string
+      |     +--rw access-control-list*     acl-ref
+      |     +--rw serial-update-method?    enumeration
+      |     +--rw any-to-tcp?              boolean {any-to-tcp}?
       |     +--rw journal
       |     |  +--rw maximum-journal-size?   uint64
       |     |  +--rw zone-file-sync-delay?   uint32
@@ -160,7 +174,24 @@ module: dns-server
       |     +--rw query-module* [type name]
       |     |  +--rw type    -> /dns-server/query-module/type
       |     |  +--rw name    -> /dns-server/query-module[type=current()/../type]/name
-      |     +--rw knot:semantic-checks?   boolean
+      |     +--rw dnssig:dnssec-signing!
+      |     |  +--rw dnssig:enabled?   boolean
+      |     |  +--rw dnssig:policy?    -> /dnss:dns-server/dnssig:sign-policy/name
+      |     |  +--rw knot:kasp-db?     string
+      |     +--rw knot:semantic-checks?    boolean
+      +--rw dnssig:sign-policy* [name]
+      |  +--rw dnssig:name                 string
+      |  +--rw dnssig:algorithm?           dsalg:dnssec-algorithm
+      |  +--rw dnssig:ksk-length?          uint16
+      |  +--rw dnssig:zsk-length?          uint16
+      |  +--rw dnssig:dnskey-ttl?          dnss:rr-ttl
+      |  +--rw dnssig:zsk-lifetime?        lifetime
+      |  +--rw dnssig:rrsig-lifetime?      lifetime
+      |  +--rw dnssig:rrsig-refresh?       uint32
+      |  +--rw dnssig:nsec3?               boolean
+      |  +--rw dnssig:soa-min-ttl?         dnss:rr-ttl
+      |  +--rw dnssig:zone-max-ttl?        dnss:rr-ttl
+      |  +--rw dnssig:propagation-delay?   uint32
       +--rw knot:log* [name]
       |  +--rw knot:name           string
       |  +--rw knot:description?   string
@@ -193,4 +224,18 @@ rpcs:
    |  +--ro output
    |     +--ro pid    uint32
    +---x reload-server
+module: dnssec-signing
+rpcs:
+   +---x generate-key
+      +---w input
+      |  +---w algorithm             dsalg:dnssec-algorithm
+      |  +---w length                uint16
+      |  +---w publish?              yang:date-and-time
+      |  +---w activate?             yang:date-and-time
+      |  +---w retire?               yang:date-and-time
+      |  +---w remove?               yang:date-and-time
+      |  +---w secure-entry-point?   boolean
+      +--ro output
+         +--ro key-id     key-id
+         +--ro key-tag    uint16
 ```

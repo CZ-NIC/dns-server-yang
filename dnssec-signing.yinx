@@ -7,6 +7,9 @@
 	xmlns:h="http://www.w3.org/1999/xhtml">
   <namespace uri="http://www.nic.cz/ns/yang/dnssec-signing"/>
   <prefix value="dnssig"/>
+  <import module="ietf-yang-types">
+    <prefix value="yang"/>
+  </import>
   <import module="dns-server">
     <prefix value="dnss"/>
   </import>
@@ -51,6 +54,17 @@
     <type name="uint32"/>
     <units name="seconds"/>
   </typedef>
+
+  <typedef name="key-id">
+    <description>
+      <text>
+	This type is used for identifiers of DNSSEC keys.
+      </text>
+    </description>
+    <type name="string">
+      <length value="40"/>
+    </type>
+  </typedef>
   
   <!-- Groupings -->
 
@@ -89,6 +103,156 @@
       </leaf>
     </container>
   </grouping>
+
+  <grouping name="key-parameters">
+    <description>
+      <text>
+	Common parameters of DNSSEC keys.
+      </text>
+    </description>
+    <leaf name="algorithm">
+      <type name="dsalg:dnssec-algorithm"/>
+      <mandatory value="true"/>
+      <description>
+	<text>
+	  Encryption algorithm for which the key works.
+	</text>
+      </description>
+    </leaf>
+    <leaf name="length">
+      <type name="uint16"/>
+      <units name="bits"/>
+      <mandatory value="true"/>
+      <description>
+	<text>
+	  Length of the key.
+	</text>
+      </description>
+    </leaf>
+    <leaf name="publish">
+      <type name="yang:date-and-time"/>
+      <description>
+	<text>
+	  <h:p>The time of key publication (the key appears as a
+	  DNSKEY resource record in the zone).</h:p>
+	  <h:p>Absence of this leaf means the key is published
+	  immediately after the key is created.</h:p>
+	</text>
+      </description>
+    </leaf>
+    <leaf name="activate">
+      <type name="yang:date-and-time"/>
+      <description>
+	<text>
+	  <h:p>Start of the time interval in which the key is used for
+	  signing.</h:p>
+	  <h:p>Absence of this leaf means the key is used for signing
+	  since the time of publishing.</h:p>
+	</text>
+      </description>
+    </leaf>
+    <leaf name="retire">
+      <type name="yang:date-and-time"/>
+      <description>
+	<text>
+	  <h:p>End of the time interval in which the key is used for signing.</h:p>
+	  <h:p>Absence of this leaf means the key is never retired.</h:p>
+	</text>
+      </description>
+    </leaf>
+    <leaf name="remove">
+      <type name="yang:date-and-time"/>
+      <description>
+	<text>
+	  <h:p>The time of DNSKEY RR removal.</h:p>
+	  <h:p>Absence of this leaf means the key is never
+	  removed.</h:p>
+	</text>
+      </description>
+    </leaf>
+  </grouping>
+
+  <!-- State data -->
+
+  <augment target-node="/dnss:dns-server-state/dnss:zone">
+    <container name="dnssec-signing">
+      <description>
+	<text>
+	  State data related to automatic DNSSEC signing.
+	</text>
+      </description>
+      <list name="key">
+	<key value="key-id"/>
+	<description>
+	  <text>
+	    Parameters of a DNSSEC key.
+	  </text>
+	</description>
+	<leaf name="key-id">
+	  <type name="key-id"/>
+	  <description>
+	    <text>
+	      Key identifier.
+	    </text>
+	  </description>
+	</leaf>
+	<leaf name="key-tag">
+	  <type name="uint16"/>
+	  <mandatory value="true"/>
+	  <description>
+	    <text>
+	      Key tag.
+	    </text>
+	  </description>
+	  <reference>
+	    <text>
+	      RFC 4034: Resource Records for the DNS Security
+	      Extensions.
+	    </text>
+	  </reference>
+	</leaf>
+	<uses name="key-parameters"/>
+	<leaf name="created">
+	  <type name="yang:date-and-time"/>
+	  <description>
+	    <text>
+	      Date and time when the key was created.
+	    </text>
+	  </description>
+	</leaf>
+	<leaf name="flags">
+	  <type name="bits">
+	    <bit name="zone-key">
+	      <position value="7"/>
+	      <description>
+		<text>
+		  This flag indicates a DNS zone key.
+		</text>
+	      </description>
+	    </bit>
+	    <bit name="secure-entry-point">
+	      <position value="15"/>
+	      <description>
+		<text>
+		  This flag indicates a key intended for use as a
+		  secure entry point, i.e., key-signing key.
+		</text>
+	      </description>
+	    </bit>
+	  </type>
+	  <description>
+	    <text>Key flags.</text>
+	  </description>
+	  <reference>
+	    <text>
+	      RFC 4034: Resource Records for the DNS Security
+	      Extensions.
+	    </text>
+	  </reference>
+	</leaf>
+      </list>
+    </container>
+  </augment>
 
   <!-- Configuration data -->
 
@@ -224,5 +388,41 @@
   </augment>
 
   <!-- RPC operations -->
+
+  <rpc name="generate-key">
+    <input>
+      <uses name="key-parameters"/>
+      <leaf name="secure-entry-point">
+	<type name="boolean"/>
+	<default value="false"/>
+	<description>
+	  <text>
+	    This flag indicates that the key is the secure entry point
+	    of the corresponding zone, i.e., a key-signing key.
+	  </text>
+	</description>
+      </leaf>
+    </input>
+    <output>
+      <leaf name="key-id">
+	<type name="key-id"/>
+	<mandatory value="true"/>
+	<description>
+	  <text>
+	    Identifier of the generated key.
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="key-tag">
+	<type name="uint16"/>
+	<mandatory value="true"/>
+	<description>
+	  <text>
+	    Tag of the generated key.
+	  </text>
+	</description>
+      </leaf>
+    </output>
+  </rpc>
   
 </module>
