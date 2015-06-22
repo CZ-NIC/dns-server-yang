@@ -38,18 +38,18 @@ module: dns-server
    |  +--ro server
    |  +--ro zone* [domain]
    |     +--ro domain                   inet:domain-name
-   |     +--ro dnssig:dnssec-signing
-   |        +--ro dnssig:key* [key-id]
-   |           +--ro dnssig:key-id       key-id
-   |           +--ro dnssig:key-tag      uint16
-   |           +--ro dnssig:algorithm    dsalg:dnssec-algorithm
-   |           +--ro dnssig:length       uint16
-   |           +--ro dnssig:publish?     yang:date-and-time
-   |           +--ro dnssig:activate?    yang:date-and-time
-   |           +--ro dnssig:retire?      yang:date-and-time
-   |           +--ro dnssig:remove?      yang:date-and-time
-   |           +--ro dnssig:created?     yang:date-and-time
-   |           +--ro dnssig:flags?       bits
+   |     +--ro dnssec:dnssec-signing
+   |        +--ro dnssec:key* [key-id]
+   |           +--ro dnssec:key-id       key-id
+   |           +--ro dnssec:key-tag      uint16
+   |           +--ro dnssec:algorithm    dsalg:dnssec-algorithm
+   |           +--ro dnssec:length       uint16
+   |           +--ro dnssec:publish?     yang:date-and-time
+   |           +--ro dnssec:activate?    yang:date-and-time
+   |           +--ro dnssec:retire?      yang:date-and-time
+   |           +--ro dnssec:remove?      yang:date-and-time
+   |           +--ro dnssec:created?     yang:date-and-time
+   |           +--ro dnssec:flags?       bits
    +--rw dns-server
       +--rw description?           string
       +--rw server-options
@@ -150,9 +150,9 @@ module: dns-server
       |  |  +--rw query-module* [type name]
       |  |  |  +--rw type    -> /dns-server/query-module/type
       |  |  |  +--rw name    -> /dns-server/query-module[type=current()/../type]/name
-      |  |  +--rw dnssig:dnssec-signing!
-      |  |  |  +--rw dnssig:enabled?   boolean
-      |  |  |  +--rw dnssig:policy?    -> /dnss:dns-server/dnssig:sign-policy/name
+      |  |  +--rw dnssec:dnssec-signing!
+      |  |  |  +--rw dnssec:enabled?   boolean
+      |  |  |  +--rw dnssec:policy?    -> /dnss:dns-server/dnssec:sign-policy/name
       |  |  |  +--rw knot:kasp-db?     string
       |  |  +--rw knot:semantic-checks?    boolean
       |  +--rw zone* [domain]
@@ -174,24 +174,24 @@ module: dns-server
       |     +--rw query-module* [type name]
       |     |  +--rw type    -> /dns-server/query-module/type
       |     |  +--rw name    -> /dns-server/query-module[type=current()/../type]/name
-      |     +--rw dnssig:dnssec-signing!
-      |     |  +--rw dnssig:enabled?   boolean
-      |     |  +--rw dnssig:policy?    -> /dnss:dns-server/dnssig:sign-policy/name
+      |     +--rw dnssec:dnssec-signing!
+      |     |  +--rw dnssec:enabled?   boolean
+      |     |  +--rw dnssec:policy?    -> /dnss:dns-server/dnssec:sign-policy/name
       |     |  +--rw knot:kasp-db?     string
       |     +--rw knot:semantic-checks?    boolean
-      +--rw dnssig:sign-policy* [name]
-      |  +--rw dnssig:name                 string
-      |  +--rw dnssig:algorithm?           dsalg:dnssec-algorithm
-      |  +--rw dnssig:ksk-length?          uint16
-      |  +--rw dnssig:zsk-length?          uint16
-      |  +--rw dnssig:dnskey-ttl?          dnss:rr-ttl
-      |  +--rw dnssig:zsk-lifetime?        lifetime
-      |  +--rw dnssig:rrsig-lifetime?      lifetime
-      |  +--rw dnssig:rrsig-refresh?       uint32
-      |  +--rw dnssig:nsec3?               boolean
-      |  +--rw dnssig:soa-min-ttl?         dnss:rr-ttl
-      |  +--rw dnssig:zone-max-ttl?        dnss:rr-ttl
-      |  +--rw dnssig:propagation-delay?   uint32
+      +--rw dnssec:sign-policy* [name]
+      |  +--rw dnssec:name                 string
+      |  +--rw dnssec:algorithm?           dsalg:dnssec-algorithm
+      |  +--rw dnssec:ksk-length?          uint16
+      |  +--rw dnssec:zsk-length?          uint16
+      |  +--rw dnssec:dnskey-ttl?          dnss:rr-ttl
+      |  +--rw dnssec:zsk-lifetime?        lifetime
+      |  +--rw dnssec:rrsig-lifetime?      lifetime
+      |  +--rw dnssec:rrsig-refresh?       uint32
+      |  +--rw dnssec:nsec3?               boolean
+      |  +--rw dnssec:soa-min-ttl?         dnss:rr-ttl
+      |  +--rw dnssec:zone-max-ttl?        dnss:rr-ttl
+      |  +--rw dnssec:propagation-delay?   uint32
       +--rw knot:log* [name]
       |  +--rw knot:name           string
       |  +--rw knot:description?   string
