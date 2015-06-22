@@ -8,6 +8,9 @@
   <import module="ietf-inet-types">
     <prefix value="inet"/>
   </import>
+  <import module="dns-parameters">
+    <prefix value="dnspars"/>
+  </import>
   <import module="tsig-algorithms">
     <prefix value="tsig"/>
   </import>
@@ -133,6 +136,22 @@
 
   <!-- Groupings -->
 
+  <grouping name="counter64">
+    <description>
+      <text>
+	This grouping defines a 64-bit zero-based counter.
+      </text>
+    </description>
+    <leaf name="count">
+      <type name="yang:zero-based-counter64"/>
+      <description>
+	<text>
+	  64-bit zero based counter.
+	</text>
+      </description>
+    </leaf>
+  </grouping>
+  
   <grouping name="endpoint-address">
     <description>
       <text>This grouping defines a TCP/IP endpoint address, i.e., the
@@ -229,6 +248,24 @@
 	  State data of the server process.
 	</text>
       </description>
+      <leaf name="boot-time">
+	<type name="yang:date-and-time"/>
+	<mandatory value="true"/>
+	<description>
+	  <text>
+	    Time when the DNS server was started.
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="config-time">
+	<type name="yang:date-and-time"/>
+	<mandatory value="true"/>
+	<description>
+	  <text>
+	    Time when the DNS server was last (re)configured.
+	  </text>
+	</description>
+      </leaf>
     </container>
     <list name="zone">
       <description>
@@ -243,6 +280,52 @@
 	  <text>Zone name.</text>
 	</description>
       </leaf>
+      <leaf name="class">
+	<type name="dnspars:dns-class"/>
+	<default value="IN"/>
+	<description>
+	  <text>DNS class of the zone.</text>
+	</description>
+      </leaf>
+      <leaf name="serial">
+	<type name="uint32"/>
+	<mandatory value="true"/>
+	<description>
+	  <text>
+	    Zone's SOA serial number.
+	  </text>
+	</description>
+      </leaf>
+      <container name="statistics">
+	<description>
+	  <text>
+	    Zone statistics.
+	  </text>
+	</description>
+	<container name="opcodes">
+	  <description>
+	    <text>
+	      Opcode statistics.
+	    </text>
+	  </description>
+	  <list name="opcode-count">
+	    <key value="opcode"/>
+	    <description>
+	      <text>
+		Each entry gives the count of queries with the given
+		opcode.
+	      </text>
+	    </description>
+	    <leaf name="opcode">
+	      <type name="dnspars:dns-opcode"/>
+	      <description>
+		<text>DNS opcode.</text>
+	      </description>
+	    </leaf>
+	    <uses name="counter64"/>
+	  </list>
+	</container>
+      </container>
     </list>
   </container>
   
