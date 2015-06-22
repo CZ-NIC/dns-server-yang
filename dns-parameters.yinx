@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module name="dns-parameters"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+        xmlns:dnspars="http://www.nic.cz/ns/yang/dns-parameters"
+        xmlns:h="http://www.w3.org/1999/xhtml">
+  <namespace uri="http://www.nic.cz/ns/yang/dns-parameters"/>
+  <prefix value="dnspars"/>
+  <organization>
+    <text>CZ.NIC, z. s. p. o.</text>
+  </organization>
+  <contact>
+    <text>
+      <h:p>
+        Editor:   Ladislav Lhotka<h:br/>
+                  &lt;mailto:lhotka@nic.cz&gt;
+      </h:p>
+    </text>
+  </contact>
+  <description>
+    <text>
+      <h:p>This module translates IANA registry of Domain Name System
+      (DNS) parameters to YANG enumeration types.</h:p>
+      <h:p>TODO: Complete the enumerations.</h:p>
+    </text>
+  </description>
+  <reference>
+    <text>
+      <h:p>IANA: Domain Name System (DNS) Parameters.<h:br/>
+      https://www.iana.org/assignments/dns-parameters/dns-parameters.xml
+      </h:p>
+    </text>
+  </reference>
+  <revision date="2015-06-22">
+    <description>
+      <text>Initial revision.</text>
+    </description>
+  </revision>
+
+  <typedef name="dns-class">
+    <description>
+      <text>
+	<h:p>DNS resource record and query classes.</h:p>
+	<h:p>Values 0 and 65535 are reserved; 65280–65534 reserved for
+	private use; 2, 5–253, 256–65279 unassigned.</h:p>
+      </text>
+    </description>
+    <type name="enumeration">
+      <enum name="IN">
+	<value value="1"/>
+	<description>
+	  <text>Internet</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 1035: Domain Names - Implementation and Specification.
+	  </text>
+	</reference>
+      </enum>
+      <enum name="CH">
+	<value value="3"/>
+	<description>
+	  <text>Chaos</text>
+	</description>
+	<reference>
+	  <text>
+	    D. Moon, "Chaosnet", A.I. Memo 628, Massachusetts
+	    Institute of Technology Artificial Intelligence
+	    Laboratory, June 1981.
+	  </text>
+	</reference>
+      </enum>
+      <enum name="HS">
+	<value value="4"/>
+	<description>
+	  <text>Hesiod</text>
+	</description>
+	<reference>
+	  <text>
+	    Dyer, S., and F. Hsu, "Hesiod", Project Athena Technical
+	    Plan – Name Service, April 1987.
+	  </text>
+	</reference>
+      </enum>
+      <enum name="NONE">
+	<value value="254"/>
+	<description>
+	  <text>QCLASS NONE</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 2136: Dynamic Updates in the Domain Name System (DNS UPDATE).
+	  </text>
+	</reference>
+      </enum>
+      <enum name="ANY">
+	<value value="255"/>
+	<description>
+	  <text>QCLASS *</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 1035: Domain Names - Implementation and Specification.
+	  </text>
+	</reference>
+      </enum>
+    </type>
+  </typedef>
+  <typedef name="dns-opcode">
+    <description>
+      <text>
+	<h:p>DNS operations codes.</h:p>
+	<h:p>Value of 3 is unassigned.</h:p>
+      </text>
+    </description>
+    <type name="enumeration">
+      <enum name="query">
+	<value value="0"/>
+	<description>
+	  <text>Query</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 1035: Domain Names - Implementation and Specification.
+	  </text>
+	</reference>
+      </enum>
+      <enum name="iquery">
+	<value value="1"/>
+	<status value="obsolete"/>
+	<description>
+	  <text>Inverse Query</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 3425: Obsoleting IQUERY.
+	  </text>
+	</reference>
+      </enum>
+      <enum name="status">
+	<value value="2"/>
+	<description>
+	  <text>Status</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 1035: Domain Names - Implementation and Specification.
+	  </text>
+	</reference>
+      </enum>
+      <enum name="notify">
+	<value value="4"/>
+	<description>
+	  <text>Notify</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 1996: A Mechanism for Prompt Notification of Zone
+	    Changes (DNS NOTIFY).
+	  </text>
+	</reference>
+      </enum>
+      <enum name="update">
+	<value value="5"/>
+	<description>
+	  <text>Update</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 2136: Dynamic Updates in the Domain Name System (DNS
+	    UPDATE).
+	  </text>
+	</reference>
+      </enum>
+    </type>
+  </typedef>
+  <typedef name="dns-rcode">
+    <description>
+      <text>
+	<h:p>DNS reply codes.</h:p>
+	<h:p>Extended rcodes (except the base 16) are not assigned
+	numeric values because they may be non-unique.</h:p>
+	<h:p>Values 11–15 are unassigned.</h:p>
+      </text>
+    </description>
+    <type name="enumeration">
+      <enum name="noerror">
+	<value value="0"/>
+	<description>
+	  <text>No error</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 1035: Domain Names - Implementation and Specification.
+	  </text>
+	</reference>
+      </enum>
+      <enum name="formerr">
+	<value value="1"/>
+	<description>
+	  <text>Format error</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 1035: Domain Names - Implementation and Specification.
+	  </text>
+	</reference>
+      </enum>
+      <enum name="servfail">
+	<value value="2"/>
+	<description>
+	  <text>Server failure</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 1035: Domain Names - Implementation and Specification.
+	  </text>
+	</reference>
+      </enum>
+      <enum name="nxdomain">
+	<value value="3"/>
+	<description>
+	  <text>Non-existent domain</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 1035: Domain Names - Implementation and Specification.
+	  </text>
+	</reference>
+      </enum>
+      <enum name="notimp">
+	<value value="4"/>
+	<description>
+	  <text>Not implemented</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 1035: Domain Names - Implementation and Specification.
+	  </text>
+	</reference>
+      </enum>
+      <enum name="refused">
+	<value value="5"/>
+	<description>
+	  <text>Query refused</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 1035: Domain Names - Implementation and Specification.
+	  </text>
+	</reference>
+      </enum>
+      <enum name="yxdomain">
+	<value value="6"/>
+	<description>
+	  <text>Name exists when it should not.</text>
+	</description>
+	<reference>
+	  <text>
+	    <h:ul>
+	      <h:li>RFC 2136: Dynamic Updates in the Domain Name
+	      System (DNS UPDATE).</h:li>
+	      <h:li>RFC 6672: DNAME Redirection in the DNS.</h:li>
+	    </h:ul>
+	  </text>
+	</reference>
+      </enum>
+      <enum name="yxrrset">
+	<value value="7"/>
+	<description>
+	  <text>RR set exists when it should not.</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 2136: Dynamic Updates in the Domain Name System (DNS UPDATE).
+	  </text>
+	</reference>
+      </enum>
+      <enum name="nxrrset">
+	<value value="8"/>
+	<description>
+	  <text>RR set that should exist does not.</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 2136: Dynamic Updates in the Domain Name System (DNS UPDATE).
+	  </text>
+	</reference>
+      </enum>
+      <enum name="notauth">
+	<value value="9"/>
+	<description>
+	  <text>Not Authorized</text>
+	</description>
+	<reference>
+	  <text>
+	    <h:ul>
+	      <h:li>RFC 2136: Dynamic Updates in the Domain Name
+	      System (DNS UPDATE).</h:li>
+	      <h:li>RFC 2845: Secret Key Transaction Authentication
+	      for DNS (TSIG).</h:li>
+	    </h:ul>
+	  </text>
+	</reference>
+      </enum>
+      <enum name="notzone">
+	<value value="10"/>
+	<description>
+	  <text>Name not contained in zone.</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 2136: Dynamic Updates in the Domain Name System (DNS UPDATE).
+	  </text>
+	</reference>
+      </enum>
+      <enum name="badvers">
+	<value value="16"/>
+	<description>
+	  <text>Bad OPT version.</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 6891: Extension Mechanisms for DNS (EDNS(0)).
+	  </text>
+	</reference>
+      </enum>
+      <enum name="tsig-badsig">
+	<description>
+	  <text>TSIG signature failure</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 2845: Secret Key Transaction Authentication for DNS
+	    (TSIG).
+	  </text>
+	</reference>
+      </enum>
+      <enum name="tsig-badkey">
+	<description>
+	  <text>Key not recognized</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 2845: Secret Key Transaction Authentication for DNS
+	    (TSIG).
+	  </text>
+	</reference>
+      </enum>
+      <enum name="tsig-badtime">
+	<description>
+	  <text>Signature out of time window</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 2845: Secret Key Transaction Authentication for DNS
+	    (TSIG).
+	  </text>
+	</reference>
+      </enum>
+      <enum name="badmode">
+	<description>
+	  <text>Bad TKEY mode</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 2930: Secret Key Establishment for DNS (TKEY RR).
+	  </text>
+	</reference>
+      </enum>
+      <enum name="badname">
+	<description>
+	  <text>Duplicate key name</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 2930: Secret Key Establishment for DNS (TKEY RR).
+	  </text>
+	</reference>
+      </enum>
+      <enum name="badalg">
+	<description>
+	  <text>Algorithm not supported</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 2930: Secret Key Establishment for DNS (TKEY RR).
+	  </text>
+	</reference>
+      </enum>
+      <enum name="badtrunc">
+	<description>
+	  <text>Bad truncation</text>
+	</description>
+	<reference>
+	  <text>
+	    RFC 4635: HMAC SHA TSIG Algorithm Identifiers.
+	  </text>
+	</reference>
+      </enum>
+    </type>
+  </typedef>
+</module>
