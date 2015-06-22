@@ -2,11 +2,11 @@
 <module name="dnssec-signing"
         xmlns="urn:ietf:params:xml:ns:yang:yin:1"
         xmlns:dnss="http://www.nic.cz/ns/yang/dns-server"
-        xmlns:dnssig="http://www.nic.cz/ns/yang/dnssec-signing"
+        xmlns:dnssec="http://www.nic.cz/ns/yang/dnssec-signing"
         xmlns:dsalg="http://www.nic.cz/ns/yang/dnssec-algorithms"
 	xmlns:h="http://www.w3.org/1999/xhtml">
   <namespace uri="http://www.nic.cz/ns/yang/dnssec-signing"/>
-  <prefix value="dnssig"/>
+  <prefix value="dnssec"/>
   <import module="ietf-yang-types">
     <prefix value="yang"/>
   </import>
@@ -91,7 +91,7 @@
       </leaf>
       <leaf name="policy">
 	<type name="leafref">
-	  <path value="/dnss:dns-server/dnssig:sign-policy/dnssig:name"/>
+	  <path value="/dnss:dns-server/dnssec:sign-policy/dnssec:name"/>
 	</type>
 	<description>
 	  <text>
@@ -380,11 +380,11 @@
   </augment>
   
   <augment target-node="/dnss:dns-server/dnss:zones/dnss:template">
-    <uses name="dnssig:zone-options"/>
+    <uses name="dnssec:zone-options"/>
   </augment>
 
   <augment target-node="/dnss:dns-server/dnss:zones/dnss:zone">
-    <uses name="dnssig:zone-options"/>
+    <uses name="dnssec:zone-options"/>
   </augment>
 
   <!-- RPC operations -->

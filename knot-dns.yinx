@@ -12,7 +12,7 @@
     <prefix value="dnss"/>
   </import>
   <import module="dnssec-signing">
-    <prefix value="dnssig"/>
+    <prefix value="dnssec"/>
   </import>
   <organization>
     <text>CZ.NIC, z. s. p. o.</text>
@@ -357,7 +357,7 @@
     <uses name="knot:zone-options"/>
   </augment>
   
-  <augment target-node="/dnss:dns-server/dnss:zones/dnss:template/dnssig:dnssec-signing">
+  <augment target-node="/dnss:dns-server/dnss:zones/dnss:template/dnssec:dnssec-signing">
     <uses name="dnssec-sign-options"/>
   </augment>
   
@@ -519,7 +519,7 @@
     <uses name="knot:zone-options"/>
   </augment>
 
-  <augment target-node="/dnss:dns-server/dnss:zones/dnss:zone/dnssig:dnssec-signing">
+  <augment target-node="/dnss:dns-server/dnss:zones/dnss:zone/dnssec:dnssec-signing">
     <uses name="dnssec-sign-options"/>
   </augment>
   
