@@ -222,8 +222,14 @@
     </zones>
   </dns-server>
   <dns-server-state>
+    <server>
+      <boot-time>2015-05-21T08:02:14+02:00</boot-time>
+      <config-time>2015-06-25T16:22:07+02:00</config-time>
+    </server>
     <zone>
       <domain>example.com</domain>
+      <class>IN</class>
+      <serial>2015060600</serial>
       <dnssec:dnssec-signing>
 	<dnssec:key>
 	  <dnssec:key-id>d3a9fd3b36a6be275adea2b67c6e82b27ca30e90</dnssec:key-id>
@@ -238,6 +244,49 @@
 	  <dnssec:remove>2015-07-25T00:00:00+02:00</dnssec:remove>
 	</dnssec:key>
       </dnssec:dnssec-signing>
+      <statistics>
+	<opcodes>
+	  <opcode-count>
+	    <opcode>query</opcode>
+	    <count>1234</count>
+	  </opcode-count>
+	  <opcode-count>
+	    <opcode>iquery</opcode>
+	    <count>5678</count>
+	  </opcode-count>
+	  <opcode-count>
+	    <opcode>status</opcode>
+	    <count>9012</count>
+	  </opcode-count>
+	  <opcode-count>
+	    <opcode>notify</opcode>
+	    <count>3456</count>
+	  </opcode-count>
+	</opcodes>
+	<packets>
+	  <packet-count>
+	    <packet-type>normal</packet-type>
+	    <count>98765</count>
+	  </packet-count>
+	  <packet-count>
+	    <packet-type>axfr</packet-type>
+	    <count>43210</count>
+	  </packet-count>
+	  <packet-count>
+	    <packet-type>ixfr</packet-type>
+	    <count>12345</count>
+	  </packet-count>
+	  <packet-count>
+	    <packet-type>notify</packet-type>
+	    <count>67890</count>
+	  </packet-count>
+	  <packet-count>
+	    <packet-type>update</packet-type>
+	    <count>24680</count>
+	  </packet-count>
+	</packets>
+	
+      </statistics>
     </zone>
   </dns-server-state>
 </nc:data>

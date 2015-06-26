@@ -8,6 +8,9 @@
   <import module="ietf-inet-types">
     <prefix value="inet"/>
   </import>
+  <import module="ietf-yang-types">
+    <prefix value="yang"/>
+  </import>
   <import module="dns-parameters">
     <prefix value="dnspars"/>
   </import>
@@ -88,6 +91,47 @@
     <units name="seconds"/>
   </typedef>
 
+  <typedef name="packet-type">
+    <description>
+      <text>
+	This type defines an enumeration for types of packets received
+	by a DNS server.
+      </text>
+    </description>
+    <type name="enumeration">
+      <enum name="invalid">
+	<description>
+	  <text>Invalid packet</text>
+	</description>
+      </enum>
+      <enum name="normal">
+	<description>
+	  <text>Normal DNS query</text>
+	</description>
+      </enum>
+      <enum name="axfr">
+	<description>
+	  <text>Authoritative zone transfer</text>
+	</description>
+      </enum>
+      <enum name="ixfr">
+	<description>
+	  <text>Incremental zone transfer</text>
+	</description>
+      </enum>
+      <enum name="notify">
+	<description>
+	  <text>NOTIFY message</text>
+	</description>
+      </enum>
+      <enum name="update">
+	<description>
+	  <text>UPDATE message</text>
+	</description>
+      </enum>
+    </type>
+  </typedef>
+  
   <typedef name="fs-path">
     <description>
       <text>
@@ -144,6 +188,7 @@
     </description>
     <leaf name="count">
       <type name="yang:zero-based-counter64"/>
+      <default value="0"/>
       <description>
 	<text>
 	  64-bit zero based counter.
@@ -233,7 +278,7 @@
     </leaf>
   </grouping>
 
-  <!-- State data -->
+  <!-- Operational state data -->
 
   <container name="dns-server-state">
     <config value="false"/>
@@ -320,6 +365,52 @@
 	      <type name="dnspars:dns-opcode"/>
 	      <description>
 		<text>DNS opcode.</text>
+	      </description>
+	    </leaf>
+	    <uses name="counter64"/>
+	  </list>
+	</container>
+	<container name="rcodes">
+	  <description>
+	    <text>
+	      Rcode statistics.
+	    </text>
+	  </description>
+	  <list name="rcode-count">
+	    <key value="rcode"/>
+	    <description>
+	      <text>
+		Each entry gives the count of responses with the given
+		rcode.
+	      </text>
+	    </description>
+	    <leaf name="rcode">
+	      <type name="dnspars:dns-rcode"/>
+	      <description>
+		<text>DNS rcode.</text>
+	      </description>
+	    </leaf>
+	    <uses name="counter64"/>
+	  </list>
+	</container>
+	<container name="packets">
+	  <description>
+	    <text>
+	      Packet statistics.
+	    </text>
+	  </description>
+	  <list name="packet-count">
+	    <key value="packet-type"/>
+	    <description>
+	      <text>
+		Each entry gives the count of packets of the given
+		type.
+	      </text>
+	    </description>
+	    <leaf name="packet-type">
+	      <type name="packet-type"/>
+	      <description>
+		<text>DNS packet type.</text>
 	      </description>
 	    </leaf>
 	    <uses name="counter64"/>
