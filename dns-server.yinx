@@ -5,6 +5,7 @@
 	xmlns:h="http://www.w3.org/1999/xhtml">
   <namespace uri="http://www.nic.cz/ns/yang/dns-server"/>
   <prefix value="dnss"/>
+  <yang-version value="1.1"/>
   <import module="ietf-inet-types">
     <prefix value="inet"/>
   </import>

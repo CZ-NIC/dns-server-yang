@@ -5,6 +5,7 @@
         xmlns:h="http://www.w3.org/1999/xhtml">
   <namespace uri="http://www.nic.cz/ns/yang/dnssec-algorithms"/>
   <prefix value="dsalg"/>
+  <yang-version value="1.1"/>
   <organization>
     <text>CZ.NIC, z. s. p. o.</text>
   </organization>

@@ -1,5 +1,7 @@
 module dns-server {
 
+  yang-version "1.1";
+
   namespace "http://www.nic.cz/ns/yang/dns-server";
 
   prefix "dnss";
