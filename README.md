@@ -8,6 +8,16 @@ general where possible but the main focus in on
 
 [Current data tree](https://gitlab.labs.nic.cz/labs/dns-server-yang/raw/master/model.tree)
 
+YANG Modules
+------------
+
+* [dns-parameters](https://gitlab.labs.nic.cz/labs/dns-server-yang/blob/master/dns-parameters.yang)
+* [dns-server](https://gitlab.labs.nic.cz/labs/dns-server-yang/blob/master/dns-server.yang)
+* [dnssec-algorithms](https://gitlab.labs.nic.cz/labs/dns-server-yang/blob/master/dnssec-algorithms.yang)
+* [dnssec-signing](https://gitlab.labs.nic.cz/labs/dns-server-yang/blob/master/dnssec-signing.yang)
+* [knot-dns](https://gitlab.labs.nic.cz/labs/dns-server-yang/blob/master/knot-dns.yang)
+* [tsig-algorithms](https://gitlab.labs.nic.cz/labs/dns-server-yang/blob/master/tsig-algorithms.yang)
+
 Make Targets
 ------------
 
