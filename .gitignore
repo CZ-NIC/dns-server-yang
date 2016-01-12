@@ -2,7 +2,7 @@ yang.ent
 hello.xml
 knot.conf
 nsd.conf
-model.*
+model.xsl
 *.json
 *.rn[gc]
 *.sch
