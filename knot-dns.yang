@@ -36,9 +36,11 @@ module knot-dns {
   reference
     "https://www.knot-dns.cz/docs/2.0/html/";
 
-  revision 2016-01-12 {
+  revision 2016-01-13 {
     description
       "Initial revision.";
+    reference
+      "TODO: put git tag here";
   }
 
   /* Identities */
@@ -133,6 +135,8 @@ module knot-dns {
   /* State data */
 
   augment "/dnss:dns-server-state/dnss:zone" {
+    description
+      "Knot-specific zone state data.";
     container next-event {
       description
         "Information about the next event scheduled for the zone.";
@@ -182,6 +186,8 @@ module knot-dns {
                   "dnssec resign event";
               }
             }
+            description
+              "Type of the event.";
           }
           choice event-time {
             description
@@ -206,6 +212,8 @@ module knot-dns {
   /* Configuration data */
 
   augment "/dnss:dns-server" {
+    description
+      "Knot-specific configuration data.";
     list log {
       key "name";
       description
@@ -215,12 +223,30 @@ module knot-dns {
          higher are logged to syslog and standard error.";
       typedef severity {
         type enumeration {
-          enum critical;
-          enum error;
-          enum warning;
-          enum notice;
-          enum info;
-          enum debug;
+          enum critical {
+            description
+              "critical severity level";
+          }
+          enum error {
+            description
+              "error severity level";
+          }
+          enum warning {
+            description
+              "warning severity level";
+          }
+          enum notice {
+            description
+              "notice severity level";
+          }
+          enum info {
+            description
+              "info severity level";
+          }
+          enum debug {
+            description
+              "debug severity level";
+          }
         }
         default "warning";
         description
@@ -230,6 +256,8 @@ module knot-dns {
       uses dnss:description;
       choice target {
         mandatory "true";
+        description
+          "Destination of log messages.";
         leaf stdout {
           type empty;
           description
@@ -265,6 +293,38 @@ module knot-dns {
         type severity;
         description
           "Severity threshold for all messages.";
+      }
+    }
+    container control-socket {
+      description
+        "Configuration of Knot DNS control socket.";
+      choice socket-type {
+        default "unix";
+        description
+          "The control socket can be either Unix domain socket
+           (default) or TCP/IP endpoint.";
+        leaf unix {
+          type dnss:fs-path;
+          default "knot.sock";
+          description
+            "Filename of the Unix domain socket.
+
+             A relative name is prepended with the directory
+             specified in 'dnss:run-time-dir'.";
+        }
+        case network {
+          description
+            "Address of the network socket.";
+          uses dnss:endpoint-address {
+            refine "port" {
+              default "5553";
+            }
+          }
+        }
+      }
+      uses dnss:acls {
+        description
+          "ACLs for the control socket.";
       }
     }
   }
@@ -328,6 +388,8 @@ module knot-dns {
   }
 
   augment "/dnss:dns-server/dnss:server-options" {
+    description
+      "Configuration of Knot-specific server options.";
     leaf async-start {
       type boolean;
       default "false";
@@ -337,52 +399,24 @@ module knot-dns {
     }
   }
 
-  augment "/dnss:dns-server" {
-    container control-socket {
-      description
-        "Configuration of Knot DNS control socket.";
-      choice socket-type {
-        default "unix";
-        description
-          "The control socket can be either Unix domain socket
-           (default) or TCP/IP endpoint.";
-        leaf unix {
-          type dnss:fs-path;
-          default "knot.sock";
-          description
-            "Filename of the Unix domain socket.
-
-             A relative name is prepended with the directory
-             specified in 'dnss:run-time-dir'.";
-        }
-        case network {
-          description
-            "Address of the network socket.";
-          uses dnss:endpoint-address {
-            refine "port" {
-              default "5553";
-            }
-          }
-        }
-      }
-      uses dnss:acls {
-        description
-          "ACLs for the control socket.";
-      }
-    }
-  }
-
   augment "/dnss:dns-server/dnss:zones/dnss:template" {
+    description
+      "Knot-specific configuration of a zone template.";
     uses knot:zone-options;
   }
 
   augment "/dnss:dns-server/dnss:zones/dnss:template/"
         + "dnssec:dnssec-signing" {
+    description
+      "Knot-specific DNSSEC signing configuration of a zone
+       template.";
     uses dnssec-sign-options;
   }
 
   augment "/dnss:dns-server/dnss:query-module" {
     when "dnss:type = 'knot:dnstap'";
+    description
+      "Configuration of 'dnstap' query module.";
     container dnstap {
       presence "dnstap query module";
       description
@@ -413,6 +447,8 @@ module knot-dns {
 
   augment "/dnss:dns-server/dnss:query-module" {
     when "dnss:type = 'knot:synth-record'";
+    description
+      "Configuration of 'synth-record' query module.";
     container synth-record {
       presence "synth-record query module";
       description
@@ -473,6 +509,8 @@ module knot-dns {
 
   augment "/dnss:dns-server/dnss:query-module" {
     when "dnss:type = 'knot:dnsproxy'";
+    description
+      "Configuration of 'dnsproxy' query module.";
     container dnsproxy {
       presence "dnsproxy query module";
       description
@@ -481,6 +519,8 @@ module knot-dns {
          This module catches all unsatisfied queries and forwards
          them to another server.";
       container remote-server {
+        description
+          "Address of the remote server.";
         uses dnss:endpoint-address;
       }
     }
@@ -488,6 +528,8 @@ module knot-dns {
 
   augment "/dnss:dns-server/dnss:query-module" {
     when "dnss:type = 'knot:rosedb'";
+    description
+      "Configuration of 'rosedb' query module.";
     container rosedb {
       presence "rosedb query module";
       description
@@ -504,11 +546,15 @@ module knot-dns {
   }
 
   augment "/dnss:dns-server/dnss:zones/dnss:zone" {
+    description
+      "Knot-specific zone configuration.";
     uses knot:zone-options;
   }
 
   augment
     "/dnss:dns-server/dnss:zones/dnss:zone/dnssec:dnssec-signing" {
+    description
+      "Knot-specific DNSSEC-signing configuration for a zone.";
     uses dnssec-sign-options;
   }
 }

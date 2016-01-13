@@ -15,7 +15,8 @@ y2dopts = -t $(EXAMPLE_TYPE) -b $(EXAMPLE_BASE)
 
 .PHONY: all clean commit json knot nsd rnc schema validate yang
 
-all: $(yams)
+all: hello.xml
+	@pyang --lint -L $<
 
 json: $(baty).json
 

@@ -23,9 +23,11 @@ module dns-parameters {
     "IANA: Domain Name System (DNS) Parameters.
      https://www.iana.org/assignments/dns-parameters/dns-parameters.xml";
 
-  revision 2015-06-22 {
+  revision 2016-01-13 {
     description
       "Initial revision.";
+    reference
+      "TODO: put git tag here";
   }
 
   typedef dns-class {

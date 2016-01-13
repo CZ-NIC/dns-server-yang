@@ -1,1 +1,2 @@
 <!-- capabilities of external modules -->
+<capability>urn:ietf:params:xml:ns:yang:ietf-netconf-acm?module=ietf-netconf-acm</capability>

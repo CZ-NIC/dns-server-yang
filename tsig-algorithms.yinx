@@ -41,6 +41,9 @@
     <description>
       <text>Initial revision.</text>
     </description>
+    <reference>
+      <text>TODO: put git tag here</text>
+    </reference>
   </revision>
   <identity name="tsig-algorithm">
     <description>

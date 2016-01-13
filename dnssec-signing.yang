@@ -29,9 +29,11 @@ module dnssec-signing {
     "This YANG module defines configuration data and RPC operations
      for automatic DNSSEC signatures.";
 
-  revision 2015-06-19 {
+  revision 2016-01-13 {
     description
       "Initial revision.";
+    reference
+      "TODO: put git tag here";
   }
 
   /* Typedefs */
@@ -135,6 +137,8 @@ module dnssec-signing {
   /* State data */
 
   augment "/dnss:dns-server-state/dnss:zone" {
+    description
+      "State data for zone DNSSEC signing.";
     container dnssec-signing {
       description
         "State data related to automatic DNSSEC signing.";
@@ -281,16 +285,22 @@ module dnssec-signing {
   }
 
   augment "/dnss:dns-server/dnss:zones/dnss:template" {
+    description
+      "DNSSEC signing configuration for a zone template.";
     uses dnssec:zone-options;
   }
 
   augment "/dnss:dns-server/dnss:zones/dnss:zone" {
+    description
+      "DNSSEC signing configuration for a zone.";
     uses dnssec:zone-options;
   }
 
   /* RPC operations */
 
   rpc generate-key {
+    description
+      "Generate a DNSSEC signing key.";
     input {
       uses key-parameters;
       leaf secure-entry-point {

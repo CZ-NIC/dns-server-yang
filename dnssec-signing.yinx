@@ -39,6 +39,9 @@
     <description>
       <text>Initial revision.</text>
     </description>
+    <reference>
+      <text>TODO: put git tag here</text>
+    </reference>
   </revision>
 
   <!-- Features -->
@@ -176,6 +179,9 @@
   <!-- State data -->
 
   <augment target-node="/dnss:dns-server-state/dnss:zone">
+    <description>
+      <text>State data for zone DNSSEC signing.</text>
+    </description>
     <container name="dnssec-signing">
       <description>
 	<text>
@@ -389,16 +395,29 @@
   </augment>
   
   <augment target-node="/dnss:dns-server/dnss:zones/dnss:template">
+    <description>
+      <text>
+	DNSSEC signing configuration for a zone template.
+      </text>
+    </description>
     <uses name="dnssec:zone-options"/>
   </augment>
 
   <augment target-node="/dnss:dns-server/dnss:zones/dnss:zone">
+    <description>
+      <text>
+	DNSSEC signing configuration for a zone.
+      </text>
+    </description>
     <uses name="dnssec:zone-options"/>
   </augment>
 
   <!-- RPC operations -->
 
   <rpc name="generate-key">
+    <description>
+      <text>Generate a DNSSEC signing key.</text>
+    </description>
     <input>
       <uses name="key-parameters"/>
       <leaf name="secure-entry-point">

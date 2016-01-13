@@ -43,6 +43,9 @@
     <description>
       <text>Initial revision.</text>
     </description>
+    <reference>
+      <text>TODO: put git tag here</text>
+    </reference>
   </revision>
 
   <!-- Identities -->
@@ -145,6 +148,11 @@
   <!-- State data -->
 
   <augment target-node="/dnss:dns-server-state/dnss:zone">
+    <description>
+      <text>
+	Knot-specific zone state data.
+      </text>
+    </description>
     <container name="next-event">
       <description>
 	<text>
@@ -167,6 +175,9 @@
 	    <text>An event is scheduled.</text>
 	  </description>
 	  <leaf name="event-type">
+	    <description>
+	      <text>Type of the event.</text>
+	    </description>
 	    <type name="enumeration">
 	      <enum name="load">
 		<description>
@@ -240,6 +251,11 @@
   <!-- Configuration data -->
 
   <augment target-node="/dnss:dns-server">
+    <description>
+      <text>
+	Knot-specific configuration data.
+      </text>
+    </description>
     <list name="log">
       <key value="name"/>
       <description>
@@ -255,18 +271,45 @@
 	  <text>Severity levels.</text>
 	</description>
 	<type name="enumeration">
-	  <enum name="critical"/>
-	  <enum name="error"/>
-	  <enum name="warning"/>
-	  <enum name="notice"/>
-	  <enum name="info"/>
-	  <enum name="debug"/>
+	  <enum name="critical">
+	    <description>
+	      <text>critical severity level</text>
+	    </description>
+	  </enum>
+	  <enum name="error">
+	    <description>
+	      <text>error severity level</text>
+	    </description>
+	  </enum>
+	  <enum name="warning">
+	    <description>
+	      <text>warning severity level</text>
+	    </description>
+	  </enum>
+	  <enum name="notice">
+	    <description>
+	      <text>notice severity level</text>
+	    </description>
+	  </enum>
+	  <enum name="info">
+	    <description>
+	      <text>info severity level</text>
+	    </description>
+	  </enum>
+	  <enum name="debug">
+	    <description>
+	      <text>debug severity level</text>
+	    </description>
+	  </enum>
 	</type>
 	<default value="warning"/>
       </typedef>
       <uses name="dnss:entry-name"/>
       <uses name="dnss:description"/>
       <choice name="target">
+	<description>
+	  <text>Destination of log messages.</text>
+	</description>
 	<mandatory value="true"/>
 	<leaf name="stdout">
 	  <type name="empty"/>
@@ -318,6 +361,46 @@
 	</description>
       </leaf>
     </list>
+    <container name="control-socket">
+      <description>
+	<text>Configuration of Knot DNS control socket.</text>
+      </description>
+      <choice name="socket-type">
+	<description>
+	  <text>The control socket can be either Unix domain socket
+	  (default) or TCP/IP endpoint.</text>
+	</description>
+	<default value="unix"/>
+	<leaf name="unix">
+	  <type name="dnss:fs-path"/>
+	  <default value="knot.sock"/>
+	  <description>
+	    <text>
+	      <h:p>Filename of the Unix domain socket.</h:p>
+	      <h:p>A relative name is prepended with the directory
+	      specified in 'dnss:run-time-dir'.</h:p>
+	    </text>
+	  </description>
+	</leaf>
+	<case name="network">
+	  <description>
+	    <text>Address of the network socket.</text>
+	  </description>
+	  <uses name="dnss:endpoint-address">
+	    <refine target-node="port">
+	      <default value="5553"/>
+	    </refine>
+	  </uses>
+	</case>
+      </choice>
+      <uses name="dnss:acls">
+	<description>
+	  <text>
+	    ACLs for the control socket.
+	  </text>
+	</description>
+      </uses>
+    </container>
   </augment>
 
   <augment target-node="/dnss:dns-server/dnss:server-options/dnss:resources">
@@ -396,7 +479,12 @@
     </leaf>
   </augment>
   
-  <augment target-node="/dnss:dns-server/dnss:server-options">  
+  <augment target-node="/dnss:dns-server/dnss:server-options">
+    <description>
+      <text>
+	Configuration of Knot-specific server options.
+      </text>
+    </description>
     <leaf name="async-start">
       <type name="boolean"/>
       <default value="false"/>
@@ -409,60 +497,33 @@
     </leaf>
   </augment>
 
-  <augment target-node="/dnss:dns-server">
-    <container name="control-socket">
-      <description>
-	<text>Configuration of Knot DNS control socket.</text>
-      </description>
-      <choice name="socket-type">
-	<description>
-	  <text>The control socket can be either Unix domain socket
-	  (default) or TCP/IP endpoint.</text>
-	</description>
-	<default value="unix"/>
-	<leaf name="unix">
-	  <type name="dnss:fs-path"/>
-	  <default value="knot.sock"/>
-	  <description>
-	    <text>
-	      <h:p>Filename of the Unix domain socket.</h:p>
-	      <h:p>A relative name is prepended with the directory
-	      specified in 'dnss:run-time-dir'.</h:p>
-	    </text>
-	  </description>
-	</leaf>
-	<case name="network">
-	  <description>
-	    <text>Address of the network socket.</text>
-	  </description>
-	  <uses name="dnss:endpoint-address">
-	    <refine target-node="port">
-	      <default value="5553"/>
-	    </refine>
-	  </uses>
-	</case>
-      </choice>
-      <uses name="dnss:acls">
-	<description>
-	  <text>
-	    ACLs for the control socket.
-	  </text>
-	</description>
-      </uses>
-    </container>
-  </augment>
-  
   <augment target-node="/dnss:dns-server/dnss:zones/dnss:template">
+    <description>
+      <text>
+	Knot-specific configuration of a zone template.
+      </text>
+    </description>
     <uses name="knot:zone-options"/>
   </augment>
   
-  <augment target-node="/dnss:dns-server/dnss:zones/dnss:template/dnssec:dnssec-signing">
+  <augment
+      target-node="/dnss:dns-server/dnss:zones/dnss:template/dnssec:dnssec-signing">
+    <description>
+      <text>
+	Knot-specific DNSSEC signing configuration of a zone template.
+      </text>
+    </description>
     <uses name="dnssec-sign-options"/>
   </augment>
   
   <augment
       target-node="/dnss:dns-server/dnss:query-module">
     <when condition="dnss:type = 'knot:dnstap'"/>
+    <description>
+      <text>
+	Configuration of 'dnstap' query module.
+      </text>
+    </description>
     <container name="dnstap">
       <presence value="dnstap query module"/>
       <description>
@@ -504,6 +565,11 @@
   <augment
       target-node="/dnss:dns-server/dnss:query-module">
     <when condition="dnss:type = 'knot:synth-record'"/>
+    <description>
+      <text>
+	Configuration of 'synth-record' query module.
+      </text>
+    </description>
     <container name="synth-record">
       <description>
 	<text>
@@ -577,6 +643,11 @@
   <augment
       target-node="/dnss:dns-server/dnss:query-module">
     <when condition="dnss:type = 'knot:dnsproxy'"/>
+    <description>
+      <text>
+	Configuration of 'dnsproxy' query module.
+      </text>
+    </description>
     <container name="dnsproxy">
       <description>
 	<text>
@@ -589,6 +660,9 @@
       <presence value="dnsproxy query module"/>
       <container name="remote-server">
 	<uses name="dnss:endpoint-address"/>
+	<description>
+	  <text>Address of the remote server.</text>
+	</description>
       </container>
     </container>
   </augment>
@@ -596,6 +670,11 @@
   <augment
       target-node="/dnss:dns-server/dnss:query-module">
     <when condition="dnss:type = 'knot:rosedb'"/>
+    <description>
+      <text>
+	Configuration of 'rosedb' query module.
+      </text>
+    </description>
     <container name="rosedb">
       <presence value="rosedb query module"/>
       <description>
@@ -615,10 +694,21 @@
   </augment>
   
   <augment target-node="/dnss:dns-server/dnss:zones/dnss:zone">
+    <description>
+      <text>
+	Knot-specific zone configuration.
+      </text>
+    </description>
     <uses name="knot:zone-options"/>
   </augment>
 
-  <augment target-node="/dnss:dns-server/dnss:zones/dnss:zone/dnssec:dnssec-signing">
+  <augment
+      target-node="/dnss:dns-server/dnss:zones/dnss:zone/dnssec:dnssec-signing">
+    <description>
+      <text>
+	Knot-specific DNSSEC-signing configuration for a zone.
+      </text>
+    </description>
     <uses name="dnssec-sign-options"/>
   </augment>
   

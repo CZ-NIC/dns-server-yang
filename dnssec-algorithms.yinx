@@ -34,6 +34,9 @@
     <description>
       <text>Initial revision.</text>
     </description>
+    <reference>
+      <text>TODO: put git tag here</text>
+    </reference>
   </revision>
 
   <typedef name="dnssec-algorithm">
