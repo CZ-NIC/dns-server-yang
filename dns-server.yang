@@ -33,9 +33,11 @@ module dns-server {
     "This YANG module defines the data model for an authoritative DNS
      server.";
 
-  revision 2015-05-22 {
+  revision 2016-01-12 {
     description
       "Initial revision.";
+    reference
+      "TODO: put git tag here";
   }
 
   /* Features */
@@ -253,6 +255,21 @@ module dns-server {
         default "IN";
         description
           "DNS class of the zone.";
+      }
+      leaf server-role {
+        type enumeration {
+          enum master {
+            description
+              "Master for the zone.";
+          }
+          enum slave {
+            description
+              "Slave for the zone.";
+          }
+        }
+        mandatory "true";
+        description
+          "The role of the server for the parent zone.";
       }
       leaf serial {
         type uint32;
@@ -497,6 +514,8 @@ module dns-server {
       list network {
         key "name";
         unique "ip-prefix port";
+        description
+          "Identification of a network.";
         uses entry-name;
         leaf ip-prefix {
           type inet:ip-prefix;
@@ -525,10 +544,22 @@ module dns-server {
       }
       leaf-list operation {
         type enumeration {
-          enum transfer;
-          enum notify;
-          enum update;
-          enum control;
+          enum transfer {
+            description
+              "Transfer operation";
+          }
+          enum notify {
+            description
+              "Notify operation";
+          }
+          enum update {
+            description
+              "Update operation";
+          }
+          enum control {
+            description
+              "Control operation";
+          }
         }
         min-elements "1";
         description
@@ -536,8 +567,14 @@ module dns-server {
       }
       leaf action {
         type enumeration {
-          enum allow;
-          enum deny;
+          enum allow {
+            description
+              "Allow action";
+          }
+          enum deny {
+            description
+              "Deny action";
+          }
         }
         default "allow";
         description

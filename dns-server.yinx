@@ -35,10 +35,13 @@
     </text>
   </description>
 
-  <revision date="2015-05-22">
+  <revision date="2016-01-12">
     <description>
       <text>Initial revision.</text>
     </description>
+    <reference>
+      <text>TODO: put git tag here</text>
+    </reference>
   </revision>
 
   <!-- Features -->
@@ -331,6 +334,24 @@
 	<default value="IN"/>
 	<description>
 	  <text>DNS class of the zone.</text>
+	</description>
+      </leaf>
+      <leaf name="server-role">
+	<type name="enumeration">
+	  <enum name="master">
+	    <description>
+	      <text>Master for the zone.</text>
+	    </description>
+	  </enum>
+	  <enum name="slave">
+	    <description>
+	      <text>Slave for the zone.</text>
+	    </description>
+	  </enum>
+	</type>
+	<mandatory value="true"/>
+	<description>
+	  <text>The role of the server for the parent zone.</text>
 	</description>
       </leaf>
       <leaf name="serial">
@@ -661,6 +682,9 @@
       <list name="network">
 	<key value="name"/>
 	<unique tag="ip-prefix port"/>
+	<description>
+	  <text>Identification of a network.</text>
+	</description>
 	<uses name="entry-name"/>
 	<leaf name="ip-prefix">
 	  <type name="inet:ip-prefix"/>
@@ -700,10 +724,26 @@
       </leaf-list>
       <leaf-list name="operation">
 	<type name="enumeration">
-	  <enum name="transfer"/>
-	  <enum name="notify"/>
-	  <enum name="update"/>
-	  <enum name="control"/>
+	  <enum name="transfer">
+	    <description>
+	      <text>Transfer operation</text>
+	    </description>
+	  </enum>
+	  <enum name="notify">
+	    <description>
+	      <text>Notify operation</text>
+	    </description>
+	  </enum>
+	  <enum name="update">
+	    <description>
+	      <text>Update operation</text>
+	    </description>
+	  </enum>
+	  <enum name="control">
+	    <description>
+	      <text>Control operation</text>
+	    </description>
+	  </enum>
 	</type>
 	<min-elements value="1"/>
 	<description>
@@ -714,8 +754,16 @@
       </leaf-list>
       <leaf name="action">
 	<type name="enumeration">
-	  <enum name="allow"/>
-	  <enum name="deny"/>
+	  <enum name="allow">
+	    <description>
+	      <text>Allow action</text>
+	    </description>
+	  </enum>
+	  <enum name="deny">
+	    <description>
+	      <text>Deny action</text>
+	    </description>
+	  </enum>
 	</type>
 	<default value="allow"/>
 	<description>

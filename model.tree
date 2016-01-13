@@ -6,6 +6,7 @@ module: dns-server
    |  +--ro zone* [domain]
    |     +--ro domain                   inet:domain-name
    |     +--ro class?                   dnspars:dns-class
+   |     +--ro server-role              enumeration
    |     +--ro serial                   uint32
    |     +--ro statistics
    |     |  +--ro opcodes

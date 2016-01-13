@@ -32,7 +32,7 @@ module knot-dns {
   reference
     "https://www.knot-dns.cz/docs/2.0/html/";
 
-  revision 2015-05-27 {
+  revision 2016-01-12 {
     description
       "Initial revision.";
   }
