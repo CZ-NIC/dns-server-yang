@@ -1,5 +1,6 @@
 MODULES = dns-server dns-parameters dnssec-signing tsig-algorithms \
 	  dnssec-algorithms knot-dns
+DATE ?= $(shell date +%F)
 EXAMPLE_BASE = example
 EXAMPLE_TYPE = data
 baty = $(EXAMPLE_BASE)-$(EXAMPLE_TYPE)
@@ -8,7 +9,7 @@ PYANG_OPTS =
 
 yams = $(addsuffix .yang, $(MODULES))
 xsldir = .tools/xslt
-xslpars =
+xslpars = --stringparam date $(DATE)
 schemas = $(baty).rng $(baty).sch $(baty).dsrl
 y2dopts = -t $(EXAMPLE_TYPE) -b $(EXAMPLE_BASE)
 
