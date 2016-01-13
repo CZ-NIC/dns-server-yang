@@ -182,6 +182,14 @@
 	  State data related to automatic DNSSEC signing.
 	</text>
       </description>
+      <leaf name="enabled">
+	<type name="boolean"/>
+	<description>
+	  <text>
+	    Is DNSSEC signing is enabled for the ancestor zone?
+	  </text>
+	</description>
+      </leaf>
       <list name="key">
 	<key value="key-id"/>
 	<description>
