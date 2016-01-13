@@ -138,6 +138,11 @@ module dnssec-signing {
     container dnssec-signing {
       description
         "State data related to automatic DNSSEC signing.";
+      leaf enabled {
+        type boolean;
+        description
+          "Is DNSSEC signing is enabled for the ancestor zone?";
+      }
       list key {
         key "key-id";
         description

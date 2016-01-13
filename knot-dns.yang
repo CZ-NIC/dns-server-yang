@@ -10,6 +10,10 @@ module knot-dns {
     prefix "inet";
   }
 
+  import ietf-yang-types {
+    prefix "yang";
+  }
+
   import dns-server {
     prefix "dnss";
   }
@@ -123,6 +127,79 @@ module knot-dns {
 
          Default: 'keys' subdirectory of the directory specified in
          'zones-dir'.";
+    }
+  }
+
+  /* State data */
+
+  augment "/dnss:dns-server-state/dnss:zone" {
+    container next-event {
+      description
+        "Information about the next event scheduled for the zone.";
+      choice next-event {
+        description
+          "Next event details or none, if no event is scheduled.";
+        leaf none {
+          type empty;
+          description
+            "No event scheduled for the zone.";
+        }
+        case scheduled-event {
+          description
+            "An event is scheduled.";
+          leaf event-type {
+            type enumeration {
+              enum load {
+                description
+                  "load event";
+              }
+              enum refresh {
+                description
+                  "refresh event";
+              }
+              enum transfer {
+                description
+                  "transfer event";
+              }
+              enum update {
+                description
+                  "update event";
+              }
+              enum expiration {
+                description
+                  "expiration event";
+              }
+              enum journal-flush {
+                description
+                  "journal flush event";
+              }
+              enum notify {
+                description
+                  "notify event";
+              }
+              enum dnssec-resign {
+                description
+                  "dnssec resign event";
+              }
+            }
+          }
+          choice event-time {
+            description
+              "Information about scheduled event time, or that it is
+               already pending.\"";
+            leaf pending {
+              type empty;
+              description
+                "The event is already pending.";
+            }
+            leaf time {
+              type yang:date-and-time;
+              description
+                "Date and time for which the event is scheduled.";
+            }
+          }
+        }
+      }
     }
   }
 

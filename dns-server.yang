@@ -219,7 +219,7 @@ module dns-server {
     }
   }
 
-  /* Operational state data */
+  /* State data */
 
   container dns-server-state {
     config "false";

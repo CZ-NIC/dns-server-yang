@@ -22,17 +22,29 @@ module: dns-server
    |     |        +--ro packet-type    packet-type
    |     |        +--ro count?         yang:zero-based-counter64
    |     +--ro dnssec:dnssec-signing
-   |        +--ro dnssec:key* [key-id]
-   |           +--ro dnssec:key-id       key-id
-   |           +--ro dnssec:key-tag      uint16
-   |           +--ro dnssec:algorithm    dsalg:dnssec-algorithm
-   |           +--ro dnssec:length       uint16
-   |           +--ro dnssec:publish?     yang:date-and-time
-   |           +--ro dnssec:activate?    yang:date-and-time
-   |           +--ro dnssec:retire?      yang:date-and-time
-   |           +--ro dnssec:remove?      yang:date-and-time
-   |           +--ro dnssec:created?     yang:date-and-time
-   |           +--ro dnssec:flags?       bits
+   |     |  +--ro dnssec:enabled?   boolean
+   |     |  +--ro dnssec:key* [key-id]
+   |     |     +--ro dnssec:key-id       key-id
+   |     |     +--ro dnssec:key-tag      uint16
+   |     |     +--ro dnssec:algorithm    dsalg:dnssec-algorithm
+   |     |     +--ro dnssec:length       uint16
+   |     |     +--ro dnssec:publish?     yang:date-and-time
+   |     |     +--ro dnssec:activate?    yang:date-and-time
+   |     |     +--ro dnssec:retire?      yang:date-and-time
+   |     |     +--ro dnssec:remove?      yang:date-and-time
+   |     |     +--ro dnssec:created?     yang:date-and-time
+   |     |     +--ro dnssec:flags?       bits
+   |     +--ro knot:next-event
+   |        +--ro (knot:next-event)?
+   |           +--:(knot:none)
+   |           |  +--ro knot:none?         empty
+   |           +--:(knot:scheduled-event)
+   |              +--ro knot:event-type?   enumeration
+   |              +--ro (knot:event-time)?
+   |                 +--:(knot:pending)
+   |                 |  +--ro knot:pending?      empty
+   |                 +--:(knot:time)
+   |                    +--ro knot:time?         yang:date-and-time
    +--rw dns-server
       +--rw description?           string
       +--rw server-options

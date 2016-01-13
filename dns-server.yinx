@@ -282,7 +282,7 @@
     </leaf>
   </grouping>
 
-  <!-- Operational state data -->
+  <!-- State data -->
 
   <container name="dns-server-state">
     <config value="false"/>

@@ -9,6 +9,9 @@
   <import module="ietf-inet-types">
     <prefix value="inet"/>
   </import>
+  <import module="ietf-yang-types">
+    <prefix value="yang"/>
+  </import>
   <import module="dns-server">
     <prefix value="dnss"/>
   </import>
@@ -139,6 +142,101 @@
     </leaf>
   </grouping>
   
+  <!-- State data -->
+
+  <augment target-node="/dnss:dns-server-state/dnss:zone">
+    <container name="next-event">
+      <description>
+	<text>
+	  Information about the next event scheduled for the zone.
+	</text>
+      </description>
+      <choice name="next-event">
+	<description>
+	  <text>Next event details or none, if no event is
+	  scheduled.</text>
+	</description>
+	<leaf name="none">
+	  <type name="empty"/>
+	  <description>
+	    <text>No event scheduled for the zone.</text>
+	  </description>
+	</leaf>
+	<case name="scheduled-event">
+	  <description>
+	    <text>An event is scheduled.</text>
+	  </description>
+	  <leaf name="event-type">
+	    <type name="enumeration">
+	      <enum name="load">
+		<description>
+		  <text>load event</text>
+		</description>
+	      </enum>
+	      <enum name="refresh">
+		<description>
+		  <text>refresh event</text>
+		</description>
+	      </enum>
+	      <enum name="transfer">
+		<description>
+		  <text>transfer event</text>
+		</description>
+	      </enum>
+	      <enum name="update">
+		<description>
+		  <text>update event</text>
+		</description>
+	      </enum>
+	      <enum name="expiration">
+		<description>
+		  <text>expiration event</text>
+		</description>
+	      </enum>
+	      <enum name="journal-flush">
+		<description>
+		  <text>journal flush event</text>
+		</description>
+	      </enum>
+	      <enum name="notify">
+		<description>
+		  <text>notify event</text>
+		</description>
+	      </enum>
+	      <enum name="dnssec-resign">
+		<description>
+		  <text>dnssec resign event</text>
+		</description>
+	      </enum>
+	    </type>
+	  </leaf>
+	  <choice name="event-time">
+	    <description>
+	      <text>
+		Information about scheduled event time, or that it is
+		already pending."
+	      </text>
+	    </description>
+	    <leaf name="pending">
+	      <type name="empty"/>
+	      <description>
+		<text>The event is already pending.</text>
+	      </description>
+	    </leaf>
+	    <leaf name="time">
+	      <type name="yang:date-and-time"/>
+	      <description>
+		<text>
+		  Date and time for which the event is scheduled.
+		</text>
+	      </description>
+	    </leaf>
+	  </choice>
+	</case>
+      </choice>
+    </container>
+  </augment>
+
   <!-- Configuration data -->
 
   <augment target-node="/dnss:dns-server">
