@@ -453,4 +453,22 @@
     </output>
   </rpc>
   
+  <rpc name="zone-sign">
+    <description>
+      <text>
+	Sign specified zones with available DNSSEC keys.
+      </text>
+    </description>
+    <input>
+      <leaf-list name="zones">
+	<type name="dnss:zone-ref"/>
+	<description>
+	  <text>
+	    Domain names of the zones to be signed.
+	  </text>
+	</description>
+      </leaf-list>
+    </input>
+  </rpc>
+
 </module>

@@ -156,7 +156,7 @@
       </text>
     </description>
     <type name="leafref">
-      <path value="/dns-server/access-control-list/name"/>
+      <path value="/dnss:dns-server/dnss:access-control-list/dnss:name"/>
     </type>
   </typedef>
 
@@ -167,7 +167,7 @@
       </text>
     </description>
     <type name="leafref">
-      <path value="/dns-server/key/name"/>
+      <path value="/dnss:dns-server/dnss:key/dnss:name"/>
     </type>
   </typedef>
 
@@ -178,7 +178,18 @@
       </text>
     </description>
     <type name="leafref">
-      <path value="/dns-server/remote-server/name"/>
+      <path value="/dnss:dns-server/dnss:remote-server/dnss:name"/>
+    </type>
+  </typedef>
+
+  <typedef name="zone-ref">
+    <description>
+      <text>
+	This type is used for referring to a configured zone.
+      </text>
+    </description>
+    <type name="leafref">
+      <path value="/dnss:dns-server/dnss:zones/dnss:zone/dnss:domain"/>
     </type>
   </typedef>
 
@@ -1137,9 +1148,66 @@
   <rpc name="reload-server">
     <description>
       <text>
-	Reload zone database from zone files.
+	Reload server configuration.
       </text>
     </description>
+  </rpc>
+
+  <rpc name="zone-reload">
+    <description>
+      <text>Reload specified zones.</text>
+    </description>
+    <input>
+      <leaf-list name="zones">
+	<type name="zone-ref"/>
+	<description>
+	  <text>
+	    Domain names of the zones to be reloaded.
+	  </text>
+	</description>
+      </leaf-list>
+    </input>
+  </rpc>
+
+  <rpc name="zone-refresh">
+    <description>
+      <text>Refresh slave zones.</text>
+    </description>
+    <input>
+      <leaf-list name="zones">
+	<type name="zone-ref"/>
+	<description>
+	  <text>
+	    Domain names of the zones to be refreshed.
+	  </text>
+	</description>
+      </leaf-list>
+      <leaf name="force-retransfer">
+	<type name="boolean"/>
+	<default value="false"/>
+	<description>
+	  <text>
+	    Setting this parameter to true forces retransfer.
+	  </text>
+	</description>
+      </leaf>
+    </input>
+  </rpc>
+
+  <rpc name="zone-flush">
+    <description>
+      <text>Flush journal and update zone files.</text>
+    </description>
+    <input>
+      <leaf-list name="zones">
+	<type name="zone-ref"/>
+	<description>
+	  <text>
+	    Domain names of the zones to be flushed.
+	  </text>
+	</description>
+      </leaf-list>
+    </input>
   </rpc>
 
 </module>

@@ -219,6 +219,16 @@ rpcs:
    |  +--ro output
    |     +--ro pid    uint32
    +---x reload-server
+   +---x zone-reload
+   |  +---w input
+   |     +---w zones*   zone-ref
+   +---x zone-refresh
+   |  +---w input
+   |     +---w zones*              zone-ref
+   |     +---w force-retransfer?   boolean
+   +---x zone-flush
+      +---w input
+         +---w zones*   zone-ref
 module: ietf-netconf-acm
    +--rw nacm
       +--rw enable-nacm?              boolean
@@ -252,14 +262,17 @@ module: ietf-netconf-acm
 module: dnssec-signing
 rpcs:
    +---x generate-key
+   |  +---w input
+   |  |  +---w algorithm             dsalg:dnssec-algorithm
+   |  |  +---w length                uint16
+   |  |  +---w publish?              yang:date-and-time
+   |  |  +---w activate?             yang:date-and-time
+   |  |  +---w retire?               yang:date-and-time
+   |  |  +---w remove?               yang:date-and-time
+   |  |  +---w secure-entry-point?   boolean
+   |  +--ro output
+   |     +--ro key-id     key-id
+   |     +--ro key-tag    uint16
+   +---x zone-sign
       +---w input
-      |  +---w algorithm             dsalg:dnssec-algorithm
-      |  +---w length                uint16
-      |  +---w publish?              yang:date-and-time
-      |  +---w activate?             yang:date-and-time
-      |  +---w retire?               yang:date-and-time
-      |  +---w remove?               yang:date-and-time
-      |  +---w secure-entry-point?   boolean
-      +--ro output
-         +--ro key-id     key-id
-         +--ro key-tag    uint16
+         +---w zones*   dnss:zone-ref

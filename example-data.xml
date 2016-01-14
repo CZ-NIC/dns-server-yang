@@ -2,6 +2,7 @@
 <nc:data
     xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0"
     xmlns="http://www.nic.cz/ns/yang/dns-server"
+    xmlns:dnss="http://www.nic.cz/ns/yang/dns-server"
     xmlns:tsig="http://www.nic.cz/ns/yang/tsig-algorithms"
     xmlns:dnssec="http://www.nic.cz/ns/yang/dnssec-signing"
     xmlns:knot="http://www.nic.cz/ns/yang/knot-dns">
@@ -230,6 +231,7 @@
       <domain>example.com</domain>
       <class>IN</class>
       <serial>2015060600</serial>
+      <server-role>slave</server-role>
       <dnssec:dnssec-signing>
 	<dnssec:key>
 	  <dnssec:key-id>d3a9fd3b36a6be275adea2b67c6e82b27ca30e90</dnssec:key-id>
@@ -285,8 +287,71 @@
 	    <count>24680</count>
 	  </packet-count>
 	</packets>
-	
       </statistics>
     </zone>
   </dns-server-state>
+  <nacm xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-acm">
+    <enable-nacm>true</enable-nacm>
+    <read-default>permit</read-default>
+    <write-default>deny</write-default>
+    <exec-default>deny</exec-default>
+    <denied-operations>123</denied-operations>
+    <denied-data-writes>456</denied-data-writes>
+    <denied-notifications>0</denied-notifications>
+    <groups>
+      <group>
+        <name>admin</name>
+	<user-name>root</user-name>
+        <user-name>dominik</user-name>
+      </group>
+      <group>
+	<name>users</name>
+	<user-name>lada</user-name>
+	<user-name>pavel</user-name>
+      </group>
+    </groups>
+    <rule-list>
+      <name>admin-acl</name>
+      <group>admin</group>
+      <rule>
+        <name>permit-all</name>
+	<module-name>*</module-name>
+	<access-operations>*</access-operations>
+        <comment>The 'admin' group has unlimited access.</comment>
+	<action>permit</action>
+      </rule>
+    </rule-list>
+    <rule-list>
+      <name>users-acl</name>
+      <group>users</group>
+      <rule>
+	<name>no-writes-on-example.com</name>
+	<path>/dnss:dns-server/dnss:zones/dnss:zone[dnss:domain='example.com']</path>
+	<access-operations>create update delete</access-operations>
+	<comment>Users cannot write example.com.</comment>
+	<action>deny</action>
+      </rule>
+      <rule>
+	<name>permit-zone-access</name>
+	<path>/dnss:dns-server/dnss:zones/dnss:zone</path>
+	<access-operations>*</access-operations>
+	<comment>Users can write other zones.</comment>
+	<action>permit</action>
+      </rule>
+      <rule>
+	<name>permit-zone-reload</name>
+	<module-name>dns-server</module-name>
+	<rpc-name>zone-reload</rpc-name>
+	<comment>Users can reload zones</comment>
+	<action>permit</action>
+      </rule>
+      <rule>
+	<name>permit-zone-sign</name>
+	<module-name>dnssec-signing</module-name>
+	<rpc-name>zone-sign</rpc-name>
+	<comment>Users can sign zones</comment>
+	<action>permit</action>
+      </rule>
+    </rule-list>
+  </nacm>
 </nc:data>

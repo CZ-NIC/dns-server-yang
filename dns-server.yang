@@ -33,7 +33,7 @@ module dns-server {
     "This YANG module defines the data model for an authoritative DNS
      server.";
 
-  revision 2016-01-13 {
+  revision 2016-01-14 {
     description
       "Initial revision.";
     reference
@@ -122,7 +122,7 @@ module dns-server {
 
   typedef acl-ref {
     type leafref {
-      path "/dns-server/access-control-list/name";
+      path "/dnss:dns-server/dnss:access-control-list/dnss:name";
     }
     description
       "This type is used for referring to a configured access control
@@ -131,7 +131,7 @@ module dns-server {
 
   typedef key-ref {
     type leafref {
-      path "/dns-server/key/name";
+      path "/dnss:dns-server/dnss:key/dnss:name";
     }
     description
       "This type is used for referring to a configured TSIG key.";
@@ -139,11 +139,19 @@ module dns-server {
 
   typedef remote-ref {
     type leafref {
-      path "/dns-server/remote-server/name";
+      path "/dnss:dns-server/dnss:remote-server/dnss:name";
     }
     description
       "This type is used for referring to a configured remote
        server.";
+  }
+
+  typedef zone-ref {
+    type leafref {
+      path "/dnss:dns-server/dnss:zones/dnss:zone/dnss:domain";
+    }
+    description
+      "This type is used for referring to a configured zone.";
   }
 
   /* Groupings */
@@ -863,6 +871,48 @@ module dns-server {
 
   rpc reload-server {
     description
-      "Reload zone database from zone files.";
+      "Reload server configuration.";
+  }
+
+  rpc zone-reload {
+    description
+      "Reload specified zones.";
+    input {
+      leaf-list zones {
+        type zone-ref;
+        description
+          "Domain names of the zones to be reloaded.";
+      }
+    }
+  }
+
+  rpc zone-refresh {
+    description
+      "Refresh slave zones.";
+    input {
+      leaf-list zones {
+        type zone-ref;
+        description
+          "Domain names of the zones to be refreshed.";
+      }
+      leaf force-retransfer {
+        type boolean;
+        default "false";
+        description
+          "Setting this parameter to true forces retransfer.";
+      }
+    }
+  }
+
+  rpc zone-flush {
+    description
+      "Flush journal and update zone files.";
+    input {
+      leaf-list zones {
+        type zone-ref;
+        description
+          "Domain names of the zones to be flushed.";
+      }
+    }
   }
 }

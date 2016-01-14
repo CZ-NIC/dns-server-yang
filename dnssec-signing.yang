@@ -29,7 +29,7 @@ module dnssec-signing {
     "This YANG module defines configuration data and RPC operations
      for automatic DNSSEC signatures.";
 
-  revision 2016-01-13 {
+  revision 2016-01-14 {
     description
       "Initial revision.";
     reference
@@ -323,6 +323,18 @@ module dnssec-signing {
         mandatory "true";
         description
           "Tag of the generated key.";
+      }
+    }
+  }
+
+  rpc zone-sign {
+    description
+      "Sign specified zones with available DNSSEC keys.";
+    input {
+      leaf-list zones {
+        type dnss:zone-ref;
+        description
+          "Domain names of the zones to be signed.";
       }
     }
   }
