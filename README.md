@@ -6,7 +6,9 @@ data model for an authoritative DNS server. The model tries to be
 general where possible but the main focus in on
 [Knot DNS](https://www.knot-dns.cz) configuration.
 
-[Current data tree](https://gitlab.labs.nic.cz/labs/dns-server-yang/raw/master/model.tree)
+* [Current data tree](https://gitlab.labs.nic.cz/labs/dns-server-yang/raw/master/model.tree)
+
+* [Example JSON data](https://gitlab.labs.nic.cz/labs/dns-server-yang/blob/master/example-data.json)
 
 YANG Modules
 ------------
