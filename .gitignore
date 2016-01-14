@@ -3,7 +3,6 @@ hello.xml
 knot.conf
 nsd.conf
 model.xsl
-*.json
 *.rn[gc]
 *.sch
 *.dsrl

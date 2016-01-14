@@ -70,8 +70,8 @@ model.xsl: hello.xml
 model.tree: hello.xml
 	@pyang $(PYANG_OPTS) -f tree -o $@ -L $<
 
-commit: model.tree
-	@git add model.tree $(yams)
+commit: model.tree $(baty).json
+	@git add $^ $(yams)
 	@git commit
 
 clean:
