@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Program name: canonicalize.xsl
 
-Copyright © 2013 by Ladislav Lhotka, CZ.NIC <lhotka@nic.cz>
+Copyright © 2015 by Ladislav Lhotka, CZ.NIC <lhotka@nic.cz>
 
 This stylesheet rearranges a YIN module into canonical order [RFC 6020].
 
@@ -32,7 +32,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
       <xsl:apply-templates select="preceding-sibling::comment()[1]"/>
     </xsl:if>
   </xsl:template>
-  <xsl:template match="html:*|xi:*|@*|comment()|text()">
+  <xsl:template
+      match="html:*|xi:*|@*|comment()|text()|processing-instruction()">
     <xsl:copy-of select="."/>
   </xsl:template>
   <xsl:template name="data-def-stmt">
@@ -44,7 +45,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:module">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:yang-version"/>
       <xsl:apply-templates select="yin:namespace"/>
       <xsl:apply-templates select="yin:prefix"/>
@@ -65,7 +67,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:submodule">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:yang-version"/>
       <xsl:apply-templates select="yin:belongs-to"/>
       <xsl:apply-templates select="yin:import"/>
@@ -95,13 +98,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:if-feature">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:identity">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:base"/>
       <xsl:apply-templates select="yin:status"/>
       <xsl:apply-templates select="yin:description"/>
@@ -111,91 +116,105 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:base">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:yang-version">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:import">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:prefix"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:include">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:namespace">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:prefix">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:belongs-to">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:prefix"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:organization">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:text"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:text">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:contact">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:text"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:description">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:text"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:reference">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:text"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:units">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:revision">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:description"/>
       <xsl:apply-templates select="yin:reference"/>
     </xsl:copy>
@@ -203,7 +222,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:extension">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:argument"/>
       <xsl:apply-templates select="yin:status"/>
       <xsl:apply-templates select="yin:description"/>
@@ -213,20 +233,23 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:argument">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:yin-element"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:yin-element">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:typedef">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:type"/>
       <xsl:apply-templates select="yin:units"/>
       <xsl:apply-templates select="yin:default"/>
@@ -238,7 +261,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:type">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:fraction-digits"/>
       <xsl:apply-templates select="yin:range"/>
       <xsl:apply-templates select="yin:length"/>
@@ -254,13 +278,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:fraction-digits">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:range">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:error-message"/>
       <xsl:apply-templates select="yin:error-app-tag"/>
       <xsl:apply-templates select="yin:description"/>
@@ -270,7 +296,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:length">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:error-message"/>
       <xsl:apply-templates select="yin:error-app-tag"/>
       <xsl:apply-templates select="yin:description"/>
@@ -280,7 +307,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:pattern">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:error-message"/>
       <xsl:apply-templates select="yin:error-app-tag"/>
       <xsl:apply-templates select="yin:description"/>
@@ -290,13 +318,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:default">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:enum">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:value"/>
       <xsl:apply-templates select="yin:status"/>
       <xsl:apply-templates select="yin:description"/>
@@ -306,7 +336,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:bit">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:position"/>
       <xsl:apply-templates select="yin:status"/>
       <xsl:apply-templates select="yin:description"/>
@@ -316,55 +347,64 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:position">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:path">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:require-instance">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:status">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:config">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:mandatory">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:presence">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:ordered-by">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:must">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:error-message"/>
       <xsl:apply-templates select="yin:error-app-tag"/>
       <xsl:apply-templates select="yin:description"/>
@@ -374,44 +414,51 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:error-message">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:value"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:value">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:error-app-tag">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:min-elements">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:max-elements">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:value">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:grouping">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:status"/>
       <xsl:apply-templates select="yin:description"/>
       <xsl:apply-templates select="yin:reference"/>
@@ -423,7 +470,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:container">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:when"/>
       <xsl:apply-templates select="yin:if-feature"/>
       <xsl:apply-templates select="yin:must"/>
@@ -440,7 +488,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:leaf">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:when"/>
       <xsl:apply-templates select="yin:if-feature"/>
       <xsl:apply-templates select="yin:type"/>
@@ -457,7 +506,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:leaf-list">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:when"/>
       <xsl:apply-templates select="yin:if-feature"/>
       <xsl:apply-templates select="yin:type"/>
@@ -475,7 +525,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:list">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:when"/>
       <xsl:apply-templates select="yin:if-feature"/>
       <xsl:apply-templates select="yin:must"/>
@@ -496,19 +547,22 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:key">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:unique">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
     </xsl:copy>
   </xsl:template>
   <xsl:template match="yin:choice">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:when"/>
       <xsl:apply-templates select="yin:if-feature"/>
       <xsl:apply-templates select="yin:default"/>
@@ -528,7 +582,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:case">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:when"/>
       <xsl:apply-templates select="yin:if-feature"/>
       <xsl:apply-templates select="yin:status"/>
@@ -540,7 +595,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:anyxml">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:when"/>
       <xsl:apply-templates select="yin:if-feature"/>
       <xsl:apply-templates select="yin:must"/>
@@ -554,7 +610,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:uses">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:when"/>
       <xsl:apply-templates select="yin:if-feature"/>
       <xsl:apply-templates select="yin:status"/>
@@ -567,7 +624,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:refine">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:must"/>
       <xsl:apply-templates select="yin:presence"/>
       <xsl:apply-templates select="yin:default"/>
@@ -582,7 +640,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:augment">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:when"/>
       <xsl:apply-templates select="yin:if-feature"/>
       <xsl:apply-templates select="yin:status"/>
@@ -595,7 +654,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:when">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:description"/>
       <xsl:apply-templates select="yin:reference"/>
     </xsl:copy>
@@ -603,7 +663,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:rpc">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:if-feature"/>
       <xsl:apply-templates select="yin:status"/>
       <xsl:apply-templates select="yin:description"/>
@@ -617,7 +678,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:input">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:typedef"/>
       <xsl:apply-templates select="yin:grouping"/>
       <xsl:call-template name="data-def-stmt"/>
@@ -626,7 +688,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:output">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:typedef"/>
       <xsl:apply-templates select="yin:grouping"/>
       <xsl:call-template name="data-def-stmt"/>
@@ -635,7 +698,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:notification">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:if-feature"/>
       <xsl:apply-templates select="yin:status"/>
       <xsl:apply-templates select="yin:description"/>
@@ -648,7 +712,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:deviation">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:description"/>
       <xsl:apply-templates select="yin:reference"/>
       <xsl:apply-templates select="yin:deviate"/>
@@ -657,7 +722,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   <xsl:template match="yin:deviate">
     <xsl:call-template name="preceding-comment"/>
     <xsl:copy>
-      <xsl:apply-templates select="html:*|xi:*|@*|text()"/>
+      <xsl:apply-templates
+	  select="html:*|xi:*|@*|text()|processing-instruction()"/>
       <xsl:apply-templates select="yin:type"/>
       <xsl:apply-templates select="yin:units"/>
       <xsl:apply-templates select="yin:must"/>

@@ -19,19 +19,23 @@ be included in other YANG modules via XInclude.
 	WG List:  &lt;mailto:netmod@ietf.org&gt;
       </h:p>
       <h:p>
-	WG Chair: Thomas Nadeau<h:br/>
-	          &lt;mailto:tnadeau@lucidvision.com&gt;
+	WG Chair: Lou Berger<h:br/>
+	          &lt;mailto:lberger@labn.net&gt;
       </h:p>
       <h:p>
 	WG Chair: Juergen Schoenwaelder<h:br/>
 	          &lt;mailto:j.schoenwaelder@jacobs-university.de&gt;
+      </h:p>
+      <h:p>
+	WG Chair: Kent Watsen<h:br/>
+	          &lt;mailto:kwatsen@juniper.net&gt;
       </h:p>
     </text>
   </contact>
   <description>
     <text xml:id="desc">
       <h:p>
-	Copyright (c) 2014 IETF Trust and the persons identified as
+	Copyright (c) 2016 IETF Trust and the persons identified as
 	authors of the code.  All rights reserved.
       </h:p>
       <h:p>

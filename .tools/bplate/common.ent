@@ -13,8 +13,7 @@ below with the date of RFC publication (and remove this note).</t>
 <t>RFC Editor: Remove this section upon publication as an RFC.</t>
 '>
 <!ENTITY treesym '
-<t>The meaning of the symbols in these diagrams is as follows:
-<list style="symbols">
+<t><list style="symbols">
   <t>Brackets "[" and "]" enclose list keys.</t>
   <t>Curly braces "{" and "}" contain names of optional features that
   make the corresponding node conditional.</t>

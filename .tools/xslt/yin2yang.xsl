@@ -2,7 +2,7 @@
 
 <!-- Program name: yin2yang.xsl
 
-Copyright © 2013 by Ladislav Lhotka, CZ.NIC <lhotka@nic.cz>
+Copyright © 2015 by Ladislav Lhotka, CZ.NIC <lhotka@nic.cz>
 
 Translates YIN to YANG (see RFC 6020).
 
@@ -12,22 +12,33 @@ NOTES:
 
 2. This stylesheet supports the following non-standard YIN extension:
 
-Arguments of 'contact', 'description', 'organization' and 'reference'
-(wrapped in <text>) may contain the following HTML elements in the
-"http://www.w3.org/1999/xhtml" namespace:
+   Arguments of 'contact', 'description', 'organization' and
+   'reference' (wrapped in <text>) may contain the following HTML
+   elements in the "http://www.w3.org/1999/xhtml" namespace:
 
-<html:p> - a paragraph of text
-<html:ul> - unordered list
-<html:ol> - ordered list
+   <html:p> - a paragraph of text
+   <html:ul> - unordered list
+   <html:ol> - ordered list
 
-<html:p> elements may, apart from text, also contain empty
-<html:br/> elements that cause an unconditional line break.
+   <html:p> elements may, apart from text, also contain empty
+   <html:br/> elements that cause an unconditional line break.
 
-List elements must contain one or more <html:li> elements
-representing list items with text and <html:br/> elements.
+   List elements must contain one or more <html:li> elements
+   representing list items with text and <html:br/> elements.
 
-A <text> element may also have the xml:id attribute and contain the
-XInclude element <xi:include>.
+   A <text> element may also have the xml:id attribute and contain the
+   XInclude element <xi:include>.
+
+3. The stylesheet tries to break long arguments into multiple
+   lines. If the result isn't satisfactory, it is possible to provide
+   a hint by adding processing instruction <?delim x> as the content
+   of the corresponding statement element, where x is is the delimiter
+   character after which the argument may be split.
+
+   For example, The following pattern can be split on every right
+   parenthesis:
+
+   <pattern value="..."><?delim )?></pattern>
 
 ==
 
@@ -250,11 +261,22 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
   <xsl:template name="chop-arg">
     <xsl:param name="token-delim" select="'/'"/>
+    <xsl:param name="after" select="2"/>
     <xsl:variable name="qchar">"</xsl:variable>
     <xsl:variable name="cind">
       <xsl:call-template name="indent">
 	<xsl:with-param name="level" select="count(ancestor::*)-1"/>
       </xsl:call-template>
+    </xsl:variable>
+    <xsl:variable name="tdel">
+      <xsl:choose>
+	<xsl:when test="../processing-instruction('delim')">
+	  <xsl:value-of select="../processing-instruction('delim')"/>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:value-of select="$token-delim"/>
+	</xsl:otherwise>
+      </xsl:choose>
     </xsl:variable>
     <xsl:variable name="txt">
       <xsl:call-template name="escape-text">
@@ -279,7 +301,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 	  <xsl:with-param name="text" select="$txt"/>
 	  <xsl:with-param
 	      name="length"
-	      select="$line-length - 2 -
+	      select="$line-length - $after -
 		      string-length(concat($cind, local-name(..)))"/>
 	  <xsl:with-param name="prefix">
 	    <xsl:value-of select="$cind"/>
@@ -291,9 +313,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 	    </xsl:call-template>
 	    <xsl:value-of select="concat('+ ',$qchar)"/>
 	  </xsl:with-param>
-	  <xsl:with-param name="wdelim" select="$token-delim"/>
+	  <xsl:with-param name="wdelim" select="$tdel"/>
 	  <xsl:with-param name="break"
-			  select="concat($token-delim,$qchar,'&#xA;')"/>
+			  select="concat($tdel,$qchar,'&#xA;')"/>
 	  <xsl:with-param name="at-start" select="true()"/>
 	</xsl:call-template>
       </xsl:otherwise>
@@ -308,14 +330,26 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   </xsl:template>
 
   <xsl:template
-      match="yin:anyxml|yin:argument|yin:base|yin:bit|yin:case
-	     |yin:choice|yin:container|yin:enum|yin:extension
-	     |yin:feature|yin:grouping|yin:identity|yin:if-feature
-	     |yin:leaf|yin:leaf-list|yin:list|yin:module
-	     |yin:notification|yin:rpc|yin:submodule|yin:type
-	     |yin:typedef|yin:uses">
+      match="yin:action|yin:anydata|yin:anyxml|yin:argument|yin:base
+	     |yin:bit|yin:case|yin:choice|yin:container|yin:enum
+	     |yin:extension|yin:feature|yin:grouping|yin:identity
+	     |yin:if-feature|yin:leaf|yin:leaf-list|yin:list
+	     |yin:module|yin:notification|yin:rpc|yin:submodule
+	     |yin:type|yin:typedef|yin:uses">
     <xsl:call-template name="statement">
       <xsl:with-param name="arg" select="@name"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="yin:namespace">
+    <xsl:call-template name="keyword"/>
+    <xsl:apply-templates select="@uri"/>
+    <xsl:call-template name="semi-or-sub"/>
+  </xsl:template>
+
+  <xsl:template match="@uri">
+    <xsl:call-template name="chop-arg">
+      <xsl:with-param name="token-delim">:</xsl:with-param>
     </xsl:call-template>
   </xsl:template>
 
@@ -345,6 +379,12 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 	     |yin:presence|yin:range|yin:require-instance
 	     |yin:status|yin:value|yin:yang-version|yin:yin-element">
     <xsl:call-template name="statement-dq">
+      <xsl:with-param name="arg" select="@value"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="yin:modifier">
+    <xsl:call-template name="statement">
       <xsl:with-param name="arg" select="@value"/>
     </xsl:call-template>
   </xsl:template>
@@ -404,12 +444,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 	  <xsl:otherwise>/</xsl:otherwise>
 	</xsl:choose>
       </xsl:with-param>
-    </xsl:call-template>
-  </xsl:template>
-
-  <xsl:template match="yin:namespace">
-    <xsl:call-template name="statement-dq">
-      <xsl:with-param name="arg" select="@uri"/>
+      <xsl:with-param name="after" select="3"/>
     </xsl:call-template>
   </xsl:template>
 
