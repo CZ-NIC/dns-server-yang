@@ -188,8 +188,8 @@
       {
         "name": "default_rsa",
         "algorithm": "RSASHA256",
-        "zsk-length": 1024,
-        "ksk-length": 2048
+        "zsk-size": 1024,
+        "ksk-size": 2048
       }
     ],
     "zones": {
@@ -276,7 +276,7 @@
               "key-id": "d3a9fd3b36a6be275adea2b67c6e82b27ca30e90",
               "key-tag": 30348,
               "algorithm": "RSASHA256",
-              "length": 2048,
+              "size": 2048,
               "flags": "zone-key secure-entry-point",
               "created": "2015-06-18T18:02:45+02:00",
               "publish": "2015-06-18T19:00:00+02:00",
@@ -385,14 +385,14 @@
         "rule": [
           {
             "name": "no-writes-on-example.com",
-            "path": "/dns-server:dns-server/zones/zone[domain='example.com']",
+            "path": "/dnss:dns-server/dnss:zones/dnss:zone[dnss:domain='example.com']",
             "access-operations": "create update delete",
             "comment": "Users cannot write example.com.",
             "action": "deny"
           },
           {
             "name": "permit-zone-access",
-            "path": "/dns-server:dns-server/zones/zone",
+            "path": "/dnss:dns-server/dnss:zones/dnss:zone",
             "access-operations": "*",
             "comment": "Users can write other zones.",
             "action": "permit"

@@ -166,8 +166,8 @@
     <dnssec:sign-policy>
       <dnssec:name>default_rsa</dnssec:name>
       <dnssec:algorithm>RSASHA256</dnssec:algorithm>
-      <dnssec:zsk-length>1024</dnssec:zsk-length>
-      <dnssec:ksk-length>2048</dnssec:ksk-length>
+      <dnssec:zsk-size>1024</dnssec:zsk-size>
+      <dnssec:ksk-size>2048</dnssec:ksk-size>
     </dnssec:sign-policy>
     <zones>
       <template>
@@ -237,7 +237,7 @@
 	  <dnssec:key-id>d3a9fd3b36a6be275adea2b67c6e82b27ca30e90</dnssec:key-id>
 	  <dnssec:key-tag>30348</dnssec:key-tag>
 	  <dnssec:algorithm>RSASHA256</dnssec:algorithm>
-	  <dnssec:length>2048</dnssec:length>
+	  <dnssec:size>2048</dnssec:size>
 	  <dnssec:flags>zone-key secure-entry-point</dnssec:flags>
 	  <dnssec:created>2015-06-18T18:02:45+02:00</dnssec:created>
 	  <dnssec:publish>2015-06-18T19:00:00+02:00</dnssec:publish>

@@ -11,6 +11,9 @@
   <import module="ietf-yang-types">
     <prefix value="yang"/>
   </import>
+  <import module="ietf-inet-types">
+    <prefix value="inet"/>
+  </import>
   <import module="dns-server">
     <prefix value="dnss"/>
   </import>
@@ -50,13 +53,24 @@
 
   <!-- Typedefs -->
 
-  <typedef name="lifetime">
+  <typedef name="time-interval">
     <description>
-      <text>This type is used for the lifetime values of keys and
+      <text>This type is used for time intervals such as TTL of
+      resource records or lifetime values of keys and
       signatures.</text>
     </description>
-    <type name="uint32"/>
+    <type name="uint32">
+      <range value="1..max"/>
+    </type>
     <units name="seconds"/>
+  </typedef>
+
+  <typedef name="key-size">
+    <type name="uint16"/>
+    <units name="bits"/>
+    <description>
+      <text>Size of a cryptographic key.</text>
+    </description>
   </typedef>
 
   <typedef name="key-id">
@@ -123,13 +137,12 @@
 	</text>
       </description>
     </leaf>
-    <leaf name="length">
-      <type name="uint16"/>
-      <units name="bits"/>
+    <leaf name="size">
+      <type name="key-size"/>
       <mandatory value="true"/>
       <description>
 	<text>
-	  Length of the key.
+	  Size of the key.
 	</text>
       </description>
     </leaf>
@@ -295,23 +308,21 @@
 	  </text>
 	</description>
       </leaf>
-      <leaf name="ksk-length">
-	<type name="uint16"/>
+      <leaf name="ksk-size">
+	<type name="key-size"/>
 	<default value="2048"/>
-	<units name="bits"/>
 	<description>
 	  <text>
-	    Length of generated key-signing keys.
+	    The size of generated key-signing keys.
 	  </text>
 	</description>
       </leaf>
-      <leaf name="zsk-length">
-	<type name="uint16"/>
+      <leaf name="zsk-size">
+	<type name="key-size"/>
 	<default value="1024"/>
-	<units name="bits"/>
 	<description>
 	  <text>
-	    Length of generated zone-signing keys.
+	    The size of generated zone-signing keys.
 	  </text>
 	</description>
       </leaf>
@@ -324,7 +335,7 @@
 	</description>
       </leaf>
       <leaf name="zsk-lifetime">
-	<type name="lifetime"/>
+	<type name="time-interval"/>
 	<default value="2592000"/>
 	<description>
 	  <text>
@@ -334,7 +345,7 @@
 	</description>
       </leaf>
       <leaf name="rrsig-lifetime">
-	<type name="lifetime"/>
+	<type name="time-interval"/>
 	<default value="1209600"/>
 	<description>
 	  <text>
@@ -391,6 +402,108 @@
 	  </text>
 	</description>
       </leaf>
+      <leaf name="manual">
+	<type name="boolean"/>
+	<default value="false"/>
+	<description>
+	  <text>
+	    Setting this flag to true enables manual key
+	    management. In this case, no keys will be generated or
+	    rolled out automatically.
+	  </text>
+	</description>
+      </leaf>
+      <leaf name="keystore">
+	<type name="leafref">
+	  <path value="../../keystore/name"/>
+	</type>
+	<description>
+	  <text>
+	    Name of a keystore to be used by the policy.
+	  </text>
+	</description>
+      </leaf>
+    </list>
+    <list name="keystore">
+      <key value="name"/>
+      <description>
+	<text>
+	  The list of configured stores for private key material.
+	</text>
+      </description>
+      <uses name="dnss:entry-name"/>
+      <leaf name="backend">
+	<description>
+	  <text>
+	    Type of the keystore backend.
+	  </text>
+	</description>
+	<type name="enumeration">
+	  <enum name="pkcs8">
+	    <description>
+	      <text>
+		This backend type stores private key material in
+		unencrypted X.509 PEM files.
+	      </text>
+	    </description>
+	  </enum>
+	  <enum name="pkcs11">
+	    <description>
+	      <text>
+		This backend type stores private key material in a
+		cryptographic token accessible via the PKCS#11
+		interface.
+	      </text>
+	    </description>
+	  </enum>
+	</type>
+	<default value="pkcs8"/>
+      </leaf>
+      <choice name="keystore-config">
+	<description>
+	  <text>
+	    Additional configuration parameters for individual backends.
+	  </text>
+	</description>
+	<case name="pkcs8">
+	  <when condition="../backend = 'pkcs8'"/>
+	  <leaf name="keystore-directory">
+	    <type name="dnss:fs-path"/>
+	    <description>
+	      <text>
+		<h:p>Absolute path to a filesystem directory where
+		private key material is stored.</h:p>
+	      </text>
+	    </description>
+	  </leaf>
+	</case>
+	<case name="pkcs11">
+	  <when condition="../backend = 'pkcs11'"/>
+	  <leaf name="token-url">
+	    <type name="inet:uri"/>
+	    <description>
+	      <text>
+		<h:p>URI of the PKCS#11 token.</h:p>
+		<h:p>If the token is protected by a PIN, the URI must
+		include 'pin-value' or 'pin-source' attribute.</h:p>
+	      </text>
+	    </description>
+	    <reference>
+	      <text>
+		RFC 7512: The PKCS #11 URI Scheme
+	      </text>
+	    </reference>
+	  </leaf>
+	  <leaf name="module-path">
+	    <type name="dnss:fs-path"/>
+	    <description>
+	      <text>
+		PKCS #11 module path.
+	      </text>
+	    </description>
+	  </leaf>
+	</case>
+      </choice>
     </list>
   </augment>
   

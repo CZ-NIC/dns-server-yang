@@ -27,7 +27,7 @@ module: dns-server
    |     |     +--ro dnssec:key-id       key-id
    |     |     +--ro dnssec:key-tag      uint16
    |     |     +--ro dnssec:algorithm    dsalg:dnssec-algorithm
-   |     |     +--ro dnssec:length       uint16
+   |     |     +--ro dnssec:size         key-size
    |     |     +--ro dnssec:publish?     yang:date-and-time
    |     |     +--ro dnssec:activate?    yang:date-and-time
    |     |     +--ro dnssec:retire?      yang:date-and-time
@@ -177,16 +177,27 @@ module: dns-server
       +--rw dnssec:sign-policy* [name]
       |  +--rw dnssec:name                 string
       |  +--rw dnssec:algorithm?           dsalg:dnssec-algorithm
-      |  +--rw dnssec:ksk-length?          uint16
-      |  +--rw dnssec:zsk-length?          uint16
+      |  +--rw dnssec:ksk-size?            key-size
+      |  +--rw dnssec:zsk-size?            key-size
       |  +--rw dnssec:dnskey-ttl?          dnss:rr-ttl
-      |  +--rw dnssec:zsk-lifetime?        lifetime
-      |  +--rw dnssec:rrsig-lifetime?      lifetime
+      |  +--rw dnssec:zsk-lifetime?        time-interval
+      |  +--rw dnssec:rrsig-lifetime?      time-interval
       |  +--rw dnssec:rrsig-refresh?       uint32
       |  +--rw dnssec:nsec3?               boolean
       |  +--rw dnssec:soa-min-ttl?         dnss:rr-ttl
       |  +--rw dnssec:zone-max-ttl?        dnss:rr-ttl
       |  +--rw dnssec:propagation-delay?   uint32
+      |  +--rw dnssec:manual?              boolean
+      |  +--rw dnssec:keystore?            -> ../../keystore/name
+      +--rw dnssec:keystore* [name]
+      |  +--rw dnssec:name                  string
+      |  +--rw dnssec:backend?              enumeration
+      |  +--rw (dnssec:keystore-config)?
+      |     +--:(dnssec:pkcs8)
+      |     |  +--rw dnssec:keystore-directory?   dnss:fs-path
+      |     +--:(dnssec:pkcs11)
+      |        +--rw dnssec:token-url?            inet:uri
+      |        +--rw dnssec:module-path?          dnss:fs-path
       +--rw knot:log* [name]
       |  +--rw knot:name           string
       |  +--rw knot:description?   string
@@ -264,7 +275,7 @@ rpcs:
    +---x generate-key
    |  +---w input
    |  |  +---w algorithm             dsalg:dnssec-algorithm
-   |  |  +---w length                uint16
+   |  |  +---w size                  key-size
    |  |  +---w publish?              yang:date-and-time
    |  |  +---w activate?             yang:date-and-time
    |  |  +---w retire?               yang:date-and-time

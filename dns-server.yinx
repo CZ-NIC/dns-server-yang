@@ -242,7 +242,7 @@
     <leaf name="name">
       <description>
 	<text>
-	  The name of the list entry.
+	  Name of a list entry.
 	</text>
       </description>
       <type name="string"/>
