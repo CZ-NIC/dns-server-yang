@@ -44,13 +44,11 @@
       </response-rate-limiting>
     </server-options>
     <knot:log>
-      <knot:name>01</knot:name>
-      <knot:syslog/>
+      <knot:target>syslog</knot:target>
       <knot:any>warning</knot:any>
     </knot:log>
     <knot:log>
-      <knot:name>02</knot:name>
-      <knot:file>/tmp/knot.log</knot:file>
+      <knot:target>/tmp/knot.log</knot:target>
       <knot:server>info</knot:server>
       <knot:zone>info</knot:zone>
     </knot:log>

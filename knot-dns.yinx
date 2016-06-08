@@ -257,7 +257,7 @@
       </text>
     </description>
     <list name="log">
-      <key value="name"/>
+      <key value="target"/>
       <description>
 	<text>
 	  <h:p>List of log options.</h:p>
@@ -304,38 +304,21 @@
 	</type>
 	<default value="warning"/>
       </typedef>
-      <uses name="dnss:entry-name"/>
-      <uses name="dnss:description"/>
-      <choice name="target">
+      <leaf name="target">
 	<description>
-	  <text>Destination of log messages.</text>
+	  <text>
+	    <h:p>Destination of log messages. The value can be either
+	    a file name, or one of the following special strings:</h:p>
+	    <h:ul>
+	      <h:li>stdout: log messages are sent to standard output,</h:li>
+	      <h:li>stderr: log messages are sent to standard error,</h:li>
+	      <h:li>stderr: log messages are passed to the syslog facility.</h:li>
+	    </h:ul>
+	  </text>
 	</description>
-	<mandatory value="true"/>
-	<leaf name="stdout">
-	  <type name="empty"/>
-	  <description>
-	    <text>Standard output.</text>
-	  </description>
-	</leaf>
-	<leaf name="stderr">
-	  <type name="empty"/>
-	  <description>
-	    <text>Standard error.</text>
-	  </description>
-	</leaf>
-	<leaf name="syslog">
-	  <type name="empty"/>
-	  <description>
-	    <text>Syslog service.</text>
-	  </description>
-	</leaf>
-	<leaf name="file">
-	  <type name="dnss:fs-path"/>
-	  <description>
-	    <text>File name.</text>
-	  </description>
-	</leaf>
-      </choice>
+	<type name="string"/>
+      </leaf>
+      <uses name="dnss:description"/>
       <leaf name="server">
 	<type name="severity"/>
 	<description>

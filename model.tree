@@ -198,18 +198,9 @@ module: dns-server
       |     +--:(dnssec:pkcs11)
       |        +--rw dnssec:token-url?            inet:uri
       |        +--rw dnssec:module-path?          dnss:fs-path
-      +--rw knot:log* [name]
-      |  +--rw knot:name           string
+      +--rw knot:log* [target]
+      |  +--rw knot:target         string
       |  +--rw knot:description?   string
-      |  +--rw (knot:target)
-      |  |  +--:(knot:stdout)
-      |  |  |  +--rw knot:stdout?        empty
-      |  |  +--:(knot:stderr)
-      |  |  |  +--rw knot:stderr?        empty
-      |  |  +--:(knot:syslog)
-      |  |  |  +--rw knot:syslog?        empty
-      |  |  +--:(knot:file)
-      |  |     +--rw knot:file?          dnss:fs-path
       |  +--rw knot:server?        severity
       |  +--rw knot:zone?          severity
       |  +--rw knot:any?           severity
