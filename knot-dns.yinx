@@ -501,7 +501,7 @@
   
   <augment
       target-node="/dnss:dns-server/dnss:query-module">
-    <when condition="dnss:type = 'knot:dnstap'"/>
+    <when condition="derived-from-or-self(dnss:type, 'knot:dnstap')"/>
     <description>
       <text>
 	Configuration of 'dnstap' query module.
@@ -547,7 +547,7 @@
   
   <augment
       target-node="/dnss:dns-server/dnss:query-module">
-    <when condition="dnss:type = 'knot:synth-record'"/>
+    <when condition="derived-from-or-self(dnss:type, 'knot:synth-record')"/>
     <description>
       <text>
 	Configuration of 'synth-record' query module.
@@ -625,7 +625,7 @@
   
   <augment
       target-node="/dnss:dns-server/dnss:query-module">
-    <when condition="dnss:type = 'knot:dnsproxy'"/>
+    <when condition="derived-from-or-self(dnss:type, 'knot:dnsproxy')"/>
     <description>
       <text>
 	Configuration of 'dnsproxy' query module.
@@ -652,7 +652,7 @@
   
   <augment
       target-node="/dnss:dns-server/dnss:query-module">
-    <when condition="dnss:type = 'knot:rosedb'"/>
+    <when condition="derived-from-or-self(dnss:type, 'knot:rosedb')"/>
     <description>
       <text>
 	Configuration of 'rosedb' query module.
