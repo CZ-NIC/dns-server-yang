@@ -312,7 +312,7 @@
 	    <h:ul>
 	      <h:li>stdout: log messages are sent to standard output,</h:li>
 	      <h:li>stderr: log messages are sent to standard error,</h:li>
-	      <h:li>stderr: log messages are passed to the syslog facility.</h:li>
+	      <h:li>syslog: log messages are passed to the syslog facility.</h:li>
 	    </h:ul>
 	  </text>
 	</description>
