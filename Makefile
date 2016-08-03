@@ -13,7 +13,7 @@ export PYANG_XSLT_DIR ?= /usr/share/yang/xslt
 export YANG_MODPATH ?= .:/usr/share/yang/modules/ietf:/usr/share/yang/modules/iana
 yams = $(addsuffix .yang, $(MODULES))
 xsldir = .tools/xslt
-xslpars = --stringparam date $(DATE)
+yypars = --stringparam date $(DATE)
 schemas = $(baty).rng $(baty).sch $(baty).dsrl
 y2dopts = -t $(EXAMPLE_TYPE) -b $(EXAMPLE_BASE)
 
@@ -48,7 +48,7 @@ hello.xml: $(yams) hello-external.ent
 
 %.yang: %.yinx
 	@xsltproc --xinclude $(xsldir)/canonicalize.xsl $< | \
-	  xsltproc --output $@ $(xslpars) $(xsldir)/yin2yang.xsl -
+	  xsltproc --output $@ $(yypars) $(xsldir)/yin2yang.xsl -
 
 $(schemas): hello.xml
 	@yang2dsdl $(y2dopts) -L $<
