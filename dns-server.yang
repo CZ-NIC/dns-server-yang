@@ -33,7 +33,7 @@ module dns-server {
     "This YANG module defines the data model for an authoritative DNS
      server.";
 
-  revision 2016-03-03 {
+  revision 2016-08-03 {
     description
       "Initial revision.";
     reference
