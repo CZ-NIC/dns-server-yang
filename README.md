@@ -34,8 +34,7 @@ flag is removed from the `validate` action.
 * `all`: generate the YANG modules in the normal compact format;
 
 * `json`: translate XML instance configuration (`example-data.xml`) to
-  JSON format, see
-  [draft-ietf-netmod-yang-json-03](https://tools.ietf.org/html/draft-ietf-netmod-yang-json);
+  JSON format, see [RFC7951](https://tools.ietf.org/html/rfc7951);
 
 * `knot`: translate XML instance to Knot DNS v2 configuration;
 
