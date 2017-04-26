@@ -5,14 +5,14 @@ EXAMPLE_BASE = example
 EXAMPLE_TYPE = data
 baty = $(EXAMPLE_BASE)-$(EXAMPLE_TYPE)
 EXAMPLE_INST = $(baty).xml
-PYANG_OPTS =
+PYANG_OPTS = --lax-quote-checks
 
 # Paths for pyang
 export PYANG_RNG_LIBDIR ?= /usr/share/yang/schema
 export PYANG_XSLT_DIR ?= /usr/share/yang/xslt
 export YANG_MODPATH ?= .:/usr/share/yang/modules/ietf:/usr/share/yang/modules/iana
 yams = $(addsuffix .yang, $(MODULES))
-xsldir = .tools/xslt
+xsldir = ../yangson/tools/xslt
 yypars = --stringparam date $(DATE)
 schemas = $(baty).rng $(baty).sch $(baty).dsrl
 y2dopts = -t $(EXAMPLE_TYPE) -b $(EXAMPLE_BASE)
