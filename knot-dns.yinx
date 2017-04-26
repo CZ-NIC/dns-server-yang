@@ -2,6 +2,7 @@
 <module name="knot-dns"
         xmlns="urn:ietf:params:xml:ns:yang:yin:1"
         xmlns:knot="http://www.nic.cz/ns/yang/knot-dns"
+	xmlns:nacm="urn:ietf:params:xml:ns:yang:ietf-netconf-acm"
 	xmlns:h="http://www.w3.org/1999/xhtml">
   <namespace uri="http://www.nic.cz/ns/yang/knot-dns"/>
   <prefix value="knot"/>
@@ -11,6 +12,9 @@
   </import>
   <import module="ietf-yang-types">
     <prefix value="yang"/>
+  </import>
+  <import module="ietf-netconf-acm">
+    <prefix value="nacm"/>
   </import>
   <import module="dns-server">
     <prefix value="dnss"/>
@@ -344,46 +348,19 @@
 	</description>
       </leaf>
     </list>
-    <container name="control-socket">
+    <leaf name="control-socket">
+      <type name="dnss:fs-path"/>
+      <default value="knot.sock"/>
+      <nacm:default-deny-write/>
       <description>
-	<text>Configuration of Knot DNS control socket.</text>
+	<text>
+	  <h:p>Filename of the Knot control socket (Unix
+	  domain).</h:p>
+	  <h:p>A relative name is prepended with the directory
+	  specified in 'dnss:run-time-dir'.</h:p>
+	</text>
       </description>
-      <choice name="socket-type">
-	<description>
-	  <text>The control socket can be either Unix domain socket
-	  (default) or TCP/IP endpoint.</text>
-	</description>
-	<default value="unix"/>
-	<leaf name="unix">
-	  <type name="dnss:fs-path"/>
-	  <default value="knot.sock"/>
-	  <description>
-	    <text>
-	      <h:p>Filename of the Unix domain socket.</h:p>
-	      <h:p>A relative name is prepended with the directory
-	      specified in 'dnss:run-time-dir'.</h:p>
-	    </text>
-	  </description>
-	</leaf>
-	<case name="network">
-	  <description>
-	    <text>Address of the network socket.</text>
-	  </description>
-	  <uses name="dnss:endpoint-address">
-	    <refine target-node="port">
-	      <default value="5553"/>
-	    </refine>
-	  </uses>
-	</case>
-      </choice>
-      <uses name="dnss:acls">
-	<description>
-	  <text>
-	    ACLs for the control socket.
-	  </text>
-	</description>
-      </uses>
-    </container>
+    </leaf>
   </augment>
 
   <augment target-node="/dnss:dns-server/dnss:server-options/dnss:resources">

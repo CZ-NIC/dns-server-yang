@@ -14,6 +14,10 @@ module knot-dns {
     prefix "yang";
   }
 
+  import ietf-netconf-acm {
+    prefix "nacm";
+  }
+
   import dns-server {
     prefix "dnss";
   }
@@ -27,6 +31,9 @@ module knot-dns {
 
   contact
     "Editor:   Ladislav Lhotka
+               <mailto:lhotka@nic.cz>
+
+     Editor:   Ladislav Lhotka
                <mailto:lhotka@nic.cz>";
 
   description
@@ -36,7 +43,7 @@ module knot-dns {
   reference
     "https://www.knot-dns.cz/docs/2.0/html/";
 
-  revision 2016-08-03 {
+  revision 2017-04-26 {
     description
       "Initial revision.";
     reference
@@ -115,6 +122,41 @@ module knot-dns {
          - not all RRs in node are signed,
 
          - wrong key flags or wrong key in RRSIG record (not the same
+           as ZSK).
+
+         Enable additional checks of zone data semantics (failures
+         are logged):
+
+         - missing NS record at the zone apex,
+
+         - missing glue A or AAAA records,
+
+         - broken or non-cyclic NSEC(3) chain,
+
+         - wrong NSEC(3) type bitmap,
+
+         - multiple NSEC records at the same node,
+
+         - missing NSEC records at authoritative nodes,
+
+         - extra record types under the same name as NSEC3 record
+           (this is valid but Knot will not serve such a zone
+           correctly),
+
+         - NSEC3-unsecured delegation that is not part of Opt-out
+           span,
+
+         - wrong original TTL value in NSEC3 records,
+
+         - wrong RDATA TTL value in RRSIG record.
+
+         - signer name in RRSIG RR not the same as in DNSKEY,
+
+         - signed RRSIG,
+
+         - not all RRs in node are signed,
+
+         - wrong key flags or wrong key in RRSIG record (not the same
            as ZSK).";
     }
   }
@@ -126,6 +168,11 @@ module knot-dns {
       type string;
       description
         "Path to Key and Signing Policy (KASP) database directory.
+
+         Default: 'keys' subdirectory of the directory specified in
+         'zones-dir'.
+
+         Path to Key and Signing Policy (KASP) database directory.
 
          Default: 'keys' subdirectory of the directory specified in
          'zones-dir'.";
@@ -220,6 +267,11 @@ module knot-dns {
         "List of log options.
 
          If no entry is present, messages with severity 'warning' or
+         higher are logged to syslog and standard error.
+
+         List of log options.
+
+         If no entry is present, messages with severity 'warning' or
          higher are logged to syslog and standard error.";
       typedef severity {
         type enumeration {
@@ -262,6 +314,15 @@ module knot-dns {
 
            - stderr: log messages are sent to standard error,
 
+           - syslog: log messages are passed to the syslog facility.
+
+           Destination of log messages. The value can be either a
+           file name, or one of the following special strings:
+
+           - stdout: log messages are sent to standard output,
+
+           - stderr: log messages are sent to standard error,
+
            - syslog: log messages are passed to the syslog
              facility.";
       }
@@ -282,37 +343,20 @@ module knot-dns {
           "Severity threshold for all messages.";
       }
     }
-    container control-socket {
+    leaf control-socket {
+      type dnss:fs-path;
+      default "knot.sock";
       description
-        "Configuration of Knot DNS control socket.";
-      choice socket-type {
-        default "unix";
-        description
-          "The control socket can be either Unix domain socket
-           (default) or TCP/IP endpoint.";
-        leaf unix {
-          type dnss:fs-path;
-          default "knot.sock";
-          description
-            "Filename of the Unix domain socket.
+        "Filename of the Knot control socket (Unix domain).
 
-             A relative name is prepended with the directory
-             specified in 'dnss:run-time-dir'.";
-        }
-        case network {
-          description
-            "Address of the network socket.";
-          uses dnss:endpoint-address {
-            refine "port" {
-              default "5553";
-            }
-          }
-        }
-      }
-      uses dnss:acls {
-        description
-          "ACLs for the control socket.";
-      }
+         A relative name is prepended with the directory specified in
+         'dnss:run-time-dir'.
+
+         Filename of the Knot control socket (Unix domain).
+
+         A relative name is prepended with the directory specified in
+         'dnss:run-time-dir'.";
+      nacm:default-deny-write;
     }
   }
 
@@ -327,6 +371,11 @@ module knot-dns {
         "Number of workers (threads) handling TCP queries.
 
          Default: auto-selected value based on the number of
+         available CPU cores.
+
+         Number of workers (threads) handling TCP queries.
+
+         Default: auto-selected value based on the number of
          available CPU cores.";
     }
     leaf udp-workers {
@@ -337,6 +386,11 @@ module knot-dns {
         "Number of workers (threads) handling UDP queries.
 
          Default: auto-selected value based on the number of
+         available CPU cores.
+
+         Number of workers (threads) handling UDP queries.
+
+         Default: auto-selected value based on the number of
          available CPU cores.";
     }
     leaf background-workers {
@@ -345,6 +399,12 @@ module knot-dns {
       }
       description
         "Number of workers (threads) performing background operations
+         (zone loading, zone updates etc.).
+
+         Default: auto-selected value based on the number of
+         available CPU cores.
+
+         Number of workers (threads) performing background operations
          (zone loading, zone updates etc.).
 
          Default: auto-selected value based on the number of
@@ -410,6 +470,11 @@ module knot-dns {
         "Configuration data for the 'dnstap' query module.
 
          This module performs query and response logging via the
+         dnstap library.
+
+         Configuration data for the 'dnstap' query module.
+
+         This module performs query and response logging via the
          dnstap library.";
       reference
         "http://dnstap.info";
@@ -442,6 +507,11 @@ module knot-dns {
         "Configuration data for the 'synth-record' query module.
 
          This module allows for synthesizing forward or reverse
+         records for a given prefix and subnet.
+
+         Configuration data for the 'synth-record' query module.
+
+         This module allows for synthesizing forward or reverse
          records for a given prefix and subnet.";
       leaf record-type {
         type enumeration {
@@ -463,6 +533,13 @@ module knot-dns {
         mandatory "true";
         description
           "A prefix of the record owner.
+
+           Dots are not allowed, parts of a synthetic name must be
+           dash-separated.
+
+           TODO: regex pattern?
+
+           A prefix of the record owner.
 
            Dots are not allowed, parts of a synthetic name must be
            dash-separated.
@@ -504,6 +581,11 @@ module knot-dns {
         "Configuration data for the 'dnsproxy' query module.
 
          This module catches all unsatisfied queries and forwards
+         them to another server.
+
+         Configuration data for the 'dnsproxy' query module.
+
+         This module catches all unsatisfied queries and forwards
          them to another server.";
       container remote-server {
         description
@@ -521,6 +603,11 @@ module knot-dns {
       presence "rosedb query module";
       description
         "Configuration data for the 'rosedb' query module.
+
+         This module allows for answering certain queries from a
+         database.
+
+         Configuration data for the 'rosedb' query module.
 
          This module allows for answering certain queries from a
          database.";

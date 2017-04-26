@@ -129,13 +129,7 @@
         "key": "key0.example.com"
       }
     ],
-    "knot-dns:control-socket": {
-      "ip-address": "127.0.0.1",
-      "port": 55553,
-      "access-control-list": [
-        "socket"
-      ]
-    },
+    "knot-dns:control-socket": "127.0.0.155553socket",
     "query-module": [
       {
         "type": "knot-dns:dnstap",

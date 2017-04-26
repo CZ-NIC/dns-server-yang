@@ -1,280 +1,275 @@
 module: dns-server
-   +--ro dns-server-state
-   |  +--ro server
-   |  |  +--ro boot-time      yang:date-and-time
-   |  |  +--ro config-time    yang:date-and-time
-   |  +--ro zone* [domain]
-   |     +--ro domain                   inet:domain-name
-   |     +--ro class?                   dnspars:dns-class
-   |     +--ro server-role              enumeration
-   |     +--ro serial                   uint32
-   |     +--ro statistics
-   |     |  +--ro opcodes
-   |     |  |  +--ro opcode-count* [opcode]
-   |     |  |     +--ro opcode    dnspars:dns-opcode
-   |     |  |     +--ro count?    yang:zero-based-counter64
-   |     |  +--ro rcodes
-   |     |  |  +--ro rcode-count* [rcode]
-   |     |  |     +--ro rcode    dnspars:dns-rcode
-   |     |  |     +--ro count?   yang:zero-based-counter64
-   |     |  +--ro packets
-   |     |     +--ro packet-count* [packet-type]
-   |     |        +--ro packet-type    packet-type
-   |     |        +--ro count?         yang:zero-based-counter64
-   |     +--ro dnssec:dnssec-signing
-   |     |  +--ro dnssec:enabled?   boolean
-   |     |  +--ro dnssec:key* [key-id]
-   |     |     +--ro dnssec:key-id       key-id
-   |     |     +--ro dnssec:key-tag      uint16
-   |     |     +--ro dnssec:algorithm    dsalg:dnssec-algorithm
-   |     |     +--ro dnssec:size         key-size
-   |     |     +--ro dnssec:publish?     yang:date-and-time
-   |     |     +--ro dnssec:activate?    yang:date-and-time
-   |     |     +--ro dnssec:retire?      yang:date-and-time
-   |     |     +--ro dnssec:remove?      yang:date-and-time
-   |     |     +--ro dnssec:created?     yang:date-and-time
-   |     |     +--ro dnssec:flags?       bits
-   |     +--ro knot:next-event
-   |        +--ro (knot:next-event)?
-   |           +--:(knot:none)
-   |           |  +--ro knot:none?         empty
-   |           +--:(knot:scheduled-event)
-   |              +--ro knot:event-type?   enumeration
-   |              +--ro (knot:event-time)?
-   |                 +--:(knot:pending)
-   |                 |  +--ro knot:pending?      empty
-   |                 +--:(knot:time)
-   |                    +--ro knot:time?         yang:date-and-time
-   +--rw dns-server
-      +--rw description?           string
-      +--rw server-options
-      |  +--rw description?              string
-      |  +--rw chaos-identity!
-      |  |  +--rw id-server?   string
-      |  |  +--rw version?     string
-      |  +--rw nsid-identity!
-      |  |  +--rw nsid?   string
-      |  +--rw listen-endpoint* [name]
-      |  |  +--rw name          string
-      |  |  +--rw ip-address    inet:ip-address
-      |  |  +--rw port?         inet:port-number
-      |  +--rw resources
-      |  |  +--rw max-tcp-clients?              uint16
-      |  |  +--rw max-udp-size?                 uint16
-      |  |  +--rw knot:tcp-workers?             uint8
-      |  |  +--rw knot:udp-workers?             uint8
-      |  |  +--rw knot:background-workers?      uint8
-      |  |  +--rw knot:tcp-idle-timeout?        uint32
-      |  |  +--rw knot:tcp-handshake-timeout?   uint32
-      |  |  +--rw knot:tcp-reply-timeout?       uint32
-      |  +--rw filesystem-paths
-      |  |  +--rw run-time-dir?   fs-path
-      |  |  +--rw pid-file?       fs-path
-      |  +--rw privileges!
-      |  |  +--rw user     string
-      |  |  +--rw group?   string
-      |  +--rw response-rate-limiting!
-      |  |  +--rw responses-per-second?   uint16
-      |  |  +--rw slip?                   uint8
-      |  |  +--rw table-size?             uint32
-      |  +--rw knot:async-start?         boolean
-      +--rw access-control-list* [name]
-      |  +--rw name           string
-      |  +--rw description?   string
-      |  +--rw network* [name]
-      |  |  +--rw name         string
-      |  |  +--rw ip-prefix    inet:ip-prefix
-      |  |  +--rw port?        inet:port-number {acl-entry-port}?
-      |  +--rw key*           key-ref
-      |  +--rw operation*     enumeration
-      |  +--rw action?        enumeration
-      +--rw remote-server* [name]
-      |  +--rw name           string
-      |  +--rw description?   string
-      |  +--rw remote
-      |  |  +--rw ip-address    inet:ip-address
-      |  |  +--rw port?         inet:port-number
-      |  +--rw local!
-      |  |  +--rw ip-address    inet:ip-address
-      |  |  +--rw port?         inet:port-number
-      |  +--rw key?           key-ref
-      +--rw key* [name]
-      |  +--rw name           string
-      |  +--rw description?   string
-      |  +--rw algorithm?     identityref
-      |  +--rw secret         binary
-      +--rw query-module* [type name]
-      |  +--rw type                 identityref
-      |  +--rw name                 string
-      |  +--rw description?         string
-      |  +--rw knot:dnstap!
-      |  |  +--rw (knot:sink)
-      |  |     +--:(knot:file)
-      |  |     |  +--rw knot:file?          dnss:fs-path
-      |  |     +--:(knot:unix-socket)
-      |  |        +--rw knot:unix-socket?   dnss:fs-path
-      |  +--rw knot:synth-record!
-      |  |  +--rw knot:record-type    enumeration
-      |  |  +--rw knot:prefix         string
-      |  |  +--rw knot:origin?        inet:domain-name
-      |  |  +--rw knot:ttl?           uint16
-      |  |  +--rw knot:network?       inet:ip-prefix
-      |  +--rw knot:dnsproxy!
-      |  |  +--rw knot:remote-server
-      |  |     +--rw knot:ip-address    inet:ip-address
-      |  |     +--rw knot:port?         inet:port-number
-      |  +--rw knot:rosedb!
-      |     +--rw knot:db-dir?   dnss:fs-path
-      +--rw zones
-      |  +--rw template* [name]
-      |  |  +--rw name                     string
-      |  |  +--rw default?                 boolean
-      |  |  +--rw description?             string
-      |  |  +--rw zones-dir?               fs-path
-      |  |  +--rw file?                    fs-path
-      |  |  +--rw master*                  remote-ref
-      |  |  +--rw notify
-      |  |  |  +--rw recipient*   remote-ref
-      |  |  +--rw access-control-list*     acl-ref
-      |  |  +--rw serial-update-method?    enumeration
-      |  |  +--rw any-to-tcp?              boolean {any-to-tcp}?
-      |  |  +--rw journal
-      |  |  |  +--rw maximum-journal-size?   uint64
-      |  |  |  +--rw zone-file-sync-delay?   uint32
-      |  |  |  +--rw from-differences?       boolean {journal-from-differences}?
-      |  |  +--rw query-module* [type name]
-      |  |  |  +--rw type    -> /dns-server/query-module/type
-      |  |  |  +--rw name    -> /dns-server/query-module[type=current()/../type]/name
-      |  |  +--rw dnssec:dnssec-signing!
-      |  |  |  +--rw dnssec:enabled?   boolean
-      |  |  |  +--rw dnssec:policy?    -> /dnss:dns-server/dnssec:sign-policy/name
-      |  |  |  +--rw knot:kasp-db?     string
-      |  |  +--rw knot:semantic-checks?    boolean
-      |  +--rw zone* [domain]
-      |     +--rw domain                   inet:domain-name
-      |     +--rw template?                -> /dns-server/zones/template/name
-      |     +--rw description?             string
-      |     +--rw zones-dir?               fs-path
-      |     +--rw file?                    fs-path
-      |     +--rw master*                  remote-ref
-      |     +--rw notify
-      |     |  +--rw recipient*   remote-ref
-      |     +--rw access-control-list*     acl-ref
-      |     +--rw serial-update-method?    enumeration
-      |     +--rw any-to-tcp?              boolean {any-to-tcp}?
-      |     +--rw journal
-      |     |  +--rw maximum-journal-size?   uint64
-      |     |  +--rw zone-file-sync-delay?   uint32
-      |     |  +--rw from-differences?       boolean {journal-from-differences}?
-      |     +--rw query-module* [type name]
-      |     |  +--rw type    -> /dns-server/query-module/type
-      |     |  +--rw name    -> /dns-server/query-module[type=current()/../type]/name
-      |     +--rw dnssec:dnssec-signing!
-      |     |  +--rw dnssec:enabled?   boolean
-      |     |  +--rw dnssec:policy?    -> /dnss:dns-server/dnssec:sign-policy/name
-      |     |  +--rw knot:kasp-db?     string
-      |     +--rw knot:semantic-checks?    boolean
-      +--rw dnssec:sign-policy* [name]
-      |  +--rw dnssec:name                 string
-      |  +--rw dnssec:algorithm?           dsalg:dnssec-algorithm
-      |  +--rw dnssec:ksk-size?            key-size
-      |  +--rw dnssec:zsk-size?            key-size
-      |  +--rw dnssec:dnskey-ttl?          dnss:rr-ttl
-      |  +--rw dnssec:zsk-lifetime?        time-interval
-      |  +--rw dnssec:rrsig-lifetime?      time-interval
-      |  +--rw dnssec:rrsig-refresh?       uint32
-      |  +--rw dnssec:nsec3?               boolean
-      |  +--rw dnssec:soa-min-ttl?         dnss:rr-ttl
-      |  +--rw dnssec:zone-max-ttl?        dnss:rr-ttl
-      |  +--rw dnssec:propagation-delay?   uint32
-      |  +--rw dnssec:manual?              boolean
-      |  +--rw dnssec:keystore?            -> ../../keystore/name
-      +--rw dnssec:keystore* [name]
-      |  +--rw dnssec:name                  string
-      |  +--rw dnssec:backend?              enumeration
-      |  +--rw (dnssec:keystore-config)?
-      |     +--:(dnssec:pkcs8)
-      |     |  +--rw dnssec:keystore-directory?   dnss:fs-path
-      |     +--:(dnssec:pkcs11)
-      |        +--rw dnssec:token-url?            inet:uri
-      |        +--rw dnssec:module-path?          dnss:fs-path
-      +--rw knot:log* [target]
-      |  +--rw knot:target         string
-      |  +--rw knot:description?   string
-      |  +--rw knot:server?        severity
-      |  +--rw knot:zone?          severity
-      |  +--rw knot:any?           severity
-      +--rw knot:control-socket
-         +--rw (knot:socket-type)?
-         |  +--:(knot:unix)
-         |  |  +--rw knot:unix?                  dnss:fs-path
-         |  +--:(knot:network)
-         |     +--rw knot:ip-address             inet:ip-address
-         |     +--rw knot:port?                  inet:port-number
-         +--rw knot:access-control-list*   acl-ref
-rpcs:
-   +---x start-server
-   |  +--ro output
-   |     +--ro pid    uint32
-   +---x stop-server
-   +---x restart-server
-   |  +--ro output
-   |     +--ro pid    uint32
-   +---x reload-server
-   +---x zone-reload
-   |  +---w input
-   |     +---w zones*   zone-ref
-   +---x zone-refresh
-   |  +---w input
-   |     +---w zones*              zone-ref
-   |     +---w force-retransfer?   boolean
-   +---x zone-flush
-      +---w input
-         +---w zones*   zone-ref
+    +--ro dns-server-state
+    |  +--ro server
+    |  |  +--ro boot-time      yang:date-and-time
+    |  |  +--ro config-time    yang:date-and-time
+    |  +--ro zone* [domain]
+    |     +--ro domain                   inet:domain-name
+    |     +--ro class?                   dnspars:dns-class
+    |     +--ro server-role              enumeration
+    |     +--ro serial                   uint32
+    |     +--ro statistics
+    |     |  +--ro opcodes
+    |     |  |  +--ro opcode-count* [opcode]
+    |     |  |     +--ro opcode    dnspars:dns-opcode
+    |     |  |     +--ro count?    yang:zero-based-counter64
+    |     |  +--ro rcodes
+    |     |  |  +--ro rcode-count* [rcode]
+    |     |  |     +--ro rcode    dnspars:dns-rcode
+    |     |  |     +--ro count?   yang:zero-based-counter64
+    |     |  +--ro packets
+    |     |     +--ro packet-count* [packet-type]
+    |     |        +--ro packet-type    packet-type
+    |     |        +--ro count?         yang:zero-based-counter64
+    |     +--ro dnssec:dnssec-signing
+    |     |  +--ro dnssec:enabled?   boolean
+    |     |  +--ro dnssec:key* [key-id]
+    |     |     +--ro dnssec:key-id       key-id
+    |     |     +--ro dnssec:key-tag      uint16
+    |     |     +--ro dnssec:algorithm    dsalg:dnssec-algorithm
+    |     |     +--ro dnssec:size         key-size
+    |     |     +--ro dnssec:publish?     yang:date-and-time
+    |     |     +--ro dnssec:activate?    yang:date-and-time
+    |     |     +--ro dnssec:retire?      yang:date-and-time
+    |     |     +--ro dnssec:remove?      yang:date-and-time
+    |     |     +--ro dnssec:created?     yang:date-and-time
+    |     |     +--ro dnssec:flags?       bits
+    |     +--ro knot:next-event
+    |        +--ro (knot:next-event)?
+    |           +--:(knot:none)
+    |           |  +--ro knot:none?         empty
+    |           +--:(knot:scheduled-event)
+    |              +--ro knot:event-type?   enumeration
+    |              +--ro (knot:event-time)?
+    |                 +--:(knot:pending)
+    |                 |  +--ro knot:pending?      empty
+    |                 +--:(knot:time)
+    |                    +--ro knot:time?         yang:date-and-time
+    +--rw dns-server
+       +--rw description?           string
+       +--rw server-options
+       |  +--rw description?              string
+       |  +--rw chaos-identity!
+       |  |  +--rw id-server?   string
+       |  |  +--rw version?     string
+       |  +--rw nsid-identity!
+       |  |  +--rw nsid?   string
+       |  +--rw listen-endpoint* [name]
+       |  |  +--rw name          string
+       |  |  +--rw ip-address    inet:ip-address
+       |  |  +--rw port?         inet:port-number
+       |  +--rw resources
+       |  |  +--rw max-tcp-clients?              uint16
+       |  |  +--rw max-udp-size?                 uint16
+       |  |  +--rw knot:tcp-workers?             uint8
+       |  |  +--rw knot:udp-workers?             uint8
+       |  |  +--rw knot:background-workers?      uint8
+       |  |  +--rw knot:tcp-idle-timeout?        uint32
+       |  |  +--rw knot:tcp-handshake-timeout?   uint32
+       |  |  +--rw knot:tcp-reply-timeout?       uint32
+       |  +--rw filesystem-paths
+       |  |  +--rw run-time-dir?   fs-path
+       |  |  +--rw pid-file?       fs-path
+       |  +--rw privileges!
+       |  |  +--rw user     string
+       |  |  +--rw group?   string
+       |  +--rw response-rate-limiting!
+       |  |  +--rw responses-per-second?   uint16
+       |  |  +--rw slip?                   uint8
+       |  |  +--rw table-size?             uint32
+       |  +--rw knot:async-start?         boolean
+       +--rw access-control-list* [name]
+       |  +--rw name           string
+       |  +--rw description?   string
+       |  +--rw network* [name]
+       |  |  +--rw name         string
+       |  |  +--rw ip-prefix    inet:ip-prefix
+       |  |  +--rw port?        inet:port-number {acl-entry-port}?
+       |  +--rw key*           key-ref
+       |  +--rw operation*     enumeration
+       |  +--rw action?        enumeration
+       +--rw remote-server* [name]
+       |  +--rw name           string
+       |  +--rw description?   string
+       |  +--rw remote
+       |  |  +--rw ip-address    inet:ip-address
+       |  |  +--rw port?         inet:port-number
+       |  +--rw local!
+       |  |  +--rw ip-address    inet:ip-address
+       |  |  +--rw port?         inet:port-number
+       |  +--rw key?           key-ref
+       +--rw key* [name]
+       |  +--rw name           string
+       |  +--rw description?   string
+       |  +--rw algorithm?     identityref
+       |  +--rw secret         binary
+       +--rw query-module* [type name]
+       |  +--rw type                 identityref
+       |  +--rw name                 string
+       |  +--rw description?         string
+       |  +--rw knot:dnstap!
+       |  |  +--rw (knot:sink)
+       |  |     +--:(knot:file)
+       |  |     |  +--rw knot:file?          dnss:fs-path
+       |  |     +--:(knot:unix-socket)
+       |  |        +--rw knot:unix-socket?   dnss:fs-path
+       |  +--rw knot:synth-record!
+       |  |  +--rw knot:record-type    enumeration
+       |  |  +--rw knot:prefix         string
+       |  |  +--rw knot:origin?        inet:domain-name
+       |  |  +--rw knot:ttl?           uint16
+       |  |  +--rw knot:network?       inet:ip-prefix
+       |  +--rw knot:dnsproxy!
+       |  |  +--rw knot:remote-server
+       |  |     +--rw knot:ip-address    inet:ip-address
+       |  |     +--rw knot:port?         inet:port-number
+       |  +--rw knot:rosedb!
+       |     +--rw knot:db-dir?   dnss:fs-path
+       +--rw zones
+       |  +--rw template* [name]
+       |  |  +--rw name                     string
+       |  |  +--rw default?                 boolean
+       |  |  +--rw description?             string
+       |  |  +--rw zones-dir?               fs-path
+       |  |  +--rw file?                    fs-path
+       |  |  +--rw master*                  remote-ref
+       |  |  +--rw notify
+       |  |  |  +--rw recipient*   remote-ref
+       |  |  +--rw access-control-list*     acl-ref
+       |  |  +--rw serial-update-method?    enumeration
+       |  |  +--rw any-to-tcp?              boolean {any-to-tcp}?
+       |  |  +--rw journal
+       |  |  |  +--rw maximum-journal-size?   uint64
+       |  |  |  +--rw zone-file-sync-delay?   uint32
+       |  |  |  +--rw from-differences?       boolean {journal-from-differences}?
+       |  |  +--rw query-module* [type name]
+       |  |  |  +--rw type    -> /dns-server/query-module/type
+       |  |  |  +--rw name    -> /dns-server/query-module[type=current()/../type]/name
+       |  |  +--rw dnssec:dnssec-signing!
+       |  |  |  +--rw dnssec:enabled?   boolean
+       |  |  |  +--rw dnssec:policy?    -> /dnss:dns-server/dnssec:sign-policy/name
+       |  |  |  +--rw knot:kasp-db?     string
+       |  |  +--rw knot:semantic-checks?    boolean
+       |  +--rw zone* [domain]
+       |     +--rw domain                   inet:domain-name
+       |     +--rw template?                -> /dns-server/zones/template/name
+       |     +--rw description?             string
+       |     +--rw zones-dir?               fs-path
+       |     +--rw file?                    fs-path
+       |     +--rw master*                  remote-ref
+       |     +--rw notify
+       |     |  +--rw recipient*   remote-ref
+       |     +--rw access-control-list*     acl-ref
+       |     +--rw serial-update-method?    enumeration
+       |     +--rw any-to-tcp?              boolean {any-to-tcp}?
+       |     +--rw journal
+       |     |  +--rw maximum-journal-size?   uint64
+       |     |  +--rw zone-file-sync-delay?   uint32
+       |     |  +--rw from-differences?       boolean {journal-from-differences}?
+       |     +--rw query-module* [type name]
+       |     |  +--rw type    -> /dns-server/query-module/type
+       |     |  +--rw name    -> /dns-server/query-module[type=current()/../type]/name
+       |     +--rw dnssec:dnssec-signing!
+       |     |  +--rw dnssec:enabled?   boolean
+       |     |  +--rw dnssec:policy?    -> /dnss:dns-server/dnssec:sign-policy/name
+       |     |  +--rw knot:kasp-db?     string
+       |     +--rw knot:semantic-checks?    boolean
+       +--rw dnssec:sign-policy* [name]
+       |  +--rw dnssec:name                 string
+       |  +--rw dnssec:algorithm?           dsalg:dnssec-algorithm
+       |  +--rw dnssec:ksk-size?            key-size
+       |  +--rw dnssec:zsk-size?            key-size
+       |  +--rw dnssec:dnskey-ttl?          dnss:rr-ttl
+       |  +--rw dnssec:zsk-lifetime?        time-interval
+       |  +--rw dnssec:rrsig-lifetime?      time-interval
+       |  +--rw dnssec:rrsig-refresh?       uint32
+       |  +--rw dnssec:nsec3?               boolean
+       |  +--rw dnssec:soa-min-ttl?         dnss:rr-ttl
+       |  +--rw dnssec:zone-max-ttl?        dnss:rr-ttl
+       |  +--rw dnssec:propagation-delay?   uint32
+       |  +--rw dnssec:manual?              boolean
+       |  +--rw dnssec:keystore?            -> ../../keystore/name
+       +--rw dnssec:keystore* [name]
+       |  +--rw dnssec:name                  string
+       |  +--rw dnssec:backend?              enumeration
+       |  +--rw (dnssec:keystore-config)?
+       |     +--:(dnssec:pkcs8)
+       |     |  +--rw dnssec:keystore-directory?   dnss:fs-path
+       |     +--:(dnssec:pkcs11)
+       |        +--rw dnssec:token-url?            inet:uri
+       |        +--rw dnssec:module-path?          dnss:fs-path
+       +--rw knot:log* [target]
+       |  +--rw knot:target         string
+       |  +--rw knot:description?   string
+       |  +--rw knot:server?        severity
+       |  +--rw knot:zone?          severity
+       |  +--rw knot:any?           severity
+       +--rw knot:control-socket?   dnss:fs-path
+
+  rpcs:
+    +---x start-server
+    |  +--ro output
+    |     +--ro pid    uint32
+    +---x stop-server
+    +---x restart-server
+    |  +--ro output
+    |     +--ro pid    uint32
+    +---x reload-server
+    +---x zone-reload
+    |  +---w input
+    |     +---w zones*   zone-ref
+    +---x zone-refresh
+    |  +---w input
+    |     +---w zones*              zone-ref
+    |     +---w force-retransfer?   boolean
+    +---x zone-flush
+       +---w input
+          +---w zones*   zone-ref
 module: ietf-netconf-acm
-   +--rw nacm
-      +--rw enable-nacm?              boolean
-      +--rw read-default?             action-type
-      +--rw write-default?            action-type
-      +--rw exec-default?             action-type
-      +--rw enable-external-groups?   boolean
-      +--ro denied-operations         yang:zero-based-counter32
-      +--ro denied-data-writes        yang:zero-based-counter32
-      +--ro denied-notifications      yang:zero-based-counter32
-      +--rw groups
-      |  +--rw group* [name]
-      |     +--rw name         group-name-type
-      |     +--rw user-name*   user-name-type
-      +--rw rule-list* [name]
-         +--rw name     string
-         +--rw group*   union
-         +--rw rule* [name]
-            +--rw name                 string
-            +--rw module-name?         union
-            +--rw (rule-type)?
-            |  +--:(protocol-operation)
-            |  |  +--rw rpc-name?            union
-            |  +--:(notification)
-            |  |  +--rw notification-name?   union
-            |  +--:(data-node)
-            |     +--rw path                 node-instance-identifier
-            +--rw access-operations?   union
-            +--rw action               action-type
-            +--rw comment?             string
+    +--rw nacm
+       +--rw enable-nacm?              boolean
+       +--rw read-default?             action-type
+       +--rw write-default?            action-type
+       +--rw exec-default?             action-type
+       +--rw enable-external-groups?   boolean
+       +--ro denied-operations         yang:zero-based-counter32
+       +--ro denied-data-writes        yang:zero-based-counter32
+       +--ro denied-notifications      yang:zero-based-counter32
+       +--rw groups
+       |  +--rw group* [name]
+       |     +--rw name         group-name-type
+       |     +--rw user-name*   user-name-type
+       +--rw rule-list* [name]
+          +--rw name     string
+          +--rw group*   union
+          +--rw rule* [name]
+             +--rw name                 string
+             +--rw module-name?         union
+             +--rw (rule-type)?
+             |  +--:(protocol-operation)
+             |  |  +--rw rpc-name?            union
+             |  +--:(notification)
+             |  |  +--rw notification-name?   union
+             |  +--:(data-node)
+             |     +--rw path                 node-instance-identifier
+             +--rw access-operations?   union
+             +--rw action               action-type
+             +--rw comment?             string
 module: dnssec-signing
-rpcs:
-   +---x generate-key
-   |  +---w input
-   |  |  +---w algorithm             dsalg:dnssec-algorithm
-   |  |  +---w size                  key-size
-   |  |  +---w publish?              yang:date-and-time
-   |  |  +---w activate?             yang:date-and-time
-   |  |  +---w retire?               yang:date-and-time
-   |  |  +---w remove?               yang:date-and-time
-   |  |  +---w secure-entry-point?   boolean
-   |  +--ro output
-   |     +--ro key-id     key-id
-   |     +--ro key-tag    uint16
-   +---x zone-sign
-      +---w input
-         +---w zones*   dnss:zone-ref
+
+  rpcs:
+    +---x generate-key
+    |  +---w input
+    |  |  +---w algorithm             dsalg:dnssec-algorithm
+    |  |  +---w size                  key-size
+    |  |  +---w publish?              yang:date-and-time
+    |  |  +---w activate?             yang:date-and-time
+    |  |  +---w retire?               yang:date-and-time
+    |  |  +---w remove?               yang:date-and-time
+    |  |  +---w secure-entry-point?   boolean
+    |  +--ro output
+    |     +--ro key-id     key-id
+    |     +--ro key-tag    uint16
+    +---x zone-sign
+       +---w input
+          +---w zones*   dnss:zone-ref
